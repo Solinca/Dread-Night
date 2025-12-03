@@ -38,6 +38,13 @@ void UItemInstance::DestroyIfEmpty()
 	}
 }
 
+void UItemInstance::SetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack)
+{
+	ItemData = DataAsset;
+	StackNumber = InitialStack;
+}
+ 
+
 bool UItemInstance::CanBeStackedWith(const UItemInstance* Other, EStackMethod StackMethod) const
 {
 	if (!Other || !ItemData)
