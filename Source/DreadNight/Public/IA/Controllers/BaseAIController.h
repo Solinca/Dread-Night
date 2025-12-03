@@ -30,4 +30,9 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void OnPossess(APawn* InPawn) override;
+
+	UFUNCTION(BlueprintNativeEvent, DisplayName = "SetupBlackboard")
+	void BP_SetupBlackboard(UBlackboardComponent* BlackboardComponent);
+
+	virtual void SetupBlackboard(UBlackboardComponent* BlackboardComponent) {};
 };
