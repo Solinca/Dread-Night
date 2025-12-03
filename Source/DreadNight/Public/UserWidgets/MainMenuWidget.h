@@ -30,4 +30,17 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ButtonQuit = nullptr;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void ActionContinue();
+
+	UFUNCTION(BlueprintCallable)
+	void ActionNewGame();
+
+	UFUNCTION(BlueprintCallable)
+	void ActionOptions();
+
+	UFUNCTION(BlueprintCallable)
+	void ActionQuit();
 };
