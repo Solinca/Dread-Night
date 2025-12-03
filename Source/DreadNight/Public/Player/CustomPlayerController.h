@@ -7,6 +7,7 @@
 #include <InputActionValue.h>
 #include <EnhancedInputComponent.h>
 #include "PlayerCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "CustomPlayerController.generated.h"
 
 
@@ -41,11 +42,8 @@ protected:
 
 public:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Values")
-	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inputs")
-	float CameraSensibility = 100.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
+	float CameraSensibility = 75.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
 	TObjectPtr<class UInputMappingContext> MappingContext = nullptr;
@@ -53,7 +51,20 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
 	TArray<FInputActionSetup> IA_Setup;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
+	float BaseMoveSpeed = 600.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
+	float SprintMoveSpeed = 1200.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
+	float CrouchMoveSpeed = 300.f;
+
+
 private:
+
+
+	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
 
 	UFUNCTION()
 	void Move(const FInputActionValue& Value);
@@ -81,6 +92,9 @@ private:
 
 	UFUNCTION()
 	void CrouchEnd(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void UpdateCrouching(bool isCrouching, float deltatime);
 
 	UFUNCTION()
 	void Aim(const FInputActionValue& Value);
