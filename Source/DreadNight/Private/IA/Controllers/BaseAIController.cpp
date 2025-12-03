@@ -3,12 +3,18 @@
 
 #include "IA/Controllers/BaseAIController.h"
 
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISense_Hearing.h"
+#include "Perception/AISense_Sight.h"
+
 
 // Sets default values
 ABaseAIController::ABaseAIController()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>("Perception Component");
 }
 
 void ABaseAIController::TryRunBehaviorTree()
@@ -29,7 +35,11 @@ void ABaseAIController::TryRunBehaviorTree()
 void ABaseAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &ABaseAIController::OnPerceptionUpdated);
+	PerceptionComponent->OnTargetPerceptionInfoUpdated.AddDynamic(this, &ABaseAIController::OnTargetPerceptionInfoUpdated);
+	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ABaseAIController::InternalOnTargetPerceptionUpdated);
+	PerceptionComponent->OnTargetPerceptionForgotten.AddDynamic(this, &ABaseAIController::OnTargetPerceptionForgotten);
 }
 
 void ABaseAIController::OnPossess(APawn* InPawn)
@@ -47,3 +57,29 @@ void ABaseAIController::BP_SetupBlackboard_Implementation(UBlackboardComponent* 
 	SetupBlackboard(BlackboardComponent);
 }
 
+void ABaseAIController::BP_OnSightStimulusUpdated_Implementation(AActor* Actor, FAIStimulus& Stimulus, const ETeamAttitude::Type TeamAttitude)
+{
+	OnSightStimulusUpdated(Actor, Stimulus, TeamAttitude);
+}
+
+void ABaseAIController::BP_OnHearingStimulusUpdated_Implementation(AActor* Actor, FAIStimulus& Stimulus,
+	const ETeamAttitude::Type TeamAttitude)
+{
+	OnHearingStimulusUpdated(Actor, Stimulus, TeamAttitude);
+}
+
+void ABaseAIController::InternalOnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+{
+	OnTargetPerceptionUpdated(Actor, Stimulus);
+
+	const ETeamAttitude::Type TeamAttitude{GetTeamAttitudeTowards(*Actor)};
+
+	if (Stimulus.Type == UAISense::GetSenseID<UAISense_Sight>())
+	{
+		BP_OnSightStimulusUpdated(Actor, Stimulus, TeamAttitude);
+	}
+	else if (Stimulus.Type == UAISense::GetSenseID<UAISense_Hearing>())
+	{
+		BP_OnHearingStimulusUpdated(Actor, Stimulus, TeamAttitude);
+	}
+}
