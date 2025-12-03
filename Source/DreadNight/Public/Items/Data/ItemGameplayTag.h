@@ -1,0 +1,20 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "NativeGameplayTags.h"
+
+//Add GT suffix to prevent redefinition
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(GT_Item)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(GT_Item_Weapon)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(GT_Item_Armor)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(GT_Item_Food)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(GT_Item_Drink)
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(GT_Rarity)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(GT_Rarity_Common)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(GT_Rarity_Rare)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(GT_Rarity_Epic)
+UE_DECLARE_GAMEPLAY_TAG_EXTERN(GT_Rarity_Legendary)
