@@ -7,6 +7,10 @@
 #include "GameFramework/Character.h"
 #include "BaseAICharacter.generated.h"
 
+/**
+ * Base class for AI characters in the game, implementing the IGenericTeamAgentInterface.
+ * Provides functionality for team-based AI behavior.
+ */
 UCLASS(Abstract, BlueprintType, Blueprintable, Category = "AI", ClassGroup = "AIController")
 class DREADNIGHT_API ABaseAICharacter : public ACharacter, public IGenericTeamAgentInterface
 {
