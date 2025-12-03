@@ -36,7 +36,7 @@ protected:
 	FLinearColor GhostColor{ FLinearColor(1.0f, 1.0f, 1.0f, 0.5f) };
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float GhostDelay{ 0.2f };
+	float GhostDelay{ 0.1f };
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float GhostSpeed{ 5.0f };
