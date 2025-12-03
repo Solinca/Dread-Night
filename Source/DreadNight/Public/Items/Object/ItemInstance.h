@@ -28,6 +28,7 @@ protected:
 
 	void DestroyIfEmpty();
 public:
+	void SetupItemInstance(UItemDataAsset* DataAsset,const int InitialStack);
 	
 	enum class EStackMethod
 	{
