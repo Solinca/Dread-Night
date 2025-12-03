@@ -85,6 +85,11 @@ bool UItemInstance::TryAdd(const int NumberOfInstanceToAdd)
 	return true;
 }
 
+bool UItemInstance::IsEmpty() const
+{
+	return StackNumber == 0;
+}
+
 bool UItemInstance::TryUse(const int NumberOfInstanceToUse)
 {
 	if (NumberOfInstanceToUse > StackNumber)

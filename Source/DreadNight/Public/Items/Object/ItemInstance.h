@@ -44,6 +44,8 @@ public:
 	bool TryUse(const int NumberOfInstanceToUse);
 
 	bool TryAdd(const int NumberOfInstanceToAdd);
+
+	bool IsEmpty() const;
 	
 	FEmptyItemEvent OnItemDepleted;
 	FItemInstanceStackChangeEvent OnItemStackChange; 
