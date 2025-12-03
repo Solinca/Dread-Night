@@ -6,7 +6,7 @@
 #include "BaseAIController.h"
 #include "WarriorAIController.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType, Category = "AI", ClassGroup = "AIController")
 class DREADNIGHT_API AWarriorAIController : public ABaseAIController
 {
 	GENERATED_BODY()
