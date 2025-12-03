@@ -4,8 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "Engine/DataAsset.h"
-#include "Items/Data/ItemGameplayTag.h"
+#include "Engine/DataAsset.h" 
 #include "ItemDataAsset.generated.h"
 
 /**
@@ -28,4 +27,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FName ItemName;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UTexture2D> ItemIcon;
 };
