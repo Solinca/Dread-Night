@@ -21,6 +21,8 @@ void ABaseAIController::TryRunBehaviorTree()
 	}
 
 	RunBehaviorTree(UsedBehaviorTree);
+
+	BP_SetupBlackboard(GetBlackboardComponent());
 }
 
 // Called when the game starts or when spawned
@@ -38,5 +40,10 @@ void ABaseAIController::OnPossess(APawn* InPawn)
 	{
 		TryRunBehaviorTree();
 	}
+}
+
+void ABaseAIController::BP_SetupBlackboard_Implementation(UBlackboardComponent* BlackboardComponent)
+{
+	SetupBlackboard(BlackboardComponent);
 }
 
