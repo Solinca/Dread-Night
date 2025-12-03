@@ -65,6 +65,8 @@ protected:
 	virtual void OnHearingStimulusUpdated(AActor* Actor, FAIStimulus& Stimulus, const ETeamAttitude::Type TeamAttitude) {}
 	
 #pragma endregion // Sense Callback
+
+	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 	
 private:
 	UFUNCTION()

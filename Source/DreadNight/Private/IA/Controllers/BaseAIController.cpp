@@ -6,6 +6,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Hearing.h"
 #include "Perception/AISense_Sight.h"
+#include "Team/FunctionLibraries/TeamFunctionLibrary.h"
 
 
 // Sets default values
@@ -15,6 +16,8 @@ ABaseAIController::ABaseAIController()
 	PrimaryActorTick.bCanEverTick = true;
 
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>("Perception Component");
+
+	UTeamFunctionLibrary::SetTeam(this, Enemy);
 }
 
 void ABaseAIController::TryRunBehaviorTree()
@@ -66,6 +69,22 @@ void ABaseAIController::BP_OnHearingStimulusUpdated_Implementation(AActor* Actor
 	const ETeamAttitude::Type TeamAttitude)
 {
 	OnHearingStimulusUpdated(Actor, Stimulus, TeamAttitude);
+}
+
+ETeamAttitude::Type ABaseAIController::GetTeamAttitudeTowards(const AActor& Other) const
+{
+	AActor* OtherPtr{const_cast<AActor*>(&Other)};
+
+	if (!IsValid(OtherPtr) && OtherPtr->Implements<IGenericTeamAgentInterface>())
+	{
+		return ETeamAttitude::Neutral;
+	}
+
+	// Simple behavior for team attitude for now but it could change in the future.
+	const EGameTeam OtherTeam{UTeamFunctionLibrary::GetTeam(OtherPtr)};
+	const EGameTeam ThisTeam{UTeamFunctionLibrary::GetTeam(this)};
+	
+	return ThisTeam == OtherTeam ? ETeamAttitude::Friendly : ETeamAttitude::Hostile;
 }
 
 void ABaseAIController::InternalOnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
