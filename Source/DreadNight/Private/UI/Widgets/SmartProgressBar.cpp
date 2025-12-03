@@ -9,16 +9,7 @@ void USmartProgressBar::NativeConstruct()
 {
     Super::NativeConstruct();
 
-	if (ForegroundBar)
-	{
-		ForegroundBar->SetPercent(1.0f);
-	}
-	
-	if (GhostBar)
-	{
-		GhostBar->SetPercent(1.0f);
-		GhostBar->SetFillColorAndOpacity(GhostColor);
-	}
+	UpdateValue(1.f, 1.f);
 }
 
 void USmartProgressBar::UpdateValue(const float CurrentValue, const float MaxValue)
