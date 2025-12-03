@@ -2,10 +2,12 @@
 
 
 #include "Player/CustomPlayerController.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include <EnhancedInputSubsystems.h>
 
 ACustomPlayerController::ACustomPlayerController()
 {
+
 }
 
 void ACustomPlayerController::BeginPlay()
@@ -13,6 +15,7 @@ void ACustomPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	MyPlayer = Cast<APlayerCharacter>(GetPawn());
+	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchMoveSpeed;
 
 	if (GetLocalPlayer())
 	{
@@ -33,7 +36,9 @@ void ACustomPlayerController::BeginPlay()
 
 void ACustomPlayerController::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
 
+	UpdateCrouching(MyPlayer->bIsCrouching, DeltaTime);
 }
 
 void ACustomPlayerController::SetupInputComponent()
@@ -85,27 +90,57 @@ void ACustomPlayerController::Jump(const FInputActionValue& Value)
 
 void ACustomPlayerController::Sprint(const FInputActionValue& Value)
 {
-
+	if (MyPlayer)
+	{
+		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = SprintMoveSpeed;
+		MyPlayer->bIsSprinting = true;
+	}
 }
 
 void ACustomPlayerController::SprintEnd(const FInputActionValue& Value)
 {
-
+	if (MyPlayer)
+	{
+		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = BaseMoveSpeed;
+		MyPlayer->bIsSprinting = false;
+	}
 }
 
 void ACustomPlayerController::Crouch(const FInputActionValue& Value)
 {
 	if (MyPlayer)
-	{
-		MyPlayer->Crouch();
-	}
+		MyPlayer->bIsCrouching = Value.Get<bool>();
 }
 
 void ACustomPlayerController::CrouchEnd(const FInputActionValue& Value)
 {
+	MyPlayer->bIsCrouching = false;
+}
+
+void ACustomPlayerController::UpdateCrouching(bool isCrouching, float deltatime)
+{
 	if (MyPlayer)
 	{
-		MyPlayer->UnCrouch();
+		if (UCharacterMovementComponent* MovementComp = MyPlayer->GetCharacterMovement())
+		{
+
+			float CurrentSpeed = MovementComp->MaxWalkSpeed;
+			float FOVInterpSpeed = 8.f;
+			if (isCrouching)
+			{
+				MyPlayer->CurrentCapsuleHH = FMath::FInterpTo(MyPlayer->CurrentCapsuleHH, 44.f, deltatime, FOVInterpSpeed);
+				MyPlayer->GetCapsuleComponent()->SetCapsuleHalfHeight(MyPlayer->CurrentCapsuleHH);
+				MyPlayer->GetCharacterMovement()->MaxWalkSpeed = CrouchMoveSpeed;
+			}
+			else
+			{
+				MyPlayer->CurrentCapsuleHH = FMath::FInterpTo(MyPlayer->CurrentCapsuleHH, 88.f, deltatime, FOVInterpSpeed);
+				MyPlayer->GetCapsuleComponent()->SetCapsuleHalfHeight(MyPlayer->CurrentCapsuleHH);
+
+				if (!MyPlayer->bIsSprinting)
+					MyPlayer->GetCharacterMovement()->MaxWalkSpeed = BaseMoveSpeed;
+			}
+		}
 	}
 }
 
@@ -160,7 +195,7 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 
 	switch (index)
 	{
-	case 0:
+	case -1:
 		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Hotbar 1");
 		break;
 	case 1:

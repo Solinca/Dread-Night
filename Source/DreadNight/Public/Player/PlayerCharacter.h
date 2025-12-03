@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "PlayerCharacter.generated.h"
 
 
@@ -24,5 +25,20 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	TObjectPtr<UCameraComponent> Camera = nullptr;
 
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	TObjectPtr<USpringArmComponent> SpringArm = nullptr;
+
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsCrouching = false;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsSprinting = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Values")
+	float CurrentCapsuleHH = 88.f;
 
 };
