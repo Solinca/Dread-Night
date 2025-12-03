@@ -6,15 +6,15 @@
 #include "Components/Button.h"
 #include "MainMenuWidget.generated.h"
 
-class UOptionsWidget;
-
 UCLASS()
 class DREADNIGHT_API UMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
 protected:
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& Geometry, float DeltaTime) override;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> TBTitle = nullptr;
@@ -30,20 +30,4 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ButtonQuit = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	TSubclassOf<UOptionsWidget> OptionsWidgetClass;
-
-public:
-	UFUNCTION(BlueprintCallable)
-	void OnContinueClicked();
-
-	UFUNCTION(BlueprintCallable)
-	void OnNewGameClicked();
-
-	UFUNCTION(BlueprintCallable)
-	void OnOptionsClicked();
-
-	UFUNCTION(BlueprintCallable)
-	void OnQuitClicked();
 };
