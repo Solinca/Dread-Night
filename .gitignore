@@ -2,6 +2,8 @@
 .vs/
 .idea/
 
+.idea/
+
 # Compiled Object files
 *.slo
 *.lo
