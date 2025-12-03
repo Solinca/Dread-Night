@@ -8,7 +8,7 @@
 
  
 UItemInstance* FItemInstanceFactory::CreateItem(UItemDataAsset* ItemDataAsset, const int StartStackSize)
-{
+{ 
 	if (!ItemDataAsset)
 		return nullptr;
 
