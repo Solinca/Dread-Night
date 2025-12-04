@@ -44,6 +44,6 @@ public:
 
 	bool IsEmpty() const;
 	
-	FEmptyItemEvent OnItemDepleted;
-	FItemInstanceStackChangeEvent OnItemStackChange; 
+	FEmptyItemEventSignature OnItemDepleted;
+	FItemInstanceStackChangeEventSignature OnItemStackChange; 
 };
