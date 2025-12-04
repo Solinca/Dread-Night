@@ -3,6 +3,7 @@
 
 #include "IA/Controllers/BaseAIController.h"
 
+#include "CustomLogCategories.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Hearing.h"
 #include "Perception/AISense_Sight.h"
@@ -75,12 +76,12 @@ ETeamAttitude::Type ABaseAIController::GetTeamAttitudeTowards(const AActor& Othe
 {
 	AActor* OtherPtr{const_cast<AActor*>(&Other)};
 
-	if (!IsValid(OtherPtr) && OtherPtr->Implements<IGenericTeamAgentInterface>())
+	if (!IsValid(OtherPtr) && OtherPtr->Implements<UGenericTeamAgentInterface>())
 	{
 		return ETeamAttitude::Neutral;
 	}
 
-	// Simple behavior for team attitude for now but it could change in the future.
+	// Simple behavior for the team attitude for now but it could change in the future.
 	const EGameTeam OtherTeam{UTeamFunctionLibrary::GetTeam(OtherPtr)};
 	const EGameTeam ThisTeam{UTeamFunctionLibrary::GetTeam(this)};
 	

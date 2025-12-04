@@ -3,17 +3,21 @@
 
 #include "IA/Controllers/WarriorAIController.h"
 
+#include "CustomLogCategories.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/GameplayStatics.h"
 
-// Sets default values
-AWarriorAIController::AWarriorAIController()
-{
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-}
+#include "GameFramework/Character.h"
 
-// Called when the game starts or when spawned
-void AWarriorAIController::BeginPlay()
+void AWarriorAIController::SetupBlackboard(UBlackboardComponent* BlackboardComponent)
 {
-	Super::BeginPlay();
-	
+	//The player character has a chance to not be set at the time SetupBlackboard is set.
+	auto RetrievePlayer{[BlackboardComponent, this]
+	{
+		AActor* PlayerActor{GetWorld()->GetFirstPlayerController()->GetPawn()};
+		UE_LOG(LogTemp, Warning, TEXT("%p"), PlayerActor)
+		BlackboardComponent->SetValueAsObject("TargetActor", PlayerActor);
+	}};
+
+	GetWorldTimerManager().SetTimerForNextTick(RetrievePlayer);
 }
