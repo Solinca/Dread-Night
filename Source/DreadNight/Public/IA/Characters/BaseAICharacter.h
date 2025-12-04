@@ -1,6 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
@@ -17,7 +15,6 @@ class DREADNIGHT_API ABaseAICharacter : public ACharacter, public IGenericTeamAg
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ABaseAICharacter();
 
 	virtual void SetGenericTeamId(const FGenericTeamId& TeamID) override;

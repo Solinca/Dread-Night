@@ -10,7 +10,7 @@ UBTDecorator_IsActorMoving::UBTDecorator_IsActorMoving()
 {
 	NodeName = "Is Actor Moving";
 
-	//bTickIntervals = true;
+	bTickIntervals = true;
 	bNotifyTick = true;
 }
 
@@ -56,7 +56,7 @@ bool UBTDecorator_IsActorMoving::CalculateRawConditionValue(UBehaviorTreeCompone
 {
 	const FBTIsActorMovingDecoratorMemory* ActorMovingDecoratorMemory{CastNodeMemory(NodeMemory)};
 
-	UBlackboardComponent* BlackboardComponent{OwnerComp.GetBlackboardComponent()};
+	const UBlackboardComponent* BlackboardComponent{OwnerComp.GetBlackboardComponent()};
 	const AActor* RetrievedActor{Cast<AActor>(BlackboardComponent->GetValue<UBlackboardKeyType_Object>(Actor.GetSelectedKeyID()))};
 	if (!RetrievedActor)
 	{
@@ -74,7 +74,7 @@ void UBTDecorator_IsActorMoving::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 		return;
 	}
 
-	FVector NewOldActorLocation{ActorMovingDecoratorMemory->Actor->GetActorLocation()};
+	const FVector NewOldActorLocation{ActorMovingDecoratorMemory->Actor->GetActorLocation()};
 	if (!IsNearlyEqual(NewOldActorLocation, ActorMovingDecoratorMemory->OldActorLocation))
 	{
 		ActorMovingDecoratorMemory->bHasMoved = true;
@@ -107,7 +107,7 @@ EBlackboardNotificationResult UBTDecorator_IsActorMoving::OnActorKeyValueChange(
 EBlackboardNotificationResult UBTDecorator_IsActorMoving::OnTickIntervalKeyValueChange(
 	const UBlackboardComponent& Blackboard, FBlackboard::FKey ChangedKeyID)
 {
-	UBehaviorTreeComponent* BehaviorTreeComponent{Cast<UBehaviorTreeComponent>(Blackboard.GetBrainComponent())};
+	const UBehaviorTreeComponent* BehaviorTreeComponent{Cast<UBehaviorTreeComponent>(Blackboard.GetBrainComponent())};
 	uint8* NodeMemory{BehaviorTreeComponent->GetNodeMemory(this, BehaviorTreeComponent->FindInstanceContainingNode(this))};
 	FBTIsActorMovingDecoratorMemory* IsInRangeDecoratorMemory{CastNodeMemory(NodeMemory)};
 	IsInRangeDecoratorMemory->TickInterval = Blackboard.GetValue<UBlackboardKeyType_Float>(ChangedKeyID);
@@ -120,7 +120,7 @@ FBTIsActorMovingDecoratorMemory* UBTDecorator_IsActorMoving::CastNodeMemory(uint
 	return reinterpret_cast<FBTIsActorMovingDecoratorMemory*>(NodeMemory);
 }
 
-bool UBTDecorator_IsActorMoving::IsNearlyEqual(const FVector& First, const FVector& Second, float ErrorTolerance)
+bool UBTDecorator_IsActorMoving::IsNearlyEqual(const FVector& First, const FVector& Second, const float ErrorTolerance)
 {
 	const bool XIsEqual{FMath::IsNearlyEqual(First.X, Second.X, ErrorTolerance)};
 	const bool YIsEqual{FMath::IsNearlyEqual(First.Y, Second.Y, ErrorTolerance)};

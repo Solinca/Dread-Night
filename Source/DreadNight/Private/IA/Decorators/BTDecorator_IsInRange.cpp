@@ -1,12 +1,9 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "IA/Decorators/BTDecorator_IsInRange.h"
+﻿#include "IA/Decorators/BTDecorator_IsInRange.h"
 
 #include "AIController.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Float.h"
-#include "GameFramework/Character.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
+#include "GameFramework/Character.h"
 
 UBTDecorator_IsInRange::UBTDecorator_IsInRange()
 {
@@ -63,8 +60,8 @@ bool UBTDecorator_IsInRange::CalculateRawConditionValue(UBehaviorTreeComponent& 
 		return false;
 	}
 	
-	UBlackboardComponent* BlackboardComponent{OwnerComp.GetBlackboardComponent()};
-	AActor* RetrievedTargetActor = Cast<AActor>(BlackboardComponent->GetValue<UBlackboardKeyType_Object>(TargetActor.GetSelectedKeyID()));
+	const UBlackboardComponent* BlackboardComponent{OwnerComp.GetBlackboardComponent()};
+	const AActor* RetrievedTargetActor = Cast<AActor>(BlackboardComponent->GetValue<UBlackboardKeyType_Object>(TargetActor.GetSelectedKeyID()));
 	
 	if (!RetrievedTargetActor)
 	{
