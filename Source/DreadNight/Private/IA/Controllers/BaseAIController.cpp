@@ -1,7 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "IA/Controllers/BaseAIController.h"
+﻿#include "IA/Controllers/BaseAIController.h"
 
 #include "CustomLogCategories.h"
 #include "Perception/AIPerceptionComponent.h"
@@ -9,11 +6,8 @@
 #include "Perception/AISense_Sight.h"
 #include "Team/FunctionLibraries/TeamFunctionLibrary.h"
 
-
-// Sets default values
 ABaseAIController::ABaseAIController()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>("Perception Component");
@@ -35,7 +29,6 @@ void ABaseAIController::TryRunBehaviorTree()
 	BP_SetupBlackboard(GetBlackboardComponent());
 }
 
-// Called when the game starts or when spawned
 void ABaseAIController::BeginPlay()
 {
 	Super::BeginPlay();

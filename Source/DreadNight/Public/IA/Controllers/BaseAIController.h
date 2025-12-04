@@ -1,6 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "Perception/AIPerceptionComponent.h"
@@ -28,7 +26,6 @@ protected:
 	TObjectPtr<UBehaviorTree> UsedBehaviorTree;
 	
 public:
-	// Sets default values for this actor's properties
 	ABaseAIController();
 
 	/**
@@ -36,7 +33,6 @@ public:
 	 */
 	void TryRunBehaviorTree();
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	virtual void OnPossess(APawn* InPawn) override;

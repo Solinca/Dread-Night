@@ -1,13 +1,5 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "IA/Controllers/WarriorAIController.h"
-
-#include "CustomLogCategories.h"
+﻿#include "IA/Controllers/WarriorAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Kismet/GameplayStatics.h"
-
-#include "GameFramework/Character.h"
 
 void AWarriorAIController::SetupBlackboard(UBlackboardComponent* BlackboardComponent)
 {
