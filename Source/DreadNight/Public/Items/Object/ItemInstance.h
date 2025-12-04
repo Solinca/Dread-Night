@@ -6,8 +6,8 @@
 
 class UItemDataAsset;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEmptyItemEvent,class UItemInstance*, ItemInstance);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FItemInstanceStackChangeEvent,class UItemInstance*, ItemInstance, int, NewInstanceNumber);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEmptyItemEventSignature, class UItemInstance*, ItemInstance);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FItemInstanceStackChangeEventSignature, class UItemInstance*, ItemInstance, int, NewInstanceNumber);
 
 
 UCLASS()
