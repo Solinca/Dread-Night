@@ -38,16 +38,16 @@ public:
 };
 
 #define GENERATE_GENERIC_SAVABLE_OBJECT()\
-protected:\
-bool bIsDynamicallySpawned = false;	\
-UClass* DynamicSpawnedClass = nullptr;\
-FGuid DynamicUniqueID;\
-public:\
-virtual FName GetUniqueIdentifier() const override {return bIsDynamicallySpawned ? FName(DynamicUniqueID.ToString()) : FName(GetName());};\
-virtual void SetIsDynamicallySpawned(UClass* SpawnClass, FGuid UniqueID = FGuid::NewGuid()) override {\
-DynamicUniqueID = MoveTemp(UniqueID);\
-DynamicSpawnedClass = SpawnClass;\
-bIsDynamicallySpawned = true;};\
-virtual bool IsDynamicallySpawned() const override {return bIsDynamicallySpawned;};\
-virtual UClass* GetSpawnClass() const override {return DynamicSpawnedClass;};\
-virtual FTransform GetSpawnTransform() const override{return GetActorTransform();};\
+	protected:\
+	bool bIsDynamicallySpawned = false;	\
+	UClass* DynamicSpawnedClass = nullptr;\
+	FGuid DynamicUniqueID;\
+	public:\
+	virtual FName GetUniqueIdentifier() const override {return bIsDynamicallySpawned ? FName(DynamicUniqueID.ToString()) : FName(GetName());};\
+	virtual void SetIsDynamicallySpawned(UClass* SpawnClass, FGuid UniqueID = FGuid::NewGuid()) override {\
+		DynamicUniqueID = MoveTemp(UniqueID);\
+		DynamicSpawnedClass = SpawnClass;\
+		bIsDynamicallySpawned = true;};\
+	virtual bool IsDynamicallySpawned() const override {return bIsDynamicallySpawned;};\
+	virtual UClass* GetSpawnClass() const override {return DynamicSpawnedClass;};\
+	virtual FTransform GetSpawnTransform() const override{return GetActorTransform();};\

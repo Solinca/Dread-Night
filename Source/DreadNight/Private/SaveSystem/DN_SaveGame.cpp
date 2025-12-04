@@ -88,7 +88,7 @@ void UDN_SaveGame::UseAllSaveData(UWorld* WorldContext)
 	for (FSaveDataStruct& SaveActorData : GameSaveData.GameData)
 	{
 		AActor* TargetActor = nullptr;
-		if (!SaveActorData.bIsDynamicActor)
+		if (!SaveActorData.bIsDynamicActor && ActorCache.Contains(SaveActorData.Identifier))
 		{
 			TargetActor = ActorCache[SaveActorData.Identifier];
 			TargetActor->SetActorTransform(SaveActorData.SpawnTransform);
