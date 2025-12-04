@@ -1,8 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "UI/Widgets/RadialProgressBarImage.h"
-
 #include "Components/Image.h"
 
 void URadialProgressBarImage::NativeConstruct()
@@ -20,6 +16,8 @@ void URadialProgressBarImage::NativeConstruct()
 			RadialMaterialInstance->SetVectorParameterValue("BarColor", RadialColor);
 		}
 	}
+
+	IconImage->SetBrushFromTexture(IconTexture);
 
 	UpdateValue(1.f);
 }

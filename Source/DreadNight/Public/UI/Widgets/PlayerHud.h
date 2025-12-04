@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -8,9 +6,7 @@
 
 class USmartProgressBar;
 class URadialProgressBarImage;
-/**
- * 
- */
+
 UCLASS()
 class DREADNIGHT_API UPlayerHud : public UUserWidget
 {
@@ -36,10 +32,6 @@ protected:
 	TObjectPtr<URadialProgressBarImage> FearRadialBarImage;
 
 public:
-	virtual void NativeConstruct() override;
-	
-private:
-
 	UFUNCTION(BlueprintCallable)
 	void UpdateHealthBar(const float CurrentValue, const float MaxValue);
 	
