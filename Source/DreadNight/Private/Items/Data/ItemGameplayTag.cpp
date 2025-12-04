@@ -1,7 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "DreadNight/Public/Items/Data/ItemGameplayTag.h"
+﻿#include "DreadNight/Public/Items/Data/ItemGameplayTag.h"
 
 UE_DEFINE_GAMEPLAY_TAG(GT_Item, "Item")
 UE_DEFINE_GAMEPLAY_TAG(GT_Item_Weapon, "Item.Weapon")

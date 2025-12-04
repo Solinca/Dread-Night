@@ -1,7 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "Items/Helper/ItemInstanceFactory.h"
+﻿#include "Items/Helper/ItemInstanceFactory.h"
 #include "Items/Object/ItemInstance.h"
 #include "Items/Data/ItemDataAsset.h"
 #include "Items/Data/ItemGameplayTag.h"

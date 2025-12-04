@@ -1,15 +1,11 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h" 
 #include "ItemDataAsset.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class DREADNIGHT_API UItemDataAsset : public UDataAsset
 {

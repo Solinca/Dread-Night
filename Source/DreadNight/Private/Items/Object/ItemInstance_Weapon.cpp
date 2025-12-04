@@ -1,4 +1,1 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "Items/Object/ItemInstance_Weapon.h"
+﻿#include "Items/Object/ItemInstance_Weapon.h"
