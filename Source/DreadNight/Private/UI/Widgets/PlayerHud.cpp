@@ -1,15 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "UI/Widgets/PlayerHud.h"
-
 #include "UI/Widgets/RadialProgressBarImage.h"
 #include "UI/Widgets/SmartProgressBar.h"
-
-void UPlayerHud::NativeConstruct()
-{
-	Super::NativeConstruct();
-}
 
 void UPlayerHud::UpdateHealthBar(const float CurrentValue, const float MaxValue)
 {

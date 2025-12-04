@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -8,9 +6,7 @@
 
 class UProgressBar;
 
-/**
- * 
- */
+
 UCLASS()
 class DREADNIGHT_API USmartProgressBar : public UUserWidget
 {
@@ -51,9 +47,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Smart Bar")
 	void UpdateValue(const float CurrentValue, const float MaxValue);
-
-protected:
-	virtual void SynchronizeProperties() override;
 	
 private:
 	void StartGhostAnimation();

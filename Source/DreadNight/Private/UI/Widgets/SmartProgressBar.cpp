@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "UI/Widgets/SmartProgressBar.h"
 #include "Components/ProgressBar.h"
 #include "TimerManager.h"
@@ -18,12 +15,6 @@ void USmartProgressBar::UpdateValue(const float CurrentValue, const float MaxVal
     {
 	    return;
     }
-
-	if (!ForegroundBar)
-	{
-		UE_LOG(LogTemp, Error, TEXT("CRITICAL: SmartProgressBar Widgets are MISSING! Check naming in WBP_SmartBar."));
-		return; 
-	}
 	
 	const float NewPercent = FMath::Clamp(CurrentValue / MaxValue, 0.0f, 1.0f);
 
@@ -43,27 +34,6 @@ void USmartProgressBar::UpdateValue(const float CurrentValue, const float MaxVal
 	
 		GhostBar->SetPercent(TargetPercent);
 		GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
-	}
-}
-
-void USmartProgressBar::SynchronizeProperties()
-{
-	Super::SynchronizeProperties();
-
-    if (CustomFillMaterial)
-    {
-        FProgressBarStyle CurrentStyle = ForegroundBar->GetWidgetStyle();
-
-        CurrentStyle.FillImage.SetResourceObject(CustomFillMaterial);
-        CurrentStyle.FillImage.ImageSize = FVector2D(32.0f, 32.0f);
-        CurrentStyle.FillImage.DrawAs = ESlateBrushDrawType::Box;
-
-        ForegroundBar->SetWidgetStyle(CurrentStyle);
-    }
-
-	if (GhostBar)
-	{
-		GhostBar->SetFillColorAndOpacity(GhostColor);
 	}
 }
 
