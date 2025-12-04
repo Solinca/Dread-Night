@@ -54,11 +54,11 @@ bool UItemInstance::CanBeStackedWith(const UItemInstance* Other, EStackMethod St
 	
 	switch (StackMethod) {
 	case EStackMethod::Fully: 
-		return bIsSameType && StackNumber + Other->StackNumber <= ItemData->StackLimit; 
+		return StackNumber + Other->StackNumber <= ItemData->StackLimit; 
 	case EStackMethod::Partially: 
-		return bIsSameType && StackNumber < ItemData->StackLimit; 
+		return StackNumber < ItemData->StackLimit; 
 	case EStackMethod::SameType:
-		return bIsSameType; 
+		return true; 
 	}
 	
  
