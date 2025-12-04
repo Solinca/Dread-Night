@@ -11,11 +11,8 @@ class DREADNIGHT_API AWarriorAIController : public ABaseAIController
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this actor's properties
-	AWarriorAIController();
-
+	FTimerHandle RetrievePlayerCharacterTimerHandle;
+	
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	virtual void SetupBlackboard(UBlackboardComponent* BlackboardComponent) override;
 };

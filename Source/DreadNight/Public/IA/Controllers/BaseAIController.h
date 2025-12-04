@@ -7,7 +7,7 @@
 #include "Runtime/AIModule/Classes/AIController.h"
 #include "BaseAIController.generated.h"
 
-DECLARE_LOG_CATEGORY_CLASS(LogAIController, Log, Log)
+
 
 UCLASS(Abstract, Blueprintable, BlueprintType, Category = "AI", ClassGroup = "AIController")
 class DREADNIGHT_API ABaseAIController : public AAIController

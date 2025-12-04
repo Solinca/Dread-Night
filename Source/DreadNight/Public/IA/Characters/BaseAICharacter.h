@@ -24,7 +24,4 @@ public:
 	virtual FGenericTeamId GetGenericTeamId() const override;
 
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 };

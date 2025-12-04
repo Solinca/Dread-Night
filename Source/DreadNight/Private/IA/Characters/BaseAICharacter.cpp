@@ -29,10 +29,3 @@ ETeamAttitude::Type ABaseAICharacter::GetTeamAttitudeTowards(const AActor& Other
 {
 	return Cast<AAIController>(Controller)->GetTeamAttitudeTowards(Other);
 }
-
-// Called when the game starts or when spawned
-void ABaseAICharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
