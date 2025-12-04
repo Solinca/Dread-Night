@@ -7,9 +7,8 @@
 #include "DN_SaveGame.generated.h"
 
 class ISavableActor;
-/**
- * 
- */
+
+
 USTRUCT() 
 struct FSaveDataStruct
 {

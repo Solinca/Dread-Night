@@ -7,9 +7,7 @@
 #include "SavableActor.h"
 #include "SavableReference.generated.h"
 
-/**
- * 
- */
+/*Use this struct when you have a reference to an actor that need to be saved*/
 USTRUCT()
 struct DREADNIGHT_API FSavableReference
 {

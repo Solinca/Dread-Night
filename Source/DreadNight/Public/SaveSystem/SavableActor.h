@@ -13,8 +13,13 @@ class USavableActor : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
+
+/*Interface that implements all the necessary for saving an actor.
+* Mark all the property that need to be saved with UPROPERTY(SaveGame).
+* For actor reference, use the FSavableReference to ensure a safe access.
+*
+* For dynamic actor, be sure to call SetIsDynamicallySpawned with the UClass used for the spawn, to ensure that this
+* actor is correctly replicated when loading a new save.
  */
 class DREADNIGHT_API ISavableActor
 {
