@@ -6,6 +6,7 @@
 #include "GameFramework/SaveGame.h"
 #include "DN_SaveGame.generated.h"
 
+class ISavableActor;
 /**
  * 
  */
@@ -43,15 +44,17 @@ class DREADNIGHT_API UDN_SaveGame : public USaveGame
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
 	FGameSaveData GameSaveData;
 	
-	void CollectSaveData();
+	void CollectSaveData(UWorld* WorldContext);
 
-	TMap<FName, AActor*> BuildWorldActorCache() const;
+	TMap<FName, AActor*> BuildWorldActorCache(UWorld* WorldContext) const;
+	TMap<FName, ISavableActor*> BuildWorldSavableCache(UWorld* WorldContext) const;
 public:
 	UFUNCTION(BlueprintCallable)
-	void GatherAllSaveData();
+	void GatherAllSaveData(UWorld* WorldContext);
 	
 	UFUNCTION(BlueprintCallable)
-	void UseAllSaveData();
+	void UseAllSaveData(UWorld* WorldContext);
 };

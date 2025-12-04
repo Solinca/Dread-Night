@@ -6,6 +6,7 @@
 #include "Engine/GameInstance.h"
 #include "MyGameInstance.generated.h"
 
+class UDN_SaveGame;
 /**
  * 
  */
@@ -19,12 +20,14 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly)
 	int UserIndex;
-	
+
+	UPROPERTY(Transient)
+	UDN_SaveGame* SaveGame;
 public:
 
 	UFUNCTION(BlueprintCallable)
-	void Save();
+	void Save(UWorld* World);
 
 	UFUNCTION(BlueprintCallable)
-	void Load();
+	void Load(UWorld* World);
 };

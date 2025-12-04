@@ -5,33 +5,30 @@
 
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
-#include "SaveSystem/SavableObject.h"
+#include "SaveSystem/SavableActor.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 
 
-void UDN_SaveGame::CollectSaveData()
+void UDN_SaveGame::CollectSaveData(UWorld* WorldContext)
 {
-    for (TActorIterator<AActor> It(GetWorld()); It; ++It)
+    for (TActorIterator<AActor> It(WorldContext); It; ++It)
 	{
-		if (!It->Implements<USavableObject>())
+		if (!It->Implements<USavableActor>())
 		{
 			continue;
 		}
 
     	FSaveDataStruct ActorSaveInfo;
 
-    	ISavableObject* SavableObject = Cast<ISavableObject>(*It);
+    	ISavableActor* SavableObject = Cast<ISavableActor>(*It);
     	
     	ActorSaveInfo.bIsDynamicActor = SavableObject->IsDynamicallySpawned();
     	ActorSaveInfo.SpawnTransform = SavableObject->GetSpawnTransform();
+    	ActorSaveInfo.Identifier = SavableObject->GetUniqueIdentifier();		
     	if (ActorSaveInfo.bIsDynamicActor)
     	{
     		ActorSaveInfo.ActorClass = SavableObject->GetSpawnClass();
     	}
-	    else
-	    {
-    		ActorSaveInfo.Identifier = SavableObject->GetUniqueIdentifier();		    
-	    }
 		
     	
     	FMemoryWriter MemoryWriter(ActorSaveInfo.Data, true);
@@ -42,17 +39,17 @@ void UDN_SaveGame::CollectSaveData()
 	}
 }
 
-TMap<FName, AActor*> UDN_SaveGame::BuildWorldActorCache() const
+TMap<FName, AActor*> UDN_SaveGame::BuildWorldActorCache(UWorld* WorldContext) const
 {
 	TMap<FName, AActor*> ActorCache;
-	for (TActorIterator<AActor> It(GetWorld()); It; ++It)
+	for (TActorIterator<AActor> It(WorldContext); It; ++It)
 	{
-		if (!It->Implements<USavableObject>())
+		if (!It->Implements<USavableActor>())
 		{
 			continue;
 		}
 
-		ISavableObject* Object = Cast<ISavableObject>(*It);
+		ISavableActor* Object = Cast<ISavableActor>(*It);
 		if (!Object->IsDynamicallySpawned())
 		{
 			ActorCache.Add(Object->GetUniqueIdentifier(), *It);
@@ -62,15 +59,32 @@ TMap<FName, AActor*> UDN_SaveGame::BuildWorldActorCache() const
 	return MoveTemp(ActorCache);	
 }
 
-void UDN_SaveGame::GatherAllSaveData()
+TMap<FName, ISavableActor*> UDN_SaveGame::BuildWorldSavableCache(UWorld* WorldContext) const
 {
-	CollectSaveData();
+	TMap<FName, ISavableActor*> SavableCache;
+	for (TActorIterator<AActor> It(WorldContext); It; ++It)
+	{
+		if (!It->Implements<USavableActor>())
+		{
+			continue;
+		}
+
+		ISavableActor* Object = Cast<ISavableActor>(*It);
+		SavableCache.Add(Object->GetUniqueIdentifier(), Object); 
+	}
+
+	return MoveTemp(SavableCache);	
+}
+
+void UDN_SaveGame::GatherAllSaveData(UWorld* WorldContext)
+{
+	CollectSaveData(WorldContext);
 	
 }
 
-void UDN_SaveGame::UseAllSaveData()
+void UDN_SaveGame::UseAllSaveData(UWorld* WorldContext)
 {
-	TMap<FName, AActor*> ActorCache = BuildWorldActorCache();
+	TMap<FName, AActor*> ActorCache = BuildWorldActorCache(WorldContext);
 	for (FSaveDataStruct& SaveActorData : GameSaveData.GameData)
 	{
 		AActor* TargetActor = nullptr;
@@ -87,18 +101,29 @@ void UDN_SaveGame::UseAllSaveData()
 			SpawnParams.SpawnCollisionHandlingOverride = 
 				ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
             
-			TargetActor = GetWorld()->SpawnActor<AActor>(
+			TargetActor = WorldContext->SpawnActor<AActor>(
 				SaveActorData.ActorClass,
 				SaveActorData.SpawnTransform,
 				SpawnParams
 			);
+			if (ISavableActor* SavableActor = Cast<ISavableActor>(TargetActor))
+			{
+				FGuid ActorGuid;
+				FGuid::Parse(SaveActorData.Identifier.ToString(),ActorGuid);
+				SavableActor->SetIsDynamicallySpawned(SaveActorData.ActorClass, ActorGuid);
+			}
 		}
 
-		if (TargetActor && TargetActor->Implements<USavableObject>())
+		if (TargetActor && TargetActor->Implements<USavableActor>())
 		{ 
 			FMemoryReader MemoryReader(SaveActorData.Data, true);
 			FObjectAndNameAsStringProxyArchive Ar(MemoryReader, false);
 			TargetActor->Serialize(Ar); 
 		}
+	}
+	TMap<FName, ISavableActor*> FinalSavableCache = BuildWorldSavableCache(WorldContext);
+	for (TPair<FName, ISavableActor*>& Savable : FinalSavableCache)
+	{
+		Savable.Value->OnPostLoad(FinalSavableCache);
 	}
 }
