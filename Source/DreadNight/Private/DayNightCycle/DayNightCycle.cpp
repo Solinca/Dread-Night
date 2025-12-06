@@ -1,6 +1,9 @@
 #include "DayNightCycle/DayNightCycle.h"
 #include "Components/DirectionalLightComponent.h"
+#include "Components/ExponentialHeightFogComponent.h"
 #include "Engine/ExponentialHeightFog.h"
+#include "Kismet/GameplayStatics.h"
+#include "Global/MyGameStateBase.h"
 
 ADayNightCycle::ADayNightCycle()
 {
@@ -17,15 +20,17 @@ void ADayNightCycle::BeginPlay()
 
 	FogComponent = Fog->GetComponentByClass<UExponentialHeightFogComponent>();
 
+	FogComponent->SetFogDensity(MaximalFogDensity);
+
 	DawnRotation = FMath::Abs(StartSunRotation - DawnRotationThreshold);
 
 	DuskRotation = FMath::Abs(EndSunRotation - DuskRotationhreshold);
 
 	DayRotation = FullSunRotation - DawnRotation - DuskRotation;
 
-	FogComponent->SetFogDensity(MaximalFogDensity);
+	MyGameStateBase = Cast<AMyGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 
-	// TODO: Link StartDayCycle with Wave End Event
+	MyGameStateBase->OnWaveEnd.AddDynamic(this, &ADayNightCycle::StartDayCycle);
 
 	StartDayCycle();
 }
@@ -42,13 +47,13 @@ void ADayNightCycle::StartDayCycle()
 
 	Sun->SetWorldRotation(SunRotation);
 
-	MoonRotation = FRotator(StartSunRotation + 180, 0, 0);
+	MoonRotation = FRotator(StartSunRotation - DayRotation, 0, 0);
 
 	Moon->SetWorldRotation(MoonRotation);
 
 	FogComponent->SetFogDensity(MaximalFogDensity);
 
-	GetWorldTimerManager().SetTimer(DayTimer, this, &ADayNightCycle::ProcessDayPerSecond, ProcessedTimeInterval, true);
+	GetWorldTimerManager().SetTimer(ProcessDayTimer, this, &ADayNightCycle::ProcessDayPerSecond, ProcessedTimeInterval, true);
 }
 
 void ADayNightCycle::ProcessDayPerSecond()
@@ -98,10 +103,7 @@ void ADayNightCycle::ProcessDayPerSecond()
 
 void ADayNightCycle::StartMoonCycle()
 {
-	GetWorldTimerManager().ClearTimer(DayTimer);
+	GetWorldTimerManager().ClearTimer(ProcessDayTimer);
 
-	// TODO: Remove this when linking with Wave End Event
-	FTimerHandle TestMoonCycle;
-
-	GetWorldTimerManager().SetTimer(TestMoonCycle, this, &ADayNightCycle::StartDayCycle, 5);
+	MyGameStateBase->OnNightStart.Broadcast();
 }

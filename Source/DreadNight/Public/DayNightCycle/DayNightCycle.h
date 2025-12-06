@@ -2,8 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/ExponentialHeightFogComponent.h"
 #include "DayNightCycle.generated.h"
+
+class AMyGameStateBase;
+class UExponentialHeightFogComponent;
 
 UCLASS()
 class DREADNIGHT_API ADayNightCycle : public AActor
@@ -11,9 +13,11 @@ class DREADNIGHT_API ADayNightCycle : public AActor
 	GENERATED_BODY()
 
 private:
-	FTimerHandle DayTimer;
+	FTimerHandle ProcessDayTimer;
 
 	FRotator SunRotation, MoonRotation;
+
+	AMyGameStateBase* MyGameStateBase;
 
 	UExponentialHeightFogComponent* FogComponent = nullptr;
 
@@ -46,13 +50,13 @@ protected:
 	TObjectPtr<class AExponentialHeightFog> Fog = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings")
-	float DayTimeInSeconds = 5;
+	float DayTimeInSeconds = 900;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings")
-	float DawnTimeInSeconds = 1;
+	float DawnTimeInSeconds = 10;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings")
-	float DuskTimeInSeconds = 1;
+	float DuskTimeInSeconds = 10;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings")
 	float StartSunRotation = 90;
@@ -64,10 +68,10 @@ protected:
 	float EndSunRotation = -270;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings")
-	float DawnRotationThreshold = 10;
+	float DawnRotationThreshold = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings")
-	float DuskRotationhreshold = -190;
+	float DuskRotationhreshold = -180;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings")
 	float ProcessedTimeInterval = 0.05f;
