@@ -20,7 +20,7 @@ struct DREADNIGHT_API FSavableReference
 
 	bool TryFindNewSavableInCache(const TMap<FName, ISavableActor*>& Cache)
 	{
-		return UniqueID.IsNone()
+		return !UniqueID.IsNone()
 			&& Cache.Contains(UniqueID)
 			&& AssignNewSavable(Cache[UniqueID]);
 	}
