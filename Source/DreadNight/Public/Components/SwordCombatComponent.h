@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "SwordCombatComponent.generated.h"
 
+class UBoxComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DREADNIGHT_API USwordCombatComponent : public UActorComponent
@@ -12,22 +13,35 @@ class DREADNIGHT_API USwordCombatComponent : public UActorComponent
 
 protected:	
 	USwordCombatComponent();
+	virtual void BeginPlay() override;
 
 	FTimerHandle AttackCooldownTimerHandle;
 
 	bool bCanAttack;
+	bool bIsAttacking;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	float AttackCooldown = 0.5f;
+	float AttackCooldown = 1.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float AttackRange = 150.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float AttackRadius = 80.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float AttackDamage = 25.0f;
+	UPROPERTY()
+	TObjectPtr<UBoxComponent> SwordHitBox;
+	UPROPERTY()
+	TArray<AActor*> HitActors;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	float CollisionEnableTime = 0.3f;
 
-	void PerformAttackTrace();
+	void EnableSwordCollision();
+	void DisableSwordCollision();
 	void ResetAttack();
+
+	UFUNCTION()
+	void OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Combat")
