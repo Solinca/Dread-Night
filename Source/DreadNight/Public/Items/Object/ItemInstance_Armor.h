@@ -6,6 +6,7 @@
 #include "ItemInstance_Armor.generated.h"
 
 
+class UArmorDataAsset;
 
 UCLASS()
 class DREADNIGHT_API UItemInstance_Armor : public UItemInstance, public IUsableItem
@@ -16,4 +17,11 @@ public:
 
 private:
 	GENERATED_BODY()
+
+protected:
+	UPROPERTY(Transient)
+	UArmorDataAsset* ArmorDataAsset;
+
+
+	virtual void OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack) override;
 };

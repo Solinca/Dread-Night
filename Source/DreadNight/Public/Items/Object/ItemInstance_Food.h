@@ -6,6 +6,7 @@
 #include "ItemInstance_Food.generated.h"
 
 
+class UFoodDataAsset;
 
 UCLASS()
 class DREADNIGHT_API UItemInstance_Food : public UItemInstance, public IUsableItem
@@ -16,4 +17,10 @@ public:
 	
 private:
 	GENERATED_BODY()
+protected:
+	UPROPERTY(Transient)
+	UFoodDataAsset* FoodDataAsset;
+
+
+	virtual void OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack) override;
 };

@@ -6,6 +6,7 @@
 #include "ItemInstance_Weapon.generated.h"
 
 
+class UWeaponDataAsset;
 
 UCLASS()
 class DREADNIGHT_API UItemInstance_Weapon : public UItemInstance, public IUsableItem
@@ -16,4 +17,10 @@ public:
 	
 private:
 	GENERATED_BODY()
+protected:
+	UPROPERTY(Transient)
+	UWeaponDataAsset* WeaponDataAsset;
+
+
+	virtual void OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack) override;
 };

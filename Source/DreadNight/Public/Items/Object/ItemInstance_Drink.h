@@ -6,6 +6,7 @@
 #include "ItemInstance_Drink.generated.h"
 
 
+class UDrinkDataAsset;
 
 UCLASS()
 class DREADNIGHT_API UItemInstance_Drink : public UItemInstance, public IUsableItem
@@ -16,4 +17,10 @@ public:
 	
 private:
 	GENERATED_BODY()
+protected:
+	UPROPERTY(Transient)
+	UDrinkDataAsset* DrinkDataAsset;
+
+
+	virtual void OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack) override;
 };
