@@ -5,11 +5,7 @@
 #include "Items/Object/ItemInstance.h"
 #include "InventoryComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FItemAddedEventSignature, class UItemInstance*, InventoryComponent, int, ItemSlot);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemRemovedEventSignature, int, ItemSlot);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FItemClearedEventSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FItemModifiedEventSignature, class UItemInstance*, InventoryComponent, int, ItemSlot);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryUpdatedEventSignature, class UInventoryComponent*, InventoryComponent);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DREADNIGHT_API UInventoryComponent : public UActorComponent
@@ -22,38 +18,29 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	TArray<TObjectPtr<UItemInstance>> Items;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int Size = 20;
+	UPROPERTY(BlueprintReadWrite)
+	int Size;
 
 public:	
 	
-	void AddItem(UItemInstance* Item);
-	void RemoveItemsByType(UItemDataAsset* Item);
+	void AddItem(TObjectPtr<UItemInstance> Item, int Amount);
+	void RemoveItemsByType(TObjectPtr<UItemDataAsset> Item);
 	void RemoveItemsAt(int SlotIndex, int Amount);
-	void UseItemByType(UItemDataAsset* Item);
+	void UseItemByType(TObjectPtr<UItemDataAsset> Item);
 	void UseItemAt(int SlotIndex);
 	void DropItems(int SlotIndex, int Amount);
 	void Clear();
 	
-	void TransferItem(UInventoryComponent* InventoryComponent, UItemInstance* Item, int SlotIndex);
-	void SwapItem(UInventoryComponent* InventoryComponent, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex);
+	void TransferItem(TObjectPtr<UInventoryComponent> InventoryComponent, TObjectPtr<UItemInstance> Item, int SlotIndex);
+	void SwapItem(TObjectPtr<UInventoryComponent> InventoryComponent, TObjectPtr<UItemInstance> FromItem, TObjectPtr<UItemInstance> ToItem, int SlotIndex);
 	
 	int GetSize() const { return Size; }
 	int GetEmptySlot() const;
-	UItemInstance* GetItemAtSlot(int SlotIndex) const;
-	UItemDataAsset* GetItemTypeAtSlot(int SlotIndex) const;
-	int GetItemSlot(UItemDataAsset* Item) const;
-	int GetStackableItemSlot(UItemDataAsset* Item) const;
 	
-	bool Contains(UItemDataAsset* Item, int StackNumber) const;
+	bool Contains(TObjectPtr<UItemDataAsset> Item, int StackNumber) const;
 	bool IsSlotEmpty(int SlotIndex) const;
 	bool IsFull() const;
-	
-	FItemAddedEventSignature OnItemAdded;
-	FItemRemovedEventSignature OnItemRemoved;
-	FItemModifiedEventSignature OnItemModified;
-	FItemClearedEventSignature OnItemCleared;
 };

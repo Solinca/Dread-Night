@@ -14,21 +14,20 @@ void UInventoryComponent::BeginPlay()
 	Items.SetNum(Size);
 }
 
-void UInventoryComponent::AddItem(UItemInstance* Item)
+void UInventoryComponent::AddItem(TObjectPtr<UItemInstance> Item, int Amount = -1)
 {
 	if (!Item || IsFull())
 		return;
 	
 	if (Contains(Item->GetItemDataAsset(), 1))
 	{
-		for (int i = 0; i < Items.Num(); ++i)
+		for (UItemInstance* tempItem : Items)
 		{
-			if (Items[i] && Items[i]->GetItemDataAsset() == Item->GetItemDataAsset())
+			if (tempItem->GetItemDataAsset() == Item->GetItemDataAsset())
 			{
-				if (Items[i]->GetStackNumber() != Items[i]->GetItemDataAsset()->StackLimit)
+				if (tempItem->GetStackNumber() != tempItem->GetItemDataAsset()->StackLimit)
 				{
-					Items[i]->TryStackWith(Item);
-					OnItemModified.Broadcast(Items[i], i);
+					Item->TryStackWith(tempItem);
 					
 					if (Item->IsEmpty())
 						return;
@@ -40,27 +39,22 @@ void UInventoryComponent::AddItem(UItemInstance* Item)
 	if (Item->IsEmpty())
 		return;
 	
-	int index = GetEmptySlot();
 	Items[GetEmptySlot()] = Item;
-	OnItemAdded.Broadcast(Item, index);
 }
 
-void UInventoryComponent::RemoveItemsByType(UItemDataAsset* Item)
+void UInventoryComponent::RemoveItemsByType(TObjectPtr<UItemDataAsset> Item)
 {
 	if (!Item)
 		return;
 	
 	for (int i = 0; i < Items.Num(); ++i)
 	{
-		if (Items[i] && Items[i]->GetItemDataAsset() == Item)
+		if (Items[i]->GetItemDataAsset() == Item)
 		{
 			Items[i]->TryUse(1);
 			
 			if (Items[i]->IsEmpty())
-			{
 				Items[i] = nullptr;
-				OnItemRemoved.Broadcast(i);
-			}
 			
 			return;
 		}
@@ -71,32 +65,26 @@ void UInventoryComponent::RemoveItemsAt(int SlotIndex, int Amount)
 {
 	Items[SlotIndex]->TryUse(Amount);
 	
-	if (Items[SlotIndex] && Items[SlotIndex]->IsEmpty())
-	{
+	if (Items[SlotIndex]->IsEmpty())
 		Items[SlotIndex] = nullptr;
-		OnItemRemoved.Broadcast(SlotIndex);
-	}
 }
 
-void UInventoryComponent::UseItemByType(UItemDataAsset* Item)
+void UInventoryComponent::UseItemByType(TObjectPtr<UItemDataAsset> Item)
 {
 	if (!Item)
 		return;
 
 	for (int i = 0; i < Items.Num(); ++i)
 	{
-		if (Items[i] && Items[i]->GetItemDataAsset() == Item)
+		if (Items[i]->GetItemDataAsset() == Item)
 		{
-			if (IUsableItem* UsableItem = Cast<IUsableItem>(Items[i]))
+			if (TObjectPtr<IUsableItem> UsableItem = Cast<IUsableItem>(Items[i]))
 			{
 				UsableItem->Use(GetOwner());
 				Items[i]->TryUse(1);
 				
 				if (Items[i]->IsEmpty())
-				{
 					Items[i] = nullptr;
-					OnItemRemoved.Broadcast(i);
-				}
 				
 				return;
 			}
@@ -109,17 +97,14 @@ void UInventoryComponent::UseItemAt(int SlotIndex)
 	if (!Items[SlotIndex])
 		return;
 	
-	if (IUsableItem* UsableItem = Cast<IUsableItem>(Items[SlotIndex]))
+	if (TObjectPtr<IUsableItem> UsableItem = Cast<IUsableItem>(Items[SlotIndex]))
 	{
 		UsableItem->Use(GetOwner());
 		Items[SlotIndex]->TryUse(1);
 	}
 	
 	if (Items[SlotIndex]->IsEmpty())
-	{
 		Items[SlotIndex] = nullptr;
-		OnItemRemoved.Broadcast(SlotIndex);
-	}
 }
 
 void UInventoryComponent::DropItems(int SlotIndex, int Amount = 1)
@@ -137,27 +122,23 @@ void UInventoryComponent::DropItems(int SlotIndex, int Amount = 1)
 	}
 	
 	if (Items[SlotIndex]->IsEmpty())
-	{
-		OnItemRemoved.Broadcast(SlotIndex);
 		Items[SlotIndex] = nullptr;
-	}
 }
 
 void UInventoryComponent::Clear()
 {
 	Items.Empty();
 	Items.SetNum(Size);
-	OnItemCleared.Broadcast();
 }
 
-void UInventoryComponent::TransferItem(UInventoryComponent* InventoryComponent, UItemInstance* Item, int SlotIndex)
+void UInventoryComponent::TransferItem(TObjectPtr<UInventoryComponent> InventoryComponent, TObjectPtr<UItemInstance> Item, int SlotIndex)
 {
 	//transfer item from inventory to another, or the same inventory
 	//if item has the same type, we try to stack them
 	//if there is rest, we add it to an empty slot
 }
 
-void UInventoryComponent::SwapItem(UInventoryComponent* InventoryComponent, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex)
+void UInventoryComponent::SwapItem(TObjectPtr<UInventoryComponent> InventoryComponent, TObjectPtr<UItemInstance> FromItem, TObjectPtr<UItemInstance> ToItem, int SlotIndex)
 {
 	//else we swap them
 }
@@ -173,57 +154,12 @@ int UInventoryComponent::GetEmptySlot() const
 	return -1;
 }
 
-UItemInstance* UInventoryComponent::GetItemAtSlot(int SlotIndex) const
-{
-	return Items[SlotIndex];
-}
-
-UItemDataAsset* UInventoryComponent::GetItemTypeAtSlot(int SlotIndex) const
-{
-	return Items[SlotIndex]->GetItemDataAsset();
-}
-
-int UInventoryComponent::GetItemSlot(UItemDataAsset* Item) const
-{
-	if (!Item)
-		return -1;
-	
-	for (int i = 0; i < Items.Num(); ++i)
-	{
-		if (Items[i] && Items[i]->GetItemDataAsset() == Item)
-		{
-			return i;
-		}
-	}
-	
-	return -1;
-}
-
-int UInventoryComponent::GetStackableItemSlot(UItemDataAsset* Item) const
-{
-	if (!Item)
-		return -1;
-	
-	for (int i = 0; i < Items.Num(); ++i)
-	{
-		if (Items[i] && Items[i]->GetItemDataAsset() == Item)
-		{
-			if (Items[i]->GetStackNumber() < Items[i]->GetItemDataAsset()->StackLimit)
-			{
-				return i;
-			}
-		}
-	}
-	
-	return -1;
-}
-
-bool UInventoryComponent::Contains(UItemDataAsset* Item, int StackNumber) const
+bool UInventoryComponent::Contains(TObjectPtr<UItemDataAsset> Item, int StackNumber) const
 {
 	int Counter = 0;
 	for (int i = 0; i < Items.Num(); ++i)
 	{
-		if (Items[i] && Items[i]->GetItemDataAsset() == Item)
+		if (Items[i]->GetItemDataAsset() == Item)
 		{
 			if (Items[i]->GetStackNumber() == StackNumber)
 			{
@@ -241,7 +177,7 @@ bool UInventoryComponent::Contains(UItemDataAsset* Item, int StackNumber) const
 
 bool UInventoryComponent::IsSlotEmpty(int SlotIndex) const
 {
-	return !Items[SlotIndex];
+	return !Items.IsValidIndex(SlotIndex);
 }
 
 bool UInventoryComponent::IsFull() const
@@ -254,3 +190,4 @@ bool UInventoryComponent::IsFull() const
 	
 	return true;
 }
+
