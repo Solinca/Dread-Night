@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include <InputActionValue.h>
-#include <EnhancedInputComponent.h>
+#include "InputActionValue.h"
+#include "InputAction.h"
+#include "EnhancedInputComponent.h"
 #include "PlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "CustomPlayerController.generated.h"
@@ -23,8 +24,10 @@ struct FInputActionSetup
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
 	ETriggerEvent Event;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
-	FName Name;
+	UPROPERTY(EditAnywhere, meta = (FunctionReference, PrototypeFunction = "/Script/DreadNight.CustomPlayerController.Prototype_InputAction"))
+	FMemberReference ActionName;
+
+
 };
 /**
  * 
@@ -35,15 +38,13 @@ class DREADNIGHT_API ACustomPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 protected:
-	ACustomPlayerController();
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 
-public:
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
-	float CameraSensibility = 75.f;
+	float CameraSensitivity = 75.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
 	TObjectPtr<class UInputMappingContext> MappingContext = nullptr;
@@ -63,66 +64,58 @@ public:
 
 private:
 
-
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
 
-	UFUNCTION()
+#if WITH_EDITOR
+	UFUNCTION(BlueprintInternalUseOnly)
+	void Prototype_InputAction(const FInputActionValue& Value) {};
+#endif
+
+	UFUNCTION(BlueprintCallable)
 	void Move(const FInputActionValue& Value);
 
-	UFUNCTION()
-	void MoveEnd(const FInputActionValue& Value);
-
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void Look(const FInputActionValue& Value);
 
-	UFUNCTION()
-	void LookEnd(const FInputActionValue& Value);
-
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void Jump(const FInputActionValue& Value);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void Sprint(const FInputActionValue& Value);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SprintEnd(const FInputActionValue& Value);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void Crouch(const FInputActionValue& Value);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void CrouchEnd(const FInputActionValue& Value);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void UpdateCrouching(bool isCrouching, float deltatime);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void Aim(const FInputActionValue& Value);
 
-	UFUNCTION()
-	void AimEnd(const FInputActionValue& Value);
-
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void Attack(const FInputActionValue& Value);
 
-	UFUNCTION()
-	void AttackEnd(const FInputActionValue& Value);
-
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void Interact(const FInputActionValue& Value);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void DisplayInventory(const FInputActionValue& Value);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void DisplayGlossary(const FInputActionValue& Value);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void DisplayMenu(const FInputActionValue& Value);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void GoBackToPrecedentMenu(const FInputActionValue& Value);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SelectedHotbar(const FInputActionValue& Value);
 };

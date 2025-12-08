@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "PlayerCharacter.generated.h"
 
@@ -15,22 +16,14 @@ class DREADNIGHT_API APlayerCharacter : public ACharacter
 	GENERATED_BODY()
 
 protected:
-	// Sets default values for this character's properties
+
 	APlayerCharacter();
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	TObjectPtr<UCameraComponent> Camera = nullptr;
 
-
-public:
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	TObjectPtr<USpringArmComponent> SpringArm = nullptr;
-
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsCrouching = false;
@@ -40,5 +33,25 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Values")
 	float CurrentCapsuleHH = 88.f;
+
+public:
+
+	UFUNCTION()
+	bool GetIsCrouching();
+
+	UFUNCTION()
+	void SetIsCrouching(bool value);
+
+	UFUNCTION()
+	bool GetIsSprinting();
+
+	UFUNCTION()
+	void SetIsSprinting(bool value);
+
+	UFUNCTION()
+	float GetCurentCapsuleHalfHeight();
+
+	UFUNCTION()
+	void SetCurentCapsuleHalfHeight(float value);
 
 };

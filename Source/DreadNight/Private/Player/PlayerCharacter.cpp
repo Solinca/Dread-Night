@@ -1,12 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Player/PlayerCharacter.h"
 
-// Sets default values
 APlayerCharacter::APlayerCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
@@ -15,18 +12,35 @@ APlayerCharacter::APlayerCharacter()
 	Camera->SetupAttachment(SpringArm);
 }
 
-// Called when the game starts or when spawned
-void APlayerCharacter::BeginPlay()
+bool APlayerCharacter::GetIsCrouching()
 {
-	Super::BeginPlay();
-	
+	return bIsCrouching;
 }
 
-// Called every frame
-void APlayerCharacter::Tick(float DeltaTime)
+void APlayerCharacter::SetIsCrouching(bool value)
 {
-	Super::Tick(DeltaTime);
+	bIsCrouching = value;
+}
 
+bool APlayerCharacter::GetIsSprinting()
+{
+	return bIsSprinting;
+}
+
+void APlayerCharacter::SetIsSprinting(bool value)
+{
+	bIsSprinting = value;
+}
+
+float APlayerCharacter::GetCurentCapsuleHalfHeight()
+{
+	return CurrentCapsuleHH;
+}
+
+void APlayerCharacter::SetCurentCapsuleHalfHeight(float value)
+{
+	CurrentCapsuleHH = value;
+	GetCapsuleComponent()->SetCapsuleHalfHeight(value);
 }
 
 
