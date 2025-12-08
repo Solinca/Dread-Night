@@ -1,0 +1,44 @@
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/Textblock.h"
+#include "Components/Button.h"
+#include "MainMenuWidget.generated.h"
+
+UCLASS()
+class DREADNIGHT_API UMainMenuWidget : public UUserWidget
+{
+	GENERATED_BODY()
+	
+protected:
+	virtual void NativeConstruct() override;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> TBTitle = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> ButtonContinue = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> ButtonNewGame = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> ButtonOptions = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> ButtonQuit = nullptr;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void ActionContinue();
+
+	UFUNCTION(BlueprintCallable)
+	void ActionNewGame();
+
+	UFUNCTION(BlueprintCallable)
+	void ActionOptions();
+
+	UFUNCTION(BlueprintCallable)
+	void ActionQuit();
+};
