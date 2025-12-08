@@ -17,16 +17,18 @@ public:
 	FOnFocusChangedSignature OnFocusChanged;
 	
 private:
+	TWeakObjectPtr<APlayerController> PlayerController;
 	TWeakObjectPtr<AActor> LastFocusedActor{ nullptr };
-	const float AimToleranceRadius = 10.0f;
+	TWeakObjectPtr<AActor> ForcedInteractable{ nullptr };
+	const float AimToleranceRadius{ 10.0f };
 	const float CheckInterval{ 0.05f };
 	const float InteractionDistance{ 200.0f };
 	float TimeSinceLastCheck{ 0.f };
-	TWeakObjectPtr<AActor> ForcedInteractable{ nullptr };
 	
 public:
 	// Begin USubsystem Interface
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 	// End USubsystem Interface
 
 	// Begin UTickableWorldSubsystem Interface
@@ -39,4 +41,6 @@ public:
 	bool TryInteract() const;
 	UFUNCTION(BlueprintCallable)
 	void RequestInteraction(AActor* Target, APawn* Instigator) const;
+
+	void CallFocusChanged(AActor* NewTargetActor, AActor* OldTargetActor);
 };

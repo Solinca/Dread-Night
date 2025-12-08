@@ -10,6 +10,12 @@ void UInteractableSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	LastFocusedActor = nullptr;
 }
 
+void UInteractableSubsystem::OnWorldBeginPlay(UWorld& InWorld)
+{
+	Super::OnWorldBeginPlay(InWorld);
+	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+}
+
 void UInteractableSubsystem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -18,7 +24,7 @@ void UInteractableSubsystem::Tick(float DeltaTime)
 
 TStatId UInteractableSubsystem::GetStatId() const
 {
-	RETURN_QUICK_DECLARE_CYCLE_STAT(UTargetingSubsystem, STATGROUP_Tickables);
+	RETURN_QUICK_DECLARE_CYCLE_STAT(UInteractableSubsystem, STATGROUP_Tickables);
 }
 
 void UInteractableSubsystem::SearchInteractable(const float DeltaTime)
@@ -30,89 +36,74 @@ void UInteractableSubsystem::SearchInteractable(const float DeltaTime)
     	return;
     }
 	
+	
     TimeSinceLastCheck = 0.0f;
+    AActor* OldActor = LastFocusedActor.Get();
     AActor* NewTargetActor = nullptr;
-
+    bool bContinueResearch = true;
+    
     if (ForcedInteractable.IsValid())
     {
         NewTargetActor = ForcedInteractable.Get();
-    }
-    else
-    {
-        const UWorld* World = GetWorld();
-        APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
-
-        if (World && PlayerController)
-        {
-            FVector CameraLocation;
-            FRotator CameraRotation;
-            PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
-
-            const FVector Start = CameraLocation;
-            const FVector End = Start + (CameraRotation.Vector() * InteractionDistance); 
-
-            FCollisionQueryParams Params;
-            Params.AddIgnoredActor(PlayerController->GetPawn());
-            
-            FHitResult HitResult;
-            bool bHit = World->LineTraceSingleByChannel(
-                HitResult, 
-                Start, 
-                End, 
-                ECC_Visibility, 
-                Params
-            );
-            
-            AActor* HitActor = HitResult.GetActor();
-
-            if (bHit && HitActor && HitActor->Implements<UInteractable>())
-            {
-                NewTargetActor = HitActor;
-                DrawDebugLine(World, Start, HitResult.ImpactPoint, FColor::Green, false, 1.f);
-            }
-            else 
-            {
-                bHit = World->SweepSingleByChannel(
-                    HitResult,
-                    Start,
-                    End,
-                    FQuat::Identity,
-                    ECC_Visibility,
-                    FCollisionShape::MakeSphere(AimToleranceRadius),
-                    Params
-                );
-
-                HitActor = HitResult.GetActor();
-
-                if (bHit && HitActor && HitActor->Implements<UInteractable>())
-                {
-                    NewTargetActor = HitActor;
-                    DrawDebugSphere(World, HitResult.ImpactPoint, AimToleranceRadius, 12, FColor::Yellow, false, 1.f);
-                }
-            }
-        }
+        bContinueResearch = false;
     }
 
-    AActor* OldActor = LastFocusedActor.Get();
-    if (NewTargetActor != OldActor)
+    if (bContinueResearch)
     {
-        if (OldActor && OldActor->Implements<UInteractable>())
-        {
-            IInteractable::Execute_OnFocusLost(OldActor);
-        }
+        if (const UWorld* World = GetWorld(); World && PlayerController.Get())
+    	{
+    		FVector CameraLocation;
+    		FRotator CameraRotation;
+    		PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
 
-        if (NewTargetActor && NewTargetActor->Implements<UInteractable>())
-        {
-            IInteractable::Execute_OnFocusGained(NewTargetActor);
-        }
+    		const FVector Start = CameraLocation;
+    		const FVector End = Start + (CameraRotation.Vector() * InteractionDistance); 
 
-        LastFocusedActor = NewTargetActor;
+    		FCollisionQueryParams Params;
+    		Params.AddIgnoredActor(PlayerController->GetPawn());
         
-        if (OnFocusChanged.IsBound())
-        {
-            OnFocusChanged.Broadcast(NewTargetActor);
-        }
+    		FHitResult HitResult;
+    		bool bHit = World->LineTraceSingleByChannel(
+				HitResult, 
+				Start, 
+				End, 
+				ECC_Visibility, 
+				Params
+			);
+        
+    		AActor* HitActor = HitResult.GetActor();
+
+    		if (bHit && HitActor && HitActor->Implements<UInteractable>())
+    		{
+    			NewTargetActor = HitActor;
+    			DrawDebugLine(World, Start, HitResult.ImpactPoint, FColor::Green, false, 1.f);
+    			bContinueResearch = false;
+    		}
+
+    		if (bContinueResearch)
+    		{
+    			bHit = World->SweepSingleByChannel(
+				HitResult,
+				Start,
+				End,
+				FQuat::Identity,
+				ECC_Visibility,
+				FCollisionShape::MakeSphere(AimToleranceRadius),
+				Params
+			);
+
+    			HitActor = HitResult.GetActor();
+
+    			if (bHit && HitActor && HitActor->Implements<UInteractable>())
+    			{
+    				NewTargetActor = HitActor;
+    				DrawDebugSphere(World, HitResult.ImpactPoint, AimToleranceRadius, 12, FColor::Yellow, false, 1.f);
+    			}
+    		}
+    	}
     }
+	
+    CallFocusChanged(NewTargetActor, OldActor);
 }
 
 bool UInteractableSubsystem::TryInteract() const
@@ -128,4 +119,27 @@ void UInteractableSubsystem::RequestInteraction(AActor* Target, APawn* Instigato
 {
 	IInteractable::Execute_OnInteract(Target, Instigator);
     OnFocusChanged.Broadcast(nullptr);
+}
+
+void UInteractableSubsystem::CallFocusChanged(AActor* NewTargetActor, AActor* OldTargetActor)
+{
+    if (NewTargetActor != OldTargetActor)
+    {
+        if (OldTargetActor && OldTargetActor->Implements<UInteractable>())
+        {
+            IInteractable::Execute_OnFocusLost(OldTargetActor);
+        }
+
+        if (NewTargetActor && NewTargetActor->Implements<UInteractable>())
+        {
+            IInteractable::Execute_OnFocusGained(NewTargetActor);
+        }
+
+        LastFocusedActor = NewTargetActor;
+        
+        if (OnFocusChanged.IsBound())
+        {
+            OnFocusChanged.Broadcast(NewTargetActor);
+        }
+    }
 }
