@@ -127,4 +127,5 @@ bool UInteractableSubsystem::TryInteract() const
 void UInteractableSubsystem::RequestInteraction(AActor* Target, APawn* Instigator) const
 {
 	IInteractable::Execute_OnInteract(Target, Instigator);
+    OnFocusChanged.Broadcast(nullptr);
 }

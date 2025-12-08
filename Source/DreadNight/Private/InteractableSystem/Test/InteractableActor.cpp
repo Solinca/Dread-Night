@@ -22,7 +22,8 @@ void AInteractableActor::BeginPlay()
 
 void AInteractableActor::OnInteract_Implementation(AActor* Caller)
 {
-	InteractableComponent->Interact(Caller);
+	// Each Actor have to define it, here I just destroy it as a placeholder
+	Destroy();
 }
 
 void AInteractableActor::OnFocusGained_Implementation()

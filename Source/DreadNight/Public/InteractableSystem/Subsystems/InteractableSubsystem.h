@@ -37,5 +37,6 @@ public:
 	AActor* GetLastFocusedActor() const { return LastFocusedActor.Get(); }
 	void SearchInteractable(const float DeltaTime);
 	bool TryInteract() const;
+	UFUNCTION(BlueprintCallable)
 	void RequestInteraction(AActor* Target, APawn* Instigator) const;
 };
