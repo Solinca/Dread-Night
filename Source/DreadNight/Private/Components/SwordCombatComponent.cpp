@@ -14,31 +14,15 @@ USwordCombatComponent::USwordCombatComponent()
 void USwordCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	AActor* Owner = GetOwner();
-	if (!Owner)
+	if (!SwordHitBox.IsValid())
 		return;
-	TArray<UBoxComponent*> Boxes;
-	Owner->GetComponents<UBoxComponent>(Boxes);
-	for (UBoxComponent* Box : Boxes)
-	{
-		if (Box->GetName().Contains("SwordHitBox"))
-		{
-			SwordHitBox = Box;
-			break;
-		}
-	}
-	if (!SwordHitBox)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SwordCombatComponent: No SwordHitBox found on %s"), *Owner->GetName());
-		return;
-	}
 	SwordHitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SwordHitBox->OnComponentBeginOverlap.AddDynamic(this, &USwordCombatComponent::OnSwordOverlap);
 }
 
 void USwordCombatComponent::Attack()
 {
-	if (!bCanAttack || !SwordHitBox)
+	if (!bCanAttack || !SwordHitBox.IsValid())
 		return;
 	bCanAttack = false;
 	bIsAttacking = true;
@@ -50,9 +34,14 @@ void USwordCombatComponent::Attack()
 	GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &USwordCombatComponent::ResetAttack, AttackCooldown, false);
 }
 
+void USwordCombatComponent::SetHitBoxComponent(UBoxComponent* HitBox)
+{
+	SwordHitBox = HitBox;
+}
+
 void USwordCombatComponent::EnableSwordCollision()
 {
-	if (SwordHitBox)
+	if (SwordHitBox.IsValid())
 	{
 		SwordHitBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		HitActors.Empty();
@@ -61,7 +50,7 @@ void USwordCombatComponent::EnableSwordCollision()
 
 void USwordCombatComponent::DisableSwordCollision()
 {
-	if (SwordHitBox)
+	if (SwordHitBox.IsValid())
 		SwordHitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	bIsAttacking = false;
 }

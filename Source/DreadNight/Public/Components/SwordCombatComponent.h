@@ -29,7 +29,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float AttackDamage = 25.0f;
 	UPROPERTY()
-	TObjectPtr<UBoxComponent> SwordHitBox;
+	TWeakObjectPtr<UBoxComponent> SwordHitBox;
 	UPROPERTY()
 	TArray<AActor*> HitActors;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
@@ -45,5 +45,6 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void Attack();		
+	void Attack();
+	void SetHitBoxComponent(UBoxComponent* HitBox);
 };
