@@ -8,4 +8,7 @@ UCLASS(BlueprintType, Blueprintable, Category = "AI", ClassGroup = "AICharacter"
 class DREADNIGHT_API AWarriorAICharacter : public ABaseAICharacter
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset) override;
 };

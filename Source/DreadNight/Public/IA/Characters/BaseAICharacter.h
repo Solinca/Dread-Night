@@ -4,6 +4,7 @@
 #include "AIController.h"
 #include "GenericTeamAgentInterface.h"
 #include "GameFramework/Character.h"
+#include "IA/DataAssets/MonsterDataAsset.h"
 #include "BaseAICharacter.generated.h"
 
 /**
@@ -16,6 +17,9 @@ class DREADNIGHT_API ABaseAICharacter : public ACharacter, public IGenericTeamAg
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<UMonsterDataAsset> UsedDataAsset;
+	
 	TWeakObjectPtr<AAIController> AIController;
 	
 public:
@@ -27,4 +31,10 @@ public:
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 
 	virtual void PossessedBy(AController* NewController) override;
+
+protected:
+	UFUNCTION(BlueprintNativeEvent, DisplayName = "OnDataAssetInitialization")
+	void BP_OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset);
+
+	virtual void OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset) {}
 };

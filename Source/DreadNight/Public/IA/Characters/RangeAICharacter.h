@@ -12,5 +12,5 @@ class DREADNIGHT_API ARangeAICharacter : public ABaseAICharacter
 	GENERATED_BODY()
 
 protected:
-	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset) override;
 };

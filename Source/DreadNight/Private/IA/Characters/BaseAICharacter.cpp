@@ -24,9 +24,18 @@ ETeamAttitude::Type ABaseAICharacter::GetTeamAttitudeTowards(const AActor& Other
 	return AIController->GetTeamAttitudeTowards(Other);
 }
 
-void ABaseAICharacter::PossessedBy(AController* NewController)
+void ABaseAICharacter::PossessedBy(AController* NewController)	
 {
 	Super::PossessedBy(NewController);
 
 	AIController = Cast<AAIController>(NewController);
+
+	UBlackboardComponent* BlackboardComponent{AIController->GetBlackboardComponent()};
+	BP_OnDataAssetInitialization(BlackboardComponent, UsedDataAsset);
+}
+
+void ABaseAICharacter::BP_OnDataAssetInitialization_Implementation(UBlackboardComponent* BlackboardComponent,
+	UMonsterDataAsset* MonsterDataAsset)
+{
+	OnDataAssetInitialization(BlackboardComponent, MonsterDataAsset);
 }

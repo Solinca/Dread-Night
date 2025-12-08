@@ -1,6 +1,7 @@
 ﻿#include "IA/Controllers/BaseAIController.h"
 
 #include "CustomLogCategories.h"
+#include "IA/Characters/BaseAICharacter.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Hearing.h"
 #include "Perception/AISense_Sight.h"
@@ -25,8 +26,6 @@ void ABaseAIController::TryRunBehaviorTree()
 	}
 
 	RunBehaviorTree(UsedBehaviorTree);
-
-	BP_SetupBlackboard(GetBlackboardComponent());
 }
 
 void ABaseAIController::BeginPlay()
@@ -47,11 +46,6 @@ void ABaseAIController::OnPossess(APawn* InPawn)
 	{
 		TryRunBehaviorTree();
 	}
-}
-
-void ABaseAIController::BP_SetupBlackboard_Implementation(UBlackboardComponent* BlackboardComponent)
-{
-	SetupBlackboard(BlackboardComponent);
 }
 
 void ABaseAIController::BP_OnSightStimulusUpdated_Implementation(AActor* Actor, FAIStimulus& Stimulus, const ETeamAttitude::Type TeamAttitude)
