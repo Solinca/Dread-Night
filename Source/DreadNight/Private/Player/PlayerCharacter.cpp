@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -34,13 +35,24 @@ void APlayerCharacter::SetIsSprinting(bool value)
 
 float APlayerCharacter::GetCurentCapsuleHalfHeight()
 {
-	return CurrentCapsuleHH;
+	return CurrentCapsuleHalfHeight;
 }
 
 void APlayerCharacter::SetCurentCapsuleHalfHeight(float value)
 {
-	CurrentCapsuleHH = value;
+	CurrentCapsuleHalfHeight = value;
 	GetCapsuleComponent()->SetCapsuleHalfHeight(value);
+}
+
+void APlayerCharacter::UpdateCrouching(float deltatime)
+{
+	if (UCharacterMovementComponent* MovementComp = GetCharacterMovement())
+	{
+		if (bIsCrouching)
+			SetCurentCapsuleHalfHeight(FMath::FInterpTo(CurrentCapsuleHalfHeight, CapsuleCrouchedHalfHeight, deltatime, LerpCrouchSpeed));
+		else
+			SetCurentCapsuleHalfHeight(FMath::FInterpTo(CurrentCapsuleHalfHeight, CapsuleMaxHalfHeight, deltatime, LerpCrouchSpeed));
+	}
 }
 
 

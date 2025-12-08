@@ -46,6 +46,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
 	float CameraSensitivity = 75.f;
 
+	/// <summary>
+	/// Value Min and Max to restrain the pitch camera angle
+	/// </summary>
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
+	FVector2D ViewPitch = FVector2D(-55, 55);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
 	TObjectPtr<class UInputMappingContext> MappingContext = nullptr;
 
@@ -92,8 +98,8 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void CrouchEnd(const FInputActionValue& Value);
 
-	UFUNCTION(BlueprintCallable)
-	void UpdateCrouching(bool isCrouching, float deltatime);
+	UFUNCTION()
+	void UpdateCrouching(float deltatime);
 
 	UFUNCTION(BlueprintCallable)
 	void Aim(const FInputActionValue& Value);

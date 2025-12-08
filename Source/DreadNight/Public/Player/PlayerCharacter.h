@@ -31,8 +31,17 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsSprinting = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Values")
-	float CurrentCapsuleHH = 88.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Values")
+	float CapsuleMaxHalfHeight = 88.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Values")
+	float CurrentCapsuleHalfHeight = CapsuleMaxHalfHeight;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Values")
+	float CapsuleCrouchedHalfHeight = 44.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Values")
+	float LerpCrouchSpeed = 8.f;
 
 public:
 
@@ -53,5 +62,8 @@ public:
 
 	UFUNCTION()
 	void SetCurentCapsuleHalfHeight(float value);
+
+	UFUNCTION()
+	void UpdateCrouching(float deltatime);
 
 };

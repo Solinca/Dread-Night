@@ -22,16 +22,15 @@ void ACustomPlayerController::BeginPlay()
 		}
 
 	}
-
-	PlayerCameraManager->ViewPitchMin = -55;
-	PlayerCameraManager->ViewPitchMax = 55;
+	PlayerCameraManager->ViewPitchMin = ViewPitch.X;
+	PlayerCameraManager->ViewPitchMax = ViewPitch.Y;
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UpdateCrouching(MyPlayer->GetIsCrouching(), DeltaTime);
+	UpdateCrouching(DeltaTime);
 }
 
 void ACustomPlayerController::SetupInputComponent()
@@ -102,27 +101,18 @@ void ACustomPlayerController::CrouchEnd(const FInputActionValue& Value)
 	MyPlayer->SetIsCrouching(false);
 }
 
-void ACustomPlayerController::UpdateCrouching(bool isCrouching, float deltatime)
+void ACustomPlayerController::UpdateCrouching(float deltatime)
 {
 	if (MyPlayer)
 	{
-		if (UCharacterMovementComponent* MovementComp = MyPlayer->GetCharacterMovement())
+		MyPlayer->UpdateCrouching(deltatime);
+
+		if (MyPlayer->GetIsCrouching())
+			MyPlayer->GetCharacterMovement()->MaxWalkSpeed = CrouchMoveSpeed;
+		else
 		{
-
-			float CurrentSpeed = MovementComp->MaxWalkSpeed;
-			float FOVInterpSpeed = 8.f;
-			if (isCrouching)
-			{
-				MyPlayer->SetCurentCapsuleHalfHeight(FMath::FInterpTo(MyPlayer->GetCurentCapsuleHalfHeight(), 44.f, deltatime, FOVInterpSpeed));
-				MyPlayer->GetCharacterMovement()->MaxWalkSpeed = CrouchMoveSpeed;
-			}
-			else
-			{
-				MyPlayer->SetCurentCapsuleHalfHeight(FMath::FInterpTo(MyPlayer->GetCurentCapsuleHalfHeight(), 88.f, deltatime, FOVInterpSpeed));
-
-				if (!MyPlayer->GetIsSprinting())
-					MyPlayer->GetCharacterMovement()->MaxWalkSpeed = BaseMoveSpeed;
-			}
+			if (!MyPlayer->GetIsSprinting())
+				MyPlayer->GetCharacterMovement()->MaxWalkSpeed = BaseMoveSpeed;
 		}
 	}
 }
