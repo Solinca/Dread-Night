@@ -1,6 +1,8 @@
 #include "Player/CustomPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include <EnhancedInputSubsystems.h>
+#include "UI/Widgets/MapWidget.h"
+#include "Blueprint/UserWidget.h"
 
 
 void ACustomPlayerController::BeginPlay()
@@ -160,4 +162,46 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Hotbar : " + FString::FromInt(index));
 }
+
+void ACustomPlayerController::DisplayMap(const FInputActionValue& Value)
+{
+	if (!MapWidgetClass)
+	{
+		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Map Widget Class not set!");
+		return;
+	}
+
+	if (bIsMapOpen)
+	{
+		// Close the map
+		if (MapWidgetInstance && MapWidgetInstance->IsInViewport())
+		{
+			MapWidgetInstance->RemoveFromParent();
+			SetInputMode(FInputModeGameOnly());
+			SetShowMouseCursor(false);
+		}
+		bIsMapOpen = false;
+	}
+	else
+	{
+		// Open the map
+		if (!MapWidgetInstance)
+		{
+			MapWidgetInstance = CreateWidget<UMapWidget>(this, MapWidgetClass);
+		}
+
+		if (MapWidgetInstance)
+		{
+			MapWidgetInstance->AddToViewport();
+			MapWidgetInstance->RefreshMap();
+			
+			FInputModeUIOnly InputMode;
+			InputMode.SetWidgetToFocus(MapWidgetInstance->TakeWidget());
+			SetInputMode(InputMode);
+			SetShowMouseCursor(true);
+		}
+		bIsMapOpen = true;
+	}
+}
+
 

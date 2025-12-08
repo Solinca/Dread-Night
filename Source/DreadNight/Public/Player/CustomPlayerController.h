@@ -67,10 +67,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
 	float CrouchMoveSpeed = 300.f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UMapWidget> MapWidgetClass;
+
 
 private:
 
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
+
+	UPROPERTY()
+	TObjectPtr<class UMapWidget> MapWidgetInstance = nullptr;
+
+	bool bIsMapOpen = false;
 
 #if WITH_EDITOR
 	UFUNCTION(BlueprintInternalUseOnly)
@@ -124,4 +132,7 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void SelectedHotbar(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintCallable)
+	void DisplayMap(const FInputActionValue& Value);
 };
