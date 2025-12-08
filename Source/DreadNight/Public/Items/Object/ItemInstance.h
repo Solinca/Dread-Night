@@ -49,6 +49,9 @@ public:
 
 	bool IsEmpty() const;
 	
+	TObjectPtr<UItemDataAsset> GetItemDataAsset() const;
+	int GetStackNumber() const;
+	
 	FEmptyItemEventSignature OnItemDepleted;
 	FItemInstanceStackChangeEventSignature OnItemStackChange; 
 };
