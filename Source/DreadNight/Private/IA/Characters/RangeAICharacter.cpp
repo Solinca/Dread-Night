@@ -16,8 +16,10 @@ void ARangeAICharacter::OnDataAssetInitialization(UBlackboardComponent* Blackboa
 
 	GetWorldTimerManager().SetTimerForNextTick(RetrievePlayer);
 
-	UBlackboardMonsterDataAsset* BBMonsterDataAsset{Cast<UBlackboardMonsterDataAsset>(MonsterDataAsset)};
-
-	BlackboardComponent->SetValueAsFloat("AttackRange", BBMonsterDataAsset->GetAttackRange());
-	BlackboardComponent->SetValueAsFloat("AcceptableRadius", BBMonsterDataAsset->GetAcceptableRadius());
+	if (URangeMonsterDataAsset* RangeMonsterDataAsset{Cast<URangeMonsterDataAsset>(MonsterDataAsset)})
+	{
+		BlackboardComponent->SetValueAsFloat("AttackRange", RangeMonsterDataAsset->GetAttackRange());
+		BlackboardComponent->SetValueAsFloat("AcceptableRadius", RangeMonsterDataAsset->GetAcceptableRadius());
+		BlackboardComponent->SetValueAsFloat("FleeRange", RangeMonsterDataAsset->GetFleeRange());
+	}
 }

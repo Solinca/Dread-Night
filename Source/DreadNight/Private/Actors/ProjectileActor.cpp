@@ -1,10 +1,5 @@
 ﻿#include "Actors/ProjectileActor.h"
 
-UProjectileMovementComponent* AProjectileActor::GetProjectileMovementComponent() const
-{
-	return ProjectileMovementComponent;
-}
-
 AProjectileActor::AProjectileActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -18,4 +13,9 @@ AProjectileActor::AProjectileActor()
 	ProjectileMovementComponent->InitialSpeed = 2000.f;
 
 	InitialLifeSpan = 10.f;
+}
+
+UProjectileMovementComponent* AProjectileActor::GetProjectileMovementComponent() const
+{
+	return ProjectileMovementComponent;
 }

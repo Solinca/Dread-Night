@@ -17,9 +17,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 	
-public:
+public:	
+	AProjectileActor();
 
 	UProjectileMovementComponent* GetProjectileMovementComponent() const;
-	
-	AProjectileActor();
 };
