@@ -29,6 +29,7 @@ public:
 	// Begin USubsystem Interface
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
+	virtual void Deinitialize() override;
 	// End USubsystem Interface
 
 	// Begin UTickableWorldSubsystem Interface

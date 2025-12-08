@@ -17,6 +17,13 @@ void UInteractableSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	InWorld.GetTimerManager().SetTimer(IntervalTimerHandle, this, &ThisClass::SearchInteractable, CheckInterval, true);
 }
 
+void UInteractableSubsystem::Deinitialize()
+{
+	Super::Deinitialize();
+
+	GetWorld()->GetTimerManager().ClearTimer(IntervalTimerHandle);
+}
+
 void UInteractableSubsystem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
