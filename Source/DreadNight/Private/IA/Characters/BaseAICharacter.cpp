@@ -34,8 +34,13 @@ void ABaseAICharacter::PossessedBy(AController* NewController)
 	BP_OnDataAssetInitialization(BlackboardComponent, UsedDataAsset);
 }
 
+UMonsterDataAsset* ABaseAICharacter::GetMonsterData() const
+{
+	return UsedDataAsset;
+}
+
 void ABaseAICharacter::BP_OnDataAssetInitialization_Implementation(UBlackboardComponent* BlackboardComponent,
-	UMonsterDataAsset* MonsterDataAsset)
+                                                                   UMonsterDataAsset* MonsterDataAsset)
 {
 	OnDataAssetInitialization(BlackboardComponent, MonsterDataAsset);
 }

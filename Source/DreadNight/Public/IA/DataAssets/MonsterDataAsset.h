@@ -24,4 +24,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Name;
+
+public:
+	[[nodiscard]] USkeletalMesh* GetMesh() const;
+	[[nodiscard]] UBehaviorTree* GetBehaviorTree() const;
+	[[nodiscard]] const FName& GetName() const;
 };

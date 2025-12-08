@@ -32,6 +32,7 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 
+	UMonsterDataAsset* GetMonsterData() const;
 protected:
 	UFUNCTION(BlueprintNativeEvent, DisplayName = "OnDataAssetInitialization")
 	void BP_OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset);

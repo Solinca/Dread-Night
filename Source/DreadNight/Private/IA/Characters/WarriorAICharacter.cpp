@@ -18,4 +18,6 @@ void AWarriorAICharacter::OnDataAssetInitialization(UBlackboardComponent* Blackb
 
 	BlackboardComponent->SetValueAsFloat("AttackRange", BBMonsterDataAsset->GetAttackRange());
 	BlackboardComponent->SetValueAsFloat("AcceptableRadius", BBMonsterDataAsset->GetAcceptableRadius());
+
+	GetMesh()->SetSkeletalMesh(MonsterDataAsset->GetMesh());
 }
