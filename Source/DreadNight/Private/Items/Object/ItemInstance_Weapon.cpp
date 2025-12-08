@@ -13,7 +13,6 @@ void UItemInstance_Weapon::Use(AActor* Player)
 
 void UItemInstance_Weapon::OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack)
 {
-	Super::OnSetupItemInstance(DataAsset, InitialStack);
 	if (WeaponDataAsset = Cast<UWeaponDataAsset>(DataAsset); !WeaponDataAsset)
 	{
 		UE_LOG(LogTemp, Error, TEXT("DataAsset %s is not the expected type !"), *DataAsset->GetName());

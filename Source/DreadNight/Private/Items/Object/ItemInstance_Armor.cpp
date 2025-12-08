@@ -13,7 +13,6 @@ void UItemInstance_Armor::Use(AActor* Player)
 
 void UItemInstance_Armor::OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack)
 {
-	Super::OnSetupItemInstance(DataAsset, InitialStack);
 	if (ArmorDataAsset = Cast<UArmorDataAsset>(DataAsset); !ArmorDataAsset)
 	{
 		UE_LOG(LogTemp, Error, TEXT("DataAsset %s is not the expected type !"), *DataAsset->GetName());
