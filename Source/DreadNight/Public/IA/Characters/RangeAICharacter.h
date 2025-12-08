@@ -10,4 +10,7 @@ UCLASS(BlueprintType, Blueprintable, Category = "AI", ClassGroup = "AICharacter"
 class DREADNIGHT_API ARangeAICharacter : public ABaseAICharacter
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void PossessedBy(AController* NewController) override;
 };
