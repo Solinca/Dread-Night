@@ -8,7 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFocusChangedSignature, AActor*, NewInteractable);
 
 UCLASS()
-class DREADNIGHT_API UInteractableSubsystem : public UTickableWorldSubsystem
+class DREADNIGHT_API UInteractableSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
 
@@ -30,12 +30,8 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 	virtual void Deinitialize() override;
+	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 	// End USubsystem Interface
-
-	// Begin UTickableWorldSubsystem Interface
-	virtual void Tick(float DeltaTime) override;
-	virtual TStatId GetStatId() const override;
-	// End UTickableWorldSubsystem Interface
 
 	AActor* GetLastFocusedActor() const { return LastFocusedActor.Get(); }
 

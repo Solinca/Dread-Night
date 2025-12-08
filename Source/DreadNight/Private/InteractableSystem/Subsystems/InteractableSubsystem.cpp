@@ -24,14 +24,34 @@ void UInteractableSubsystem::Deinitialize()
 	GetWorld()->GetTimerManager().ClearTimer(IntervalTimerHandle);
 }
 
-void UInteractableSubsystem::Tick(float DeltaTime)
+bool UInteractableSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 {
-	Super::Tick(DeltaTime);
-}
+	if (!Super::ShouldCreateSubsystem(Outer))
+	{
+		return false;
+	}
+	const UWorld* World = Cast<const UWorld>(Outer);
+	if (!World)
+	{
+		return false;
+	}
+	
+	if (!World->IsGameWorld())
+	{
+		return false;
+	}
 
-TStatId UInteractableSubsystem::GetStatId() const
-{
-	RETURN_QUICK_DECLARE_CYCLE_STAT(UInteractableSubsystem, STATGROUP_Tickables);
+	FString MapName = World->GetName();
+	
+	MapName.RemoveFromStart(World->StreamingLevelsPrefix);
+	
+	if (MapName.Contains(TEXT("Menu")))
+	{
+		return false;
+	}
+
+	return true;
+
 }
 
 AActor* UInteractableSubsystem::PerformAccurateRayCast(const UWorld* World, const FVector& Start, const FVector& End) const
