@@ -35,10 +35,15 @@ void UItemInstance::DestroyIfEmpty()
 	}
 }
 
+void UItemInstance::OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack)
+{
+}
+
 void UItemInstance::SetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack)
 {
 	ItemData = DataAsset;
 	StackNumber = InitialStack;
+	OnSetupItemInstance(DataAsset,InitialStack);
 }
  
 

@@ -24,6 +24,8 @@ protected:
 	bool TryStealInstance(UItemInstance* Other);
 
 	void DestroyIfEmpty();
+
+	virtual void OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack);
 public:
 	void SetupItemInstance(UItemDataAsset* DataAsset,const int InitialStack);
 	
