@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "AIController.h"
 #include "GenericTeamAgentInterface.h"
 #include "GameFramework/Character.h"
 #include "BaseAICharacter.generated.h"
@@ -14,6 +15,9 @@ class DREADNIGHT_API ABaseAICharacter : public ACharacter, public IGenericTeamAg
 {
 	GENERATED_BODY()
 
+protected:
+	TWeakObjectPtr<AAIController> AIController;
+	
 public:
 	ABaseAICharacter();
 
@@ -21,4 +25,6 @@ public:
 	virtual FGenericTeamId GetGenericTeamId() const override;
 
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
+
+	virtual void PossessedBy(AController* NewController) override;
 };

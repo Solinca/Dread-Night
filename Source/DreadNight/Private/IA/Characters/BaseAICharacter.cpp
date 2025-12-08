@@ -11,15 +11,22 @@ ABaseAICharacter::ABaseAICharacter()
 
 void ABaseAICharacter::SetGenericTeamId(const FGenericTeamId& TeamID)
 {
-	Cast<AAIController>(Controller)->SetGenericTeamId(TeamID);
+	AIController->SetGenericTeamId(TeamID);
 }
 
 FGenericTeamId ABaseAICharacter::GetGenericTeamId() const
 {
-	return Cast<AAIController>(Controller)->GetGenericTeamId();
+	return AIController->GetGenericTeamId();
 }
 
 ETeamAttitude::Type ABaseAICharacter::GetTeamAttitudeTowards(const AActor& Other) const
 {
-	return Cast<AAIController>(Controller)->GetTeamAttitudeTowards(Other);
+	return AIController->GetTeamAttitudeTowards(Other);
+}
+
+void ABaseAICharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	AIController = Cast<AAIController>(NewController);
 }
