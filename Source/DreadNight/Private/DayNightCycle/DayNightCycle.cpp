@@ -4,6 +4,7 @@
 #include "Engine/ExponentialHeightFog.h"
 #include "Kismet/GameplayStatics.h"
 #include "Global/MyGameStateBase.h"
+#include "Subsystems/World/WaveWorldSubsystem.h"
 
 ADayNightCycle::ADayNightCycle()
 {
@@ -30,7 +31,7 @@ void ADayNightCycle::BeginPlay()
 
 	MyGameStateBase = Cast<AMyGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 
-	MyGameStateBase->OnWaveEnd.AddDynamic(this, &ADayNightCycle::StartDayCycle);
+	GetWorld()->GetSubsystem<UWaveWorldSubsystem>()->OnWaveEnd.AddDynamic(this, &ADayNightCycle::StartDayCycle);
 
 	StartDayCycle();
 }

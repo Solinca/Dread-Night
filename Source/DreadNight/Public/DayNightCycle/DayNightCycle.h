@@ -27,12 +27,10 @@ private:
 
 	float CurrentPhaseRotation, DawnRotation, DuskRotation, DayRotation;
 
-	UFUNCTION()
 	void StartDayCycle();
 
 	void ProcessDayPerSecond();
 
-	UFUNCTION()
 	void StartMoonCycle();
 	
 protected:

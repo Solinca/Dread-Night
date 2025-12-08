@@ -5,7 +5,6 @@
 #include "MyGameStateBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnNightStartSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWaveEndSignature);
 
 UCLASS()
 class DREADNIGHT_API AMyGameStateBase : public AGameStateBase
@@ -14,6 +13,4 @@ class DREADNIGHT_API AMyGameStateBase : public AGameStateBase
 	
 public:
 	FOnNightStartSignature OnNightStart;
-
-	FOnWaveEndSignature OnWaveEnd;
 };
