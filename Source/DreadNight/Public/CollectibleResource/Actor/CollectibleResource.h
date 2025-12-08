@@ -3,14 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DamageSystem/Interface/Damageable.h"
 #include "GameFramework/Actor.h"
 #include "CollectibleResource.generated.h"
 
 class UItemDataAsset;
 
 UCLASS()
-class DREADNIGHT_API ACollectibleResource : public AActor
+class DREADNIGHT_API ACollectibleResource : public AActor, public IDamageable
 {
+public:
+	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
+
+private:
 	GENERATED_BODY()
 
 public: 
@@ -25,7 +30,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	FVector2D ItemQuantityRange;
 
-	int CurrentItemQuantity; 
+	int CurrentItemQuantity;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UStaticMeshComponent> ResourceMesh;
 	
 public:
 
