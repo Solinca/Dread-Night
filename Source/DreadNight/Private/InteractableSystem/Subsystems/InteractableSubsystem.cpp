@@ -14,12 +14,12 @@ void UInteractableSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
 	Super::OnWorldBeginPlay(InWorld);
 	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	InWorld.GetTimerManager().SetTimer(IntervalTimerHandle, this, &ThisClass::SearchInteractable, CheckInterval, true);
 }
 
 void UInteractableSubsystem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	SearchInteractable(DeltaTime);
 }
 
 TStatId UInteractableSubsystem::GetStatId() const
@@ -27,62 +27,35 @@ TStatId UInteractableSubsystem::GetStatId() const
 	RETURN_QUICK_DECLARE_CYCLE_STAT(UInteractableSubsystem, STATGROUP_Tickables);
 }
 
-void UInteractableSubsystem::SearchInteractable(const float DeltaTime)
+AActor* UInteractableSubsystem::PerformAccurateRayCast(const UWorld* World, const FVector& Start, const FVector& End) const
 {
-    TimeSinceLastCheck += DeltaTime;
-	
-    if (TimeSinceLastCheck < CheckInterval)
-    {
-    	return;
-    }
-	
-	
-    TimeSinceLastCheck = 0.0f;
-    AActor* OldActor = LastFocusedActor.Get();
-    AActor* NewTargetActor = nullptr;
-    bool bContinueResearch = true;
-    
-    if (ForcedInteractable.IsValid())
-    {
-        NewTargetActor = ForcedInteractable.Get();
-        bContinueResearch = false;
-    }
-
-    if (bContinueResearch)
-    {
-        if (const UWorld* World = GetWorld(); World && PlayerController.Get())
-    	{
-    		FVector CameraLocation;
-    		FRotator CameraRotation;
-    		PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
-
-    		const FVector Start = CameraLocation;
-    		const FVector End = Start + (CameraRotation.Vector() * InteractionDistance); 
-
-    		FCollisionQueryParams Params;
-    		Params.AddIgnoredActor(PlayerController->GetPawn());
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(PlayerController->GetPawn());
         
-    		FHitResult HitResult;
-    		bool bHit = World->LineTraceSingleByChannel(
-				HitResult, 
-				Start, 
-				End, 
-				ECC_Visibility, 
-				Params
-			);
+	FHitResult HitResult;
+	const bool bHit = World->LineTraceSingleByChannel(
+		HitResult, 
+		Start, 
+		End, 
+		ECC_Visibility, 
+		Params
+	);
         
-    		AActor* HitActor = HitResult.GetActor();
+	if (AActor* HitActor = HitResult.GetActor(); bHit && HitActor && HitActor->Implements<UInteractable>())
+	{
+		DrawDebugLine(World, Start, HitResult.ImpactPoint, FColor::Green, false, 1.f);
+		return HitActor;
+	}
+	return nullptr;
+}
 
-    		if (bHit && HitActor && HitActor->Implements<UInteractable>())
-    		{
-    			NewTargetActor = HitActor;
-    			DrawDebugLine(World, Start, HitResult.ImpactPoint, FColor::Green, false, 1.f);
-    			bContinueResearch = false;
-    		}
-
-    		if (bContinueResearch)
-    		{
-    			bHit = World->SweepSingleByChannel(
+AActor* UInteractableSubsystem::PerformPermissiveRayCast(const UWorld* World, const FVector& Start, const FVector& End) const
+{
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(PlayerController->GetPawn());
+        
+	FHitResult HitResult;
+	const bool bHit = World->SweepSingleByChannel(
 				HitResult,
 				Start,
 				End,
@@ -90,19 +63,45 @@ void UInteractableSubsystem::SearchInteractable(const float DeltaTime)
 				ECC_Visibility,
 				FCollisionShape::MakeSphere(AimToleranceRadius),
 				Params
-			);
-
-    			HitActor = HitResult.GetActor();
-
-    			if (bHit && HitActor && HitActor->Implements<UInteractable>())
-    			{
-    				NewTargetActor = HitActor;
-    				DrawDebugSphere(World, HitResult.ImpactPoint, AimToleranceRadius, 12, FColor::Yellow, false, 1.f);
-    			}
-    		}
-    	}
-    }
+				);
 	
+	if (AActor* HitActor = HitResult.GetActor(); bHit && HitActor && HitActor->Implements<UInteractable>())
+	{
+		DrawDebugSphere(World, HitResult.ImpactPoint, AimToleranceRadius, 12, FColor::Yellow, false, 1.f);
+		return HitActor;
+	}
+	return nullptr;
+}
+
+void UInteractableSubsystem::SearchInteractable()
+{
+    AActor* OldActor = LastFocusedActor.Get();
+    AActor* NewTargetActor = nullptr;
+    
+    if (ForcedInteractable.IsValid())
+    {
+        NewTargetActor = ForcedInteractable.Get();
+		CallFocusChanged(NewTargetActor, OldActor);
+    	return;
+    }
+
+    if (const UWorld* World = GetWorld(); World && PlayerController.Get())
+    {
+	    FVector CameraLocation;
+	    FRotator CameraRotation;
+	    PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
+
+	    const FVector Start = CameraLocation;
+	    const FVector End = Start + (CameraRotation.Vector() * InteractionDistance); 
+
+	    NewTargetActor = PerformAccurateRayCast(World, Start, End);
+
+	    if (!NewTargetActor)
+	    {
+	    	NewTargetActor = PerformPermissiveRayCast(World, Start, End);
+	    }
+    }
+    
     CallFocusChanged(NewTargetActor, OldActor);
 }
 

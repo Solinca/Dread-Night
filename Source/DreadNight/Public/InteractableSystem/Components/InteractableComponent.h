@@ -21,7 +21,7 @@ protected:
 	TObjectPtr<UMaterialInstanceDynamic> OutlineMaterialInstance;
 	
 public:
-	UMaterialInstanceDynamic* GetOutlineMaterial(const bool bGainedFocus);
+	UMaterialInstanceDynamic* GetOutlineMaterial();
 	const FText& GetInteractionPromptText() const;
 
 protected:

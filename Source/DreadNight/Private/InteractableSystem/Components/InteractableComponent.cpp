@@ -7,9 +7,9 @@ void UInteractableComponent::BeginPlay()
 	OutlineMaterialInstance = UMaterialInstanceDynamic::Create(OutlineMaterial, this);
 }
 
-UMaterialInstanceDynamic* UInteractableComponent::GetOutlineMaterial(const bool bGainedFocus)
+UMaterialInstanceDynamic* UInteractableComponent::GetOutlineMaterial()
 {
-	return bGainedFocus ? OutlineMaterialInstance : nullptr;
+	return OutlineMaterialInstance;
 }
 
 const FText& UInteractableComponent::GetInteractionPromptText() const

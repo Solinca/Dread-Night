@@ -28,12 +28,12 @@ void AInteractableActor::OnInteract_Implementation(AActor* Caller)
 
 void AInteractableActor::OnFocusGained_Implementation()
 {
-	MeshComponent->SetOverlayMaterial(InteractableComponent->GetOutlineMaterial(true));
+	MeshComponent->SetOverlayMaterial(InteractableComponent->GetOutlineMaterial());
 }
 
 void AInteractableActor::OnFocusLost_Implementation()
 {
-	MeshComponent->SetOverlayMaterial(InteractableComponent->GetOutlineMaterial(false));
+	MeshComponent->SetOverlayMaterial(nullptr);
 }
 
 FText AInteractableActor::GetInteractionPromptText_Implementation()

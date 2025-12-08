@@ -20,10 +20,10 @@ private:
 	TWeakObjectPtr<APlayerController> PlayerController;
 	TWeakObjectPtr<AActor> LastFocusedActor{ nullptr };
 	TWeakObjectPtr<AActor> ForcedInteractable{ nullptr };
+	FTimerHandle IntervalTimerHandle;
 	const float AimToleranceRadius{ 10.0f };
 	const float CheckInterval{ 0.05f };
 	const float InteractionDistance{ 200.0f };
-	float TimeSinceLastCheck{ 0.f };
 	
 public:
 	// Begin USubsystem Interface
@@ -37,10 +37,15 @@ public:
 	// End UTickableWorldSubsystem Interface
 
 	AActor* GetLastFocusedActor() const { return LastFocusedActor.Get(); }
-	void SearchInteractable(const float DeltaTime);
+
+	AActor* PerformAccurateRayCast(const UWorld* World, const FVector& Start, const FVector& End) const ;
+	AActor* PerformPermissiveRayCast(const UWorld* World, const FVector& Start, const FVector& End) const;
+	void SearchInteractable();
+
+
+	
 	bool TryInteract() const;
 	UFUNCTION(BlueprintCallable)
 	void RequestInteraction(AActor* Target, APawn* Instigator) const;
-
 	void CallFocusChanged(AActor* NewTargetActor, AActor* OldTargetActor);
 };
