@@ -15,7 +15,10 @@ struct FRecipe : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UDataAsset> TargetItem;
+	TObjectPtr<UItemDataAsset> TargetItem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int TargetQuantity = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FIngredient> Ingredients;
