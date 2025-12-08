@@ -1,7 +1,7 @@
-﻿#include "IA/Controllers/WarriorAIController.h"
+﻿#include "IA/Controllers/RangeAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-void AWarriorAIController::SetupBlackboard(UBlackboardComponent* BlackboardComponent)
+void ARangeAIController::SetupBlackboard(UBlackboardComponent* BlackboardComponent)
 {
 	//The player character has a chance to not be set at the time SetupBlackboard is set.
 	auto RetrievePlayer{[BlackboardComponent, this]
@@ -12,3 +12,4 @@ void AWarriorAIController::SetupBlackboard(UBlackboardComponent* BlackboardCompo
 
 	GetWorldTimerManager().SetTimerForNextTick(RetrievePlayer);
 }
+

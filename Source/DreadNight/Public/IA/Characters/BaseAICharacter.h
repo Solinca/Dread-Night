@@ -10,7 +10,7 @@
  * Base class for AI characters in the game, implementing the IGenericTeamAgentInterface.
  * Provides functionality for team-based AI behavior.
  */
-UCLASS(Abstract, BlueprintType, Blueprintable, Category = "AI", ClassGroup = "AIController")
+UCLASS(Abstract, BlueprintType, Blueprintable, Category = "AI", ClassGroup = "AICharacter")
 class DREADNIGHT_API ABaseAICharacter : public ACharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
