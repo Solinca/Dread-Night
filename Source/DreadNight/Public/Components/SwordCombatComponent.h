@@ -23,10 +23,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float AttackCooldown = 1.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	float AttackRange = 150.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	float AttackRadius = 80.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float AttackDamage = 25.0f;
 	UPROPERTY()
 	TWeakObjectPtr<UBoxComponent> SwordHitBox;
