@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MapSystem/MapDiscoverySubsystem.h"
+#include "MapSystem/MapDiscoverable.h"
 
 void UMapDiscoverySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -46,4 +47,22 @@ TArray<FMapMarkerData> UMapDiscoverySubsystem::GetDiscoveredMarkers() const
 void UMapDiscoverySubsystem::ClearDiscoveredMarkers()
 {
 	DiscoveredMarkers.Empty();
+}
+
+void UMapDiscoverySubsystem::DiscoverActor(AActor* Actor)
+{
+	if (!Actor || !Actor->Implements<UMapDiscoverable>())
+	{
+		return;
+	}
+
+	IMapDiscoverable* DiscoverableActor = Cast<IMapDiscoverable>(Actor);
+	if (DiscoverableActor)
+	{
+		FVector Location = IMapDiscoverable::Execute_GetDiscoveryLocation(Actor);
+		EMapMarkerType MarkerType = IMapDiscoverable::Execute_GetMarkerType(Actor);
+		FString LocationName = IMapDiscoverable::Execute_GetLocationName(Actor);
+
+		DiscoverLocation(Location, MarkerType, LocationName);
+	}
 }

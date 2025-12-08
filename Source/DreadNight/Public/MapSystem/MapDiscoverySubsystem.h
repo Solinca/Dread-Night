@@ -60,6 +60,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	void ClearDiscoveredMarkers();
 
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	void DiscoverActor(AActor* Actor);
+
 protected:
 	UPROPERTY()
 	TArray<FMapMarkerData> DiscoveredMarkers;
