@@ -24,7 +24,6 @@ public:
 	AInteractableActor();
 
 	// Begin IInteractable Interface
-	 UFUNCTION(BlueprintCallable)
 	virtual void OnInteract_Implementation(AActor* Caller) override;
 	virtual void OnFocusGained_Implementation() override;
 	virtual void OnFocusLost_Implementation() override;

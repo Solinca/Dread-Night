@@ -4,6 +4,8 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerHud.generated.h"
 
+class UTextBlock;
+class UHorizontalBox;
 class USmartProgressBar;
 class URadialProgressBarImage;
 
@@ -30,6 +32,12 @@ protected:
 	
 	UPROPERTY(meta = (BindWidgetOptional))
 	TObjectPtr<URadialProgressBarImage> FearRadialBarImage;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UHorizontalBox> InformationTextHorizontalBox;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> InteractionText;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -49,4 +57,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateFearRadialBarImage(const float CurrentValue);
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateInteractionText(AActor* NewInteractable);
+
+protected:
+	virtual void NativeConstruct() override;
 };
