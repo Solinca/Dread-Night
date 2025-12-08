@@ -12,9 +12,7 @@ class DREADNIGHT_API UMainMenuWidget : public UUserWidget
 	GENERATED_BODY()
 	
 protected:
-	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& Geometry, float DeltaTime) override;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> TBTitle = nullptr;

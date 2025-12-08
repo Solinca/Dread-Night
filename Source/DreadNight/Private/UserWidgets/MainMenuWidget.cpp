@@ -2,19 +2,14 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-void UMainMenuWidget::NativePreConstruct()
-{
-	Super::NativePreConstruct();
-}
-
 void UMainMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-}
 
-void UMainMenuWidget::NativeTick(const FGeometry& Geometry, float DeltaTime)
-{
-	Super::NativeTick(Geometry, DeltaTime);
+	ButtonContinue->OnClicked.AddDynamic(this, &UMainMenuWidget::ActionContinue);
+	ButtonNewGame->OnClicked.AddDynamic(this, &UMainMenuWidget::ActionNewGame);
+	ButtonOptions->OnClicked.AddDynamic(this, &UMainMenuWidget::ActionOptions);
+	ButtonQuit->OnClicked.AddDynamic(this, &UMainMenuWidget::ActionQuit);
 }
 
 void UMainMenuWidget::ActionContinue()
