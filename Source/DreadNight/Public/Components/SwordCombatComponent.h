@@ -10,11 +10,8 @@ class DREADNIGHT_API USwordCombatComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+protected:	
 	USwordCombatComponent();
-
-protected:
-	virtual void BeginPlay() override;
 
 	FTimerHandle AttackCooldownTimerHandle;
 
@@ -34,6 +31,5 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void Attack();
-		
+	void Attack();		
 };
