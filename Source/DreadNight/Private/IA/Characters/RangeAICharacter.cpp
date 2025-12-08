@@ -1,6 +1,6 @@
 ﻿#include "IA/Characters/RangeAICharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "IA/DataAssets/BlackboardMonsterDataAsset.h"
+#include "IA/DataAssets/RangeMonsterDataAsset.h"
 
 void ARangeAICharacter::OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent,
                                                   UMonsterDataAsset* MonsterDataAsset)

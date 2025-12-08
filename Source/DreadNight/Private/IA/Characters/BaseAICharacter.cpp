@@ -1,6 +1,6 @@
 ﻿#include "IA/Characters/BaseAICharacter.h"
+
 #include "AIController.h"
-#include "Subsystems/World/WaveWorldSubsystem.h"
 
 ABaseAICharacter::ABaseAICharacter()
 {
