@@ -7,7 +7,7 @@
 #include "Items/Data/Recipe.h"
 #include "CraftingComponent.generated.h"
 
-class UInventory;
+class UInventoryComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DREADNIGHT_API UCraftingComponent : public UActorComponent
@@ -17,7 +17,7 @@ class DREADNIGHT_API UCraftingComponent : public UActorComponent
 
 public:
 
-	void Craft(FRecipe* Recipe, TObjectPtr<UInventory> Inventory);
+	void Craft(FRecipe* Recipe, TObjectPtr<UInventoryComponent> Inventory);
 
 	void OpenUI();
 
@@ -32,6 +32,6 @@ protected:
 
 private:
 
-	//TObjectPtr<UCraftingWidget> GameWidget;
+	//TObjectPtr<UCraftingWidget> CraftingWidget;
 		
 };

@@ -5,7 +5,7 @@
 
 
 
-void UCraftingComponent::Craft(FRecipe* Recipe, TObjectPtr<UInventory> Inventory)
+void UCraftingComponent::Craft(FRecipe* Recipe, TObjectPtr<UInventoryComponent> Inventory)
 {
 
 	for (FIngredient Ingredient : Recipe->Ingredients)
@@ -20,11 +20,11 @@ void UCraftingComponent::Craft(FRecipe* Recipe, TObjectPtr<UInventory> Inventory
 	for (FIngredient Ingredient : Recipe->Ingredients)
 	{
 
-		//Inventory->Remove(Ingredient.ItemType, Ingredient.Quantity);
+		//Inventory->RemoveItem(Ingredient.ItemType, Ingredient.Quantity);
 
 	}
 
-	//Inventory->Add(Recipe->TargetItem, 1);
+	//Inventory->AddItem(Recipe->TargetItem, 1);
 
 }
 
