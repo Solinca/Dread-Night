@@ -22,14 +22,14 @@ void UBowCombatComponent::SetAiming(bool bAiming)
 	// (optionnel) activer un zoom caméra, FOV changes, etc.
 
 	if (bIsAiming)
-		SpawnArrow();
-	else
 	{
-		if (CurrentArrow.IsValid())
-		{
-			CurrentArrow->Destroy();
-			CurrentArrow = nullptr;
-		}
+		SpawnArrow();
+		return;
+	}
+	if (CurrentArrow.IsValid())
+	{
+		CurrentArrow->Destroy();
+		CurrentArrow = nullptr;
 	}
 }
 
@@ -42,6 +42,7 @@ void UBowCombatComponent::Shoot()
 		return;
 	CurrentArrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	CurrentArrow->ProjectileMovementComponent->Activate();
+	CurrentArrow = nullptr;
 	bCanShoot = false;
 
 	// cooldown
