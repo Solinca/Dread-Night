@@ -1,6 +1,11 @@
 #include "Player/CustomPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "UI/Widgets/PauseMenu.h"
 #include <EnhancedInputSubsystems.h>
+
+#include "Global/MyGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void ACustomPlayerController::BeginPlay()
@@ -192,37 +197,25 @@ void ACustomPlayerController::DisplayGlossary(const FInputActionValue& Value)
 }
 
 void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
-{
-	if (GetLocalPlayer())
+{	
+	if (!PauseMenuWidget)
 	{
-		if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
-		{
-			if (!MappingContextBase)
-			{
-				return;
-			}
-			InputSystem->ClearAllMappings();
-			InputSystem->AddMappingContext(MappingContextMenu, 0);
-		}
+		PauseMenuWidget = CreateWidget<UPauseMenu>(this, PauseMenuClass);
+		PauseMenuWidget->OnResume.AddDynamic(this, &ThisClass::ResumeGame);
+		PauseMenuWidget->OnQuitToMenu.AddDynamic(this, &ThisClass::GoBackToMenu);
+		PauseMenuWidget->OnQuitToDesktop.AddDynamic(this, &ThisClass::LeaveGame);
+		PauseGame();
+
+		PushNewMenu(PauseMenuWidget, [this]{
+			UGameplayStatics::SetGamePaused(GetWorld(), false);
+			;});
 	}
 }
 
 void ACustomPlayerController::GoBackToPrecedentMenu(const FInputActionValue& Value)
 {
 	//TODO IF MENU QUEUE == LAST (if user is in the last menu before going back to the game)
-
-	if (GetLocalPlayer())
-	{
-		if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
-		{
-			if (!MappingContextBase)
-			{
-				return;
-			}
-			InputSystem->ClearAllMappings();
-			InputSystem->AddMappingContext(MappingContextBase, 0);
-		}
-	}
+	PopLastMenu();	
 }
 
 void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
@@ -232,3 +225,66 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Hotbar : " + FString::FromInt(index));
 }
 
+void ACustomPlayerController::SaveGame()
+{
+	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
+	{
+		GameInstance->Save(GetWorld());
+	}
+	
+}
+
+void ACustomPlayerController::GoBackToMenu()
+{
+	SaveGame();
+	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), WorldMenu);	
+}
+
+
+void ACustomPlayerController::PopLastMenu()
+{
+	if (MenuList.IsEmpty())
+		return;
+
+	auto& LastMenu = *MenuList.Peek();
+
+	LastMenu.Key->RemoveFromParent();
+	LastMenu.Value();
+	MenuList.Pop();
+	
+	if (MenuList.IsEmpty())
+	{
+		if (GetLocalPlayer())
+		{
+			if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			{
+				if (!MappingContextBase)
+				{
+					return;
+				}
+				InputSystem->ClearAllMappings();
+				InputSystem->AddMappingContext(MappingContextBase, 0); 
+				SetInputMode(FInputModeGameOnly());
+			}
+		}
+		SetShowMouseCursor(false);
+	}
+}
+
+void ACustomPlayerController::ResumeGame()
+{
+	UGameplayStatics::SetGamePaused(GetWorld(), false);
+	PopLastMenu();
+}
+
+void ACustomPlayerController::PauseGame()
+{
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
+}
+
+void ACustomPlayerController::LeaveGame()
+{
+	SaveGame();
+	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
+}
+ 
