@@ -1,19 +1,12 @@
 #include "Components/BowCombatComponent.h"
 #include "GameFramework/Actor.h"
-#include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 
 UBowCombatComponent::UBowCombatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	bCanShoot = true;
 	bIsAiming = false;
-}
-
-void UBowCombatComponent::BeginPlay()
-{
-	Super::BeginPlay();
 }
 
 void UBowCombatComponent::SetAiming(bool bAiming)
@@ -35,8 +28,7 @@ void UBowCombatComponent::Shoot()
 		return;
 
 	bCanShoot = false;
-
-	SpawnArrowProjectile();
+	SpawnArrow();
 
 	// cooldown
 	GetWorld()->GetTimerManager().SetTimer(
@@ -48,51 +40,27 @@ void UBowCombatComponent::Shoot()
 	);
 }
 
-void UBowCombatComponent::SpawnArrowProjectile()
+void UBowCombatComponent::SpawnArrow()
 {
 	AActor* Owner = GetOwner();
-	if (!Owner) return;
+	if (!Owner)
+		return;
 
-	//On spawn depuis la caméra ou un socket de la main ?
 	FVector SpawnLocation;
 	FRotator SpawnRotation;
-
-	//VERSION simple ? tirer depuis la caméra du joueur
-	APlayerController* PC = Cast<APlayerController>(Owner->GetInstigatorController());
-	if (PC)
-	{
-		FVector CamLoc;
-		FRotator CamRot;
-		PC->GetPlayerViewPoint(CamLoc, CamRot);
-
-		SpawnLocation = CamLoc + CamRot.Vector() * 60.f;
-		SpawnRotation = CamRot;
-	}
-	else
-	{
-		SpawnLocation = Owner->GetActorLocation() + Owner->GetActorForwardVector() * 100.f;
-		SpawnRotation = Owner->GetActorRotation();
-	}
-
+	USkeletalMeshComponent* MeshComp = Owner->FindComponentByClass<USkeletalMeshComponent>();
+	if (!MeshComp)
+		return;
+	FName HandSocketName = TEXT("hand_rSocket"); //test avec un socket que j'ai ajouté au mannequin unreal, c'est temporaire, faudra ajuster ça avec notre perso
+	SpawnLocation = MeshComp->GetSocketLocation(HandSocketName);
+	SpawnRotation = MeshComp->GetSocketRotation(HandSocketName);
 	FActorSpawnParameters Params;
-	Params.Instigator = Cast<APawn>(Owner);
-	Params.Owner = Owner;
-
 	AActor* Arrow = GetWorld()->SpawnActor<AActor>(
 		ArrowProjectileClass,
 		SpawnLocation,
 		SpawnRotation,
 		Params
 	);
-
-	//si ta flèche a un ProjectileMovementComponent :
-	if (Arrow)
-	{
-		if (UProjectileMovementComponent* MoveComp = Arrow->FindComponentByClass<UProjectileMovementComponent>())
-		{
-			MoveComp->Velocity = SpawnRotation.Vector() * ArrowSpeed;
-		}
-	}
 }
 
 void UBowCombatComponent::ResetShot()
