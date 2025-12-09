@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,7 +5,12 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/HealthComponent.h"
+#include "Components/StaminaComponent.h"
+#include "Components/ManaComponent.h"
+#include "Components/ConditionStateComponent.h"
 #include "PlayerCharacter.generated.h"
+
 
 
 UCLASS()
@@ -19,11 +22,29 @@ protected:
 
 	APlayerCharacter();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	//===============//
+	//  Components   //
+	//===============//
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UCameraComponent> Camera = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<USpringArmComponent> SpringArm = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UHealthComponent> HealthComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UStaminaComponent> StaminaComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UManaComponent> ManaComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UConditionStateComponent> ConditionStateComponent = nullptr;
+
+	//===============//
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsCrouching = false;
@@ -43,7 +64,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Values")
 	float LerpCrouchSpeed = 8.f;
 
+
+
 public:
+
 
 	UFUNCTION()
 	bool GetIsCrouching();
@@ -65,5 +89,17 @@ public:
 
 	UFUNCTION()
 	void UpdateCrouching(float deltatime);
+
+	UFUNCTION()
+	UStaminaComponent* GetStaminaComponent();
+
+	UFUNCTION()
+	UManaComponent* GetManaComponent();
+
+	UFUNCTION()
+	UHealthComponent* GetHealthComponent();
+
+	UFUNCTION()
+	UConditionStateComponent* GetConditionStateComponent();
 
 };

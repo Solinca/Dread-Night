@@ -69,6 +69,19 @@ void ACustomPlayerController::Jump(const FInputActionValue& Value)
 	if (MyPlayer)
 	{
 		MyPlayer->Jump();
+		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
+		StaminaComponent->RemoveStamina(JumpStaminaCost);
+		StaminaComponent->SetCanRegen(false);
+
+		//START REGEN STAMINA
+		GetWorldTimerManager().SetTimer(
+			StaminaComponent->CoolDownTimer,
+			[=] {StaminaComponent->SetCanRegen(true); },
+			StaminaComponent->GetRegenCoolDown(),
+			false
+		);
+
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(HungerJumpCost);
 	}
 }
 
@@ -76,8 +89,13 @@ void ACustomPlayerController::Sprint(const FInputActionValue& Value)
 {
 	if (MyPlayer)
 	{
+		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = SprintMoveSpeed;
 		MyPlayer->SetIsSprinting(true);
+		StaminaComponent->SetCanRegen(false);
+
+		StaminaComponent->RemoveStamina(SprintStaminaCost * GetWorld()->GetDeltaSeconds());
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(HungerSprintCost * GetWorld()->GetDeltaSeconds());
 	}
 }
 
@@ -87,6 +105,15 @@ void ACustomPlayerController::SprintEnd(const FInputActionValue& Value)
 	{
 		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = BaseMoveSpeed;
 		MyPlayer->SetIsSprinting(false);
+
+		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
+		//START REGEN STAMINA
+		GetWorldTimerManager().SetTimer(
+			StaminaComponent->CoolDownTimer,
+			[=] {StaminaComponent->SetCanRegen(true); },
+			StaminaComponent->GetRegenCoolDown(),
+			false
+		);
 	}
 }
 
@@ -126,6 +153,22 @@ void ACustomPlayerController::Aim(const FInputActionValue& Value)
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Attacking");
+
+	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
+
+	StaminaComponent->RemoveStamina(AttackStaminaCost);
+
+	StaminaComponent->SetCanRegen(false);
+
+	//START REGEN STAMINA
+	GetWorldTimerManager().SetTimer(
+		StaminaComponent->CoolDownTimer,
+		[=] {StaminaComponent->SetCanRegen(true); },
+		StaminaComponent->GetRegenCoolDown(),
+		false
+	);
+
+	MyPlayer->GetConditionStateComponent()->RemoveHungerValue(HungerAttackCost);
 }
 
 
