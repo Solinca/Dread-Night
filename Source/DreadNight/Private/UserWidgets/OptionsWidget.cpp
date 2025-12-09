@@ -129,13 +129,12 @@ UOptionsWidget::UOptionsWidget(const FObjectInitializer& ObjectInitializer) : Su
 		{TEXT("Windowed"), EWindowMode::Windowed}
 	};
 
-	ResolutionMap = {
-		{TEXT("1200x720"), FIntPoint(1200, 720)},
-		{TEXT("1600x900"), FIntPoint(1600, 900)},
-		{TEXT("1920x1080"), FIntPoint(1920, 1080)},
-		{TEXT("2560x1440"), FIntPoint(2560, 1440)},
-		{TEXT("3840x2160"), FIntPoint(3840, 2160)}
-	};
+	TArray<FIntPoint> Array;
+	UKismetSystemLibrary::GetSupportedFullscreenResolutions(Array);
+	for (auto& i : Array)
+	{
+		ResolutionMap.Add(FString::Printf(TEXT("%dx%d"), i.X, i.Y), i);
+	}
 
 	GraphicsMap = {
 		{TEXT("Low"), 0},
