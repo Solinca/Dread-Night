@@ -67,6 +67,41 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
 	float CrouchMoveSpeed = 300.f;
 
+	//=========//
+	//==Stats==//
+	//=========//
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
+	float JumpStaminaCost = 20.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
+	float AttackStaminaCost = 20.f;//REPLACE WITH WEAPON STAMINA COST LATER
+
+
+	/// <summary>
+	/// Cost in amount/s
+	/// </summary>
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
+	float SprintStaminaCost = 10.f;//REPLACE WITH WEAPON STAMINA COST LATER
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mana")
+	float SpellManaCost = 20.f;//REPLACE WITH WEAPON MANA COST LATER
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hunger")
+	float HungerSprintCost = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hunger")
+	float HungerJumpCost = 0.5f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hunger")
+	float HungerAttackCost = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sanity")
+	float SanityOnDamageCost = 5.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sanity")
+	float SanityOnDarknessCost = 1.f;
+
+	//==================//
 
 private:
 

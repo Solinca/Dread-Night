@@ -69,6 +69,19 @@ void ACustomPlayerController::Jump(const FInputActionValue& Value)
 	if (MyPlayer)
 	{
 		MyPlayer->Jump();
+
+		MyPlayer->GetStaminaComponent()->RemoveStamina(JumpStaminaCost);
+		MyPlayer->GetStaminaComponent()->SetCanRegen(false);
+
+		//START REGEN STAMINA
+		GetWorldTimerManager().SetTimer(
+			MyPlayer->GetStaminaComponent()->CoolDownTimer,
+			[&] {MyPlayer->GetStaminaComponent()->SetCanRegen(true); },
+			MyPlayer->GetStaminaComponent()->GetRegenCoolDown(),
+			false
+		);
+
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(HungerJumpCost);
 	}
 }
 
@@ -78,6 +91,10 @@ void ACustomPlayerController::Sprint(const FInputActionValue& Value)
 	{
 		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = SprintMoveSpeed;
 		MyPlayer->SetIsSprinting(true);
+		MyPlayer->GetStaminaComponent()->SetCanRegen(false);
+
+		MyPlayer->GetStaminaComponent()->RemoveStamina(SprintStaminaCost * GetWorld()->GetDeltaSeconds());
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(HungerSprintCost * GetWorld()->GetDeltaSeconds());
 	}
 }
 
@@ -87,6 +104,15 @@ void ACustomPlayerController::SprintEnd(const FInputActionValue& Value)
 	{
 		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = BaseMoveSpeed;
 		MyPlayer->SetIsSprinting(false);
+
+
+		//START REGEN STAMINA
+		GetWorldTimerManager().SetTimer(
+			MyPlayer->GetStaminaComponent()->CoolDownTimer,
+			[&] {MyPlayer->GetStaminaComponent()->SetCanRegen(true); },
+			MyPlayer->GetStaminaComponent()->GetRegenCoolDown(),
+			false
+		);
 	}
 }
 
@@ -126,6 +152,20 @@ void ACustomPlayerController::Aim(const FInputActionValue& Value)
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Attacking");
+
+	MyPlayer->GetStaminaComponent()->RemoveStamina(AttackStaminaCost);
+
+	MyPlayer->GetStaminaComponent()->SetCanRegen(false);
+
+	//START REGEN STAMINA
+	GetWorldTimerManager().SetTimer(
+		MyPlayer->GetStaminaComponent()->CoolDownTimer,
+		[&] {MyPlayer->GetStaminaComponent()->SetCanRegen(true); },
+		MyPlayer->GetStaminaComponent()->GetRegenCoolDown(),
+		false
+	);
+
+	MyPlayer->GetConditionStateComponent()->RemoveHungerValue(HungerAttackCost);
 }
 
 
