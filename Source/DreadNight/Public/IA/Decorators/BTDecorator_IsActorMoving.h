@@ -48,6 +48,8 @@ public:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 protected:
+	virtual void InitializeFromAsset(UBehaviorTree& Asset) override;
+	
 	virtual uint16 GetInstanceMemorySize() const override;
 
 private:
