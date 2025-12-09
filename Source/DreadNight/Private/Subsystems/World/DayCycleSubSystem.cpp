@@ -14,46 +14,21 @@ void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 
 	BaseWorldSettings = Cast<ABaseLevelWorldSettings>(InWorld.GetWorldSettings());
 
-    Sun = InWorld.SpawnActor<ADirectionalLight>()->GetComponentByClass<UDirectionalLightComponent>();
-	
-	Sun->SetMobility(EComponentMobility::Movable);
-	Sun->SetIntensity(BaseWorldSettings->SunIntensity);
-	Sun->SetLightColor(BaseWorldSettings->SunColor);
-	Sun->SetCastShadows(BaseWorldSettings->DoesSunCastShadow);
-
-	Moon = InWorld.SpawnActor<ADirectionalLight>()->GetComponentByClass<UDirectionalLightComponent>();
-
-	Moon->SetMobility(EComponentMobility::Movable);
-	Moon->SetIntensity(BaseWorldSettings->MoonIntensity);
-	Moon->SetLightColor(BaseWorldSettings->MoonColor);
-	Moon->SetCastShadows(BaseWorldSettings->DoesMoonCastShadow);
-	Moon->SetForwardShadingPriority(1);
-	Moon->SetAtmosphereSunLightIndex(1);
-
-	FogComponent = InWorld.SpawnActor<AExponentialHeightFog>()->GetComponentByClass<UExponentialHeightFogComponent>();
-
-	FogComponent->SetFogDensity(BaseWorldSettings->MaximalFogDensity);
-	FogComponent->SetFogHeightFalloff(BaseWorldSettings->FogHeightFalloff);
-	FogComponent->SetSecondFogDensity(BaseWorldSettings->MaximalFogDensity);
-
-	if (BaseWorldSettings->HasVolumetricFog)
-	{
-		FogComponent->SetVolumetricFog(BaseWorldSettings->HasVolumetricFog);
-		FogComponent->SetVolumetricFogAlbedo(BaseWorldSettings->VolumetricFogAlbedo.ToFColor(false));
-		FogComponent->SetVolumetricFogExtinctionScale(BaseWorldSettings->VolumetricFogExtinctionScale);
-	}
-
-	Cloud = InWorld.SpawnActor<AVolumetricCloud>()->GetComponentByClass<UVolumetricCloudComponent>();
-
-	Sky = InWorld.SpawnActor<ASkyAtmosphere>()->GetComponentByClass<USkyAtmosphereComponent>();
-
-	Sky->SetRayleighScatteringScale(BaseWorldSettings->RayleighScatteringScale);
-
 	DawnRotation = FMath::Abs(BaseWorldSettings->StartSunRotation - BaseWorldSettings->DawnRotationThreshold);
 
 	DuskRotation = FMath::Abs(BaseWorldSettings->EndSunRotation - BaseWorldSettings->DuskRotationhreshold);
 
 	DayRotation = BaseWorldSettings->FullSunRotation - DawnRotation - DuskRotation;
+
+	InitSunDirectionalLight(InWorld);
+
+	InitMoonDirectionalLight(InWorld);
+
+	InitExponentialHeightFog(InWorld);
+
+	InitVolumetricCloud(InWorld);
+
+	InitSkyAtmoshpere(InWorld);
 
 	InWorld.GetSubsystem<UWaveWorldSubsystem>()->OnWaveEnd.AddDynamic(this, &UDayCycleSubSystem::StartDayCycle);
 
@@ -138,4 +113,66 @@ void UDayCycleSubSystem::StartMoonCycle()
 	GetWorld()->GetTimerManager().ClearTimer(ProcessDayTimer);
 
 	OnNightStart.Broadcast();
+}
+
+void UDayCycleSubSystem::InitSunDirectionalLight(UWorld& InWorld)
+{
+	Sun = InWorld.SpawnActor<ADirectionalLight>()->GetComponentByClass<UDirectionalLightComponent>();
+
+	Sun->SetMobility(EComponentMobility::Movable);
+
+	Sun->SetIntensity(BaseWorldSettings->SunIntensity);
+
+	Sun->SetLightColor(BaseWorldSettings->SunColor);
+
+	Sun->SetCastShadows(BaseWorldSettings->DoesSunCastShadow);
+}
+
+void UDayCycleSubSystem::InitMoonDirectionalLight(UWorld& InWorld)
+{
+	Moon = InWorld.SpawnActor<ADirectionalLight>()->GetComponentByClass<UDirectionalLightComponent>();
+
+	Moon->SetMobility(EComponentMobility::Movable);
+
+	Moon->SetIntensity(BaseWorldSettings->MoonIntensity);
+
+	Moon->SetLightColor(BaseWorldSettings->MoonColor);
+
+	Moon->SetCastShadows(BaseWorldSettings->DoesMoonCastShadow);
+
+	Moon->SetForwardShadingPriority(1);
+
+	Moon->SetAtmosphereSunLightIndex(1);
+}
+
+void UDayCycleSubSystem::InitExponentialHeightFog(UWorld& InWorld)
+{
+	FogComponent = InWorld.SpawnActor<AExponentialHeightFog>()->GetComponentByClass<UExponentialHeightFogComponent>();
+
+	FogComponent->SetFogDensity(BaseWorldSettings->MaximalFogDensity);
+
+	FogComponent->SetFogHeightFalloff(BaseWorldSettings->FogHeightFalloff);
+
+	FogComponent->SetSecondFogDensity(BaseWorldSettings->MaximalFogDensity);
+
+	if (BaseWorldSettings->HasVolumetricFog)
+	{
+		FogComponent->SetVolumetricFog(BaseWorldSettings->HasVolumetricFog);
+
+		FogComponent->SetVolumetricFogAlbedo(BaseWorldSettings->VolumetricFogAlbedo.ToFColor(false));
+
+		FogComponent->SetVolumetricFogExtinctionScale(BaseWorldSettings->VolumetricFogExtinctionScale);
+	}
+}
+
+void UDayCycleSubSystem::InitVolumetricCloud(UWorld& InWorld)
+{
+	Cloud = InWorld.SpawnActor<AVolumetricCloud>()->GetComponentByClass<UVolumetricCloudComponent>();
+}
+
+void UDayCycleSubSystem::InitSkyAtmoshpere(UWorld& InWorld)
+{
+	Sky = InWorld.SpawnActor<ASkyAtmosphere>()->GetComponentByClass<USkyAtmosphereComponent>();
+
+	Sky->SetRayleighScatteringScale(BaseWorldSettings->RayleighScatteringScale);
 }

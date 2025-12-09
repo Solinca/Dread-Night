@@ -47,6 +47,16 @@ private:
 
 	void StartMoonCycle();
 
+	void InitSunDirectionalLight(UWorld& InWorld);
+
+	void InitMoonDirectionalLight(UWorld& InWorld);
+
+	void InitExponentialHeightFog(UWorld& InWorld);
+
+	void InitVolumetricCloud(UWorld& InWorld);
+
+	void InitSkyAtmoshpere(UWorld& InWorld);
+
 protected:
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 
