@@ -11,7 +11,7 @@ class DREADNIGHT_API ABaseLevelWorldSettings : public AWorldSettings
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	FString MapName = "TestDayNightCycle";
+	TObjectPtr<UWorld> MapToLoadSubsystems = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Day Cycle System")
 	float DayTimeInSeconds = 900;

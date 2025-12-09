@@ -64,7 +64,7 @@ bool UDayCycleSubSystem::ShouldCreateSubsystem(UObject* Outer) const
 {
 	UWorld* World = Cast<UWorld>(Outer);
 
-	return World && World->IsGameWorld() && World->GetMapName().Contains(Cast<ABaseLevelWorldSettings>(World->GetWorldSettings())->MapName);
+	return World && World->IsGameWorld() && World == Cast<ABaseLevelWorldSettings>(World->GetWorldSettings())->MapToLoadSubsystems;
 }
 
 void UDayCycleSubSystem::StartDayCycle()
