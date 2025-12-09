@@ -1,5 +1,7 @@
 #include "Player/CustomPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "UI/Widgets/PauseMenu.h"
 #include <EnhancedInputSubsystems.h>
 
 
@@ -204,6 +206,12 @@ void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
 			InputSystem->ClearAllMappings();
 			InputSystem->AddMappingContext(MappingContextMenu, 0);
 		}
+	if (!PauseMenuWidget)
+	{
+		PauseMenuWidget = CreateWidget<UPauseMenu>(this, PauseMenuClass);
+		PauseMenuWidget->AddToViewport();
+		
+		//TODO Bind Menu logic.
 	}
 }
 
@@ -231,4 +239,4 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Hotbar : " + FString::FromInt(index));
 }
-
+  

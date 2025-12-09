@@ -12,6 +12,7 @@
 #include "CustomPlayerController.generated.h"
 
 
+class UPauseMenu;
 
 USTRUCT(BlueprintType)
 struct FInputActionSetup
@@ -108,8 +109,20 @@ protected:
 
 	//==================//
 
-private:
+	
+	//=========//
+	//==Widget==//
+	//=========//
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UPauseMenu> PauseMenuClass;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UPauseMenu> PauseMenuWidget;
+	
+	//==================//
+private:
+	
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
 
 #if WITH_EDITOR
@@ -164,4 +177,6 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void SelectedHotbar(const FInputActionValue& Value);
+
+ 
 };

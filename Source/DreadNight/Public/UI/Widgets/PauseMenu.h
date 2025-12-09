@@ -8,7 +8,7 @@
 
 class UButton;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnButtonClickedEventSignature)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnButtonClickedEventSignature);
 
 
 UCLASS()
