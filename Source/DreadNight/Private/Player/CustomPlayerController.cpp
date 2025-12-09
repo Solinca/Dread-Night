@@ -230,8 +230,15 @@ void ACustomPlayerController::SaveGame()
 	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
 	{
 		GameInstance->Save(GetWorld());
+	}	
+}
+
+void ACustomPlayerController::LoadGame()
+{
+	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
+	{
+		GameInstance->Load(GetWorld());
 	}
-	
 }
 
 void ACustomPlayerController::GoBackToMenu()

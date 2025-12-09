@@ -182,8 +182,12 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void SelectedHotbar(const FInputActionValue& Value);
-	
+
+	UFUNCTION(BlueprintCallable)
 	void SaveGame();
+	
+	UFUNCTION(BlueprintCallable)
+	void LoadGame();
 
 	UFUNCTION()
 	void GoBackToMenu();
