@@ -119,6 +119,9 @@ protected:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UPauseMenu> PauseMenuWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI|Logic")
+	TSoftObjectPtr<UWorld> WorldMenu;
 	
 	//==================//
 private:
@@ -177,6 +180,9 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void SelectedHotbar(const FInputActionValue& Value);
+	
+	void SaveGame();
 
- 
+	UFUNCTION()
+	void GoBackToMenu();
 };

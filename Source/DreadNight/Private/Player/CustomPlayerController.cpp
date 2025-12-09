@@ -4,6 +4,9 @@
 #include "UI/Widgets/PauseMenu.h"
 #include <EnhancedInputSubsystems.h>
 
+#include "Global/MyGameInstance.h"
+#include "Kismet/GameplayStatics.h"
+
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -210,6 +213,9 @@ void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
 	{
 		PauseMenuWidget = CreateWidget<UPauseMenu>(this, PauseMenuClass);
 		PauseMenuWidget->AddToViewport();
+		//PauseMenuWidget->OnResume.AddDynamic() -> Switch InputMapContext
+		PauseMenuWidget->OnQuitToMenu.AddDynamic(this, &ThisClass::GoBackToMenu);
+		SetShowMouseCursor(true);
 		
 		//TODO Bind Menu logic.
 	}
@@ -238,5 +244,20 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 	int index = (int)Value.Get<float>();
 
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Hotbar : " + FString::FromInt(index));
+}
+
+void ACustomPlayerController::SaveGame()
+{
+	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
+	{
+		GameInstance->Save(GetWorld());
+	}
+	
+}
+
+void ACustomPlayerController::GoBackToMenu()
+{
+	SaveGame();
+	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), WorldMenu);	
 }
   
