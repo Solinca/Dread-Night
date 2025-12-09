@@ -4,7 +4,7 @@
 
 void UWaveWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
-	Super::PostInitialize();
+	Super::OnWorldBeginPlay(InWorld);
 
 	InWorld.GetSubsystem<UDayCycleSubSystem>()->OnNightStart.AddDynamic(this, &UWaveWorldSubsystem::OnNightStart);
 }
