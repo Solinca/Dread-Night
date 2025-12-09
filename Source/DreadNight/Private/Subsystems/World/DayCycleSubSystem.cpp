@@ -47,7 +47,7 @@ void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 
 	Sky = InWorld.SpawnActor<ASkyAtmosphere>()->GetComponentByClass<USkyAtmosphereComponent>();
 
-	Sky->SetRayleighScatteringScale(0.1f);
+	Sky->SetRayleighScatteringScale(BaseWorldSettings->RayleighScatteringScale);
 
 	DawnRotation = FMath::Abs(BaseWorldSettings->StartSunRotation - BaseWorldSettings->DawnRotationThreshold);
 

@@ -72,4 +72,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Fog", meta = (EditCondition = "HasVolumetricFog"))
 	float VolumetricFogExtinctionScale = 5.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Sky")
+	float RayleighScatteringScale = 0.1f;
 };
