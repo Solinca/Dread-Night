@@ -1,22 +1,33 @@
 #include "Subsystems/World/WaveWorldSubsystem.h"
-#include "Global/MyGameStateBase.h"
-#include "Kismet/GameplayStatics.h"
+#include "Subsystems/World/DayCycleSubSystem.h"
+#include "Global/BaseLevelWorldSettings.h"
 
-void UWaveWorldSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+void UWaveWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
-	Super::Initialize(Collection);
+	Super::PostInitialize();
 
-	//Cast<AMyGameStateBase>(UGameplayStatics::GetGameState(GetWorld()))->OnNightStart.AddDynamic(this, &UWaveSystem::OnNightStart);
+	InWorld.GetSubsystem<UDayCycleSubSystem>()->OnNightStart.AddDynamic(this, &UWaveWorldSubsystem::OnNightStart);
 }
 
 bool UWaveWorldSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 {
 	UWorld* World = Cast<UWorld>(Outer);
 
-	return World && World->GetMapName().Contains(TEXT("TestDayNightCycle"));
+	return World && World->GetMapName().Contains(Cast<ABaseLevelWorldSettings>(World->GetWorldSettings())->MapName);
 }
 
 void UWaveWorldSubsystem::OnNightStart()
 {
+	// TODO: Replace with SpawningSystem with Wave Data Asset
 
+	FTimerHandle Handle;
+
+	GetWorld()->GetTimerManager().SetTimer(Handle, this, &UWaveWorldSubsystem::EndNight, 5, false);
+}
+
+void UWaveWorldSubsystem::EndNight()
+{
+	// TODO: Replace with Monster death count
+
+	OnWaveEnd.Broadcast();
 }

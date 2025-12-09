@@ -12,10 +12,13 @@ class DREADNIGHT_API UWaveWorldSubsystem : public UWorldSubsystem
 	GENERATED_BODY()
 
 private:
+	UFUNCTION()
 	void OnNightStart();
 
+	void EndNight();
+
 protected:
-	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 
