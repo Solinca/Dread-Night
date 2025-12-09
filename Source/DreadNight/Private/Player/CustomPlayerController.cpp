@@ -14,11 +14,11 @@ void ACustomPlayerController::BeginPlay()
 	{
 		if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 		{
-			if (!MappingContext)
+			if (!MappingContextBase)
 			{
 				return;
 			}
-			InputSystem->AddMappingContext(MappingContext, 0);
+			InputSystem->AddMappingContext(MappingContextBase, 0);
 		}
 
 	}
@@ -40,6 +40,10 @@ void ACustomPlayerController::SetupInputComponent()
 	if (TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
 		for (FInputActionSetup i : IA_Setup)
+		{
+			EnhancedInputComponent->BindAction(i.Action, i.Event, this, i.ActionName.GetMemberName());
+		}
+		for (FInputActionSetup i : IA_SetupMenu)
 		{
 			EnhancedInputComponent->BindAction(i.Action, i.Event, this, i.ActionName.GetMemberName());
 		}
@@ -189,12 +193,36 @@ void ACustomPlayerController::DisplayGlossary(const FInputActionValue& Value)
 
 void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Display Menu");
+	if (GetLocalPlayer())
+	{
+		if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		{
+			if (!MappingContextBase)
+			{
+				return;
+			}
+			InputSystem->ClearAllMappings();
+			InputSystem->AddMappingContext(MappingContextMenu, 0);
+		}
+	}
 }
 
 void ACustomPlayerController::GoBackToPrecedentMenu(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Go Back To Precedent Menu");
+	//TODO IF MENU QUEUE == LAST (if user is in the last menu before going back to the game)
+
+	if (GetLocalPlayer())
+	{
+		if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		{
+			if (!MappingContextBase)
+			{
+				return;
+			}
+			InputSystem->ClearAllMappings();
+			InputSystem->AddMappingContext(MappingContextBase, 0);
+		}
+	}
 }
 
 void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
