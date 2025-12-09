@@ -5,13 +5,6 @@ UConditionStateComponent::UConditionStateComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-
-void UConditionStateComponent::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-
 void UConditionStateComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);

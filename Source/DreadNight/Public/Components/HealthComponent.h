@@ -15,10 +15,6 @@ class DREADNIGHT_API UHealthComponent : public UActorComponent, public IDamageab
 protected:
 	UHealthComponent();
 
-	virtual void BeginPlay() override;
-
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values", meta = (ClampMin = 1.f))
 	float MaxHealth;
 
