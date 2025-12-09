@@ -44,6 +44,12 @@ protected:
 
 	virtual void NativeConstruct() override;
 
+	template<typename TValue>
+	void SetupComboBox(
+		UComboBoxString* ComboBox,
+		TMap<FString, TValue>& Map,
+		const TValue& CurrentValue);
+
 	UFUNCTION()
 	void OnWindowModeChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
 
@@ -58,4 +64,7 @@ protected:
 
 	UFUNCTION()
 	void OnReturnClicked();
+
+public:
+	UOptionsWidget(const FObjectInitializer& ObjectInitializer);
 };
