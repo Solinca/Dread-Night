@@ -23,7 +23,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	float ShotCooldown = 0.8f;
 	UPROPERTY(EditAnywhere, Category = "Combat")
-	TSubclassOf<ProjectileActor> ArrowProjectileClass;
+	TSubclassOf<AProjectileActor> ArrowProjectileClass;
+	UPROPERTY()
+	TWeakObjectPtr<AProjectileActor> CurrentArrow;
 
 	void SpawnArrow();
 	void ResetShot();

@@ -20,6 +20,17 @@ void UBowCombatComponent::SetAiming(bool bAiming)
 	// }
 
 	// (optionnel) activer un zoom caméra, FOV changes, etc.
+
+	if (bIsAiming)
+		SpawnArrow();
+	else
+	{
+		if (CurrentArrow.IsValid())
+		{
+			CurrentArrow->Destroy();
+			CurrentArrow = nullptr;
+		}
+	}
 }
 
 void UBowCombatComponent::Shoot()
@@ -27,8 +38,11 @@ void UBowCombatComponent::Shoot()
 	if (!bCanShoot || !ArrowProjectileClass)
 		return;
 
+	if (!CurrentArrow.IsValid())
+		return;
+	CurrentArrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	CurrentArrow->ProjectileMovementComponent->Activate();
 	bCanShoot = false;
-	SpawnArrow();
 
 	// cooldown
 	GetWorld()->GetTimerManager().SetTimer(
@@ -51,15 +65,23 @@ void UBowCombatComponent::SpawnArrow()
 	USkeletalMeshComponent* MeshComp = Owner->FindComponentByClass<USkeletalMeshComponent>();
 	if (!MeshComp)
 		return;
-	FName HandSocketName = TEXT("hand_rSocket"); //test avec un socket que j'ai ajouté au mannequin unreal, c'est temporaire, faudra ajuster ça avec notre perso
+	FName HandSocketName = TEXT("hand_rSocket"); //test avec un socket que j'ai ajouté au mannequin unreal, c'était temporaire, faudra ajuster ça avec notre perso
 	SpawnLocation = MeshComp->GetSocketLocation(HandSocketName);
 	SpawnRotation = MeshComp->GetSocketRotation(HandSocketName);
 	FActorSpawnParameters Params;
-	AActor* Arrow = GetWorld()->SpawnActor<AActor>(
+	CurrentArrow = GetWorld()->SpawnActor<AProjectileActor>(
 		ArrowProjectileClass,
 		SpawnLocation,
 		SpawnRotation,
 		Params
+	);
+	if (!CurrentArrow.IsValid())
+		return;
+	CurrentArrow->ProjectileMovementComponent->Deactivate();
+	CurrentArrow->AttachToComponent(
+		MeshComp,
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		HandSocketName
 	);
 }
 
