@@ -77,12 +77,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
 	float AttackStaminaCost = 20.f;//REPLACE WITH WEAPON STAMINA COST LATER
 
-
 	/// <summary>
 	/// Cost in amount/s
 	/// </summary>
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
-	float SprintStaminaCost = 10.f;//REPLACE WITH WEAPON STAMINA COST LATER
+	float SprintStaminaCost = 10.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mana")
 	float SpellManaCost = 20.f;//REPLACE WITH WEAPON MANA COST LATER

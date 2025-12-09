@@ -4,9 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "ConditionStateComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHungerChanged, float, HungerValue, bool, IsHungry);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FThirstChanged, float, ThirstValue, bool, IsThristy);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSanityChanged, float, SanityValue, bool, IsCrazy);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FConditionStateChanged, float, Value, bool, IsState);
 
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
@@ -54,19 +52,19 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
 	float HungerValue = 100.f;// 0 - 100 where 100 is NOT hungry
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State", meta = (ClampMin = 1.f))
 	float HungerMaxValue = 100.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
 	float ThirstValue = 100.f;// 0 - 100 where 100 is NOT thirsty
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State", meta = (ClampMin = 1.f))
 	float ThirstMaxValue = 100.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
 	float SanityValue = 100.f;// 0 - 100 where 100 is NOT crazy
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State", meta = (ClampMin = 1.f))
 	float SanityMaxValue = 100.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
@@ -79,13 +77,13 @@ public:
 
 
 	UPROPERTY(BlueprintAssignable)
-	FHungerChanged OnHungerChanged;
+	FConditionStateChanged OnHungerChanged;
 
 	UPROPERTY(BlueprintAssignable)
-	FThirstChanged OnThirstChanged;
+	FConditionStateChanged OnThirstChanged;
 
 	UPROPERTY(BlueprintAssignable)
-	FSanityChanged OnSanityChanged;
+	FConditionStateChanged OnSanityChanged;
 
 
 	UFUNCTION()
