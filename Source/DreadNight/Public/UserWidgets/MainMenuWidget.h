@@ -6,6 +6,8 @@
 #include "Components/Button.h"
 #include "MainMenuWidget.generated.h"
 
+class UOptionsWidget;
+
 UCLASS()
 class DREADNIGHT_API UMainMenuWidget : public UUserWidget
 {
@@ -29,16 +31,19 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ButtonQuit = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TSubclassOf<UOptionsWidget> OptionsWidgetClass;
+
 public:
 	UFUNCTION(BlueprintCallable)
-	void ActionContinue();
+	void OnContinueClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void ActionNewGame();
+	void OnNewGameClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void ActionOptions();
+	void OnOptionsClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void ActionQuit();
+	void OnQuitClicked();
 };
