@@ -8,6 +8,9 @@
 
 class UButton;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnButtonClickedEventSignature)
+
+
 UCLASS()
 class DREADNIGHT_API UPauseMenu : public UUserWidget
 {
@@ -25,6 +28,17 @@ protected:
 public:
 	virtual void NativeConstruct() override;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonClickedEventSignature OnResume;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonClickedEventSignature OnOptions;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonClickedEventSignature OnQuitToMenu;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonClickedEventSignature OnQuitToDesktop;
 private:
 	UFUNCTION()
 	void OnResumeButtonClicked();

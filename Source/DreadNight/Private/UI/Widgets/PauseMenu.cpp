@@ -16,18 +16,22 @@ void UPauseMenu::NativeConstruct()
 
 void UPauseMenu::OnResumeButtonClicked()
 {
+	OnResume.Broadcast();
 }
 
 void UPauseMenu::OnOptionsButtonClicked()
 {
+	OnOptions.Broadcast();
 }
 
 void UPauseMenu::OnMenuButtonClicked()
 {
+	OnQuitToMenu.Broadcast();
 }
 
 void UPauseMenu::OnDesktopButtonClicked()
 {
+	OnQuitToDesktop.Broadcast();
 	TObjectPtr<APlayerController> PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	UKismetSystemLibrary::QuitGame(GetWorld(), PC, EQuitPreference::Quit, true);
 }
