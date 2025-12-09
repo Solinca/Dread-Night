@@ -32,6 +32,4 @@ void UPauseMenu::OnMenuButtonClicked()
 void UPauseMenu::OnDesktopButtonClicked()
 {
 	OnQuitToDesktop.Broadcast();
-	TObjectPtr<APlayerController> PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	UKismetSystemLibrary::QuitGame(GetWorld(), PC, EQuitPreference::Quit, true);
 }
