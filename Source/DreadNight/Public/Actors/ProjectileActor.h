@@ -21,4 +21,12 @@ public:
 	AProjectileActor();
 
 	UProjectileMovementComponent* GetProjectileMovementComponent() const;
+
+protected:
+	virtual void BeginPlay() override;
+	
+private:
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

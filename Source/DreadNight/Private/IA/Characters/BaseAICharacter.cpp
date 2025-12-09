@@ -1,12 +1,15 @@
 ﻿#include "IA/Characters/BaseAICharacter.h"
 
 #include "AIController.h"
+#include "Components/CapsuleComponent.h"
 
 ABaseAICharacter::ABaseAICharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	GetCapsuleComponent()->SetCollisionProfileName("AiPawn");
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
 }
