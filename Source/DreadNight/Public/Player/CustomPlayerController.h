@@ -53,10 +53,16 @@ protected:
 	FVector2D ViewPitch = FVector2D(-55, 55);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
-	TObjectPtr<class UInputMappingContext> MappingContext = nullptr;
+	TObjectPtr<class UInputMappingContext> MappingContextBase = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
+	TObjectPtr<class UInputMappingContext> MappingContextMenu = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
 	TArray<FInputActionSetup> IA_Setup;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
+	TArray<FInputActionSetup> IA_SetupMenu;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
 	float BaseMoveSpeed = 600.f;
