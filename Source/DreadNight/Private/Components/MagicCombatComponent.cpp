@@ -7,6 +7,5 @@ UMagicCombatComponent::UMagicCombatComponent()
 
 void UMagicCombatComponent::CastFireball()
 {
-	// Implementation for casting a fireball
 	AActor* Fireball = GetWorld()->SpawnActor<AActor>(FireballClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
 }
