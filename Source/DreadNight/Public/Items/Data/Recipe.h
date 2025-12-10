@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CraftMethod.h"
 #include "Ingredient.h"
 #include "Recipe.generated.h"
 
@@ -19,6 +20,9 @@ struct FRecipe : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int TargetQuantity = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECraftMethod CraftMethod = ECraftMethod::Default;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FIngredient> Ingredients;
