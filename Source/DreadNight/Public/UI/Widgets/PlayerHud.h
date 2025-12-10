@@ -21,6 +21,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USmartProgressBar> StaminaBar;
 	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<USmartProgressBar> ManaBar;
+	
 	UPROPERTY(meta = (BindWidgetOptional))
 	TObjectPtr<URadialProgressBarImage> ThirstRadialBarImage;
 	
@@ -45,6 +48,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void UpdateStaminaBar(const float CurrentValue, const float MaxValue);
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateManaBar(const float CurrentValue, const float MaxValue);
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateThirstRadialBarImage(const float CurrentValue);
