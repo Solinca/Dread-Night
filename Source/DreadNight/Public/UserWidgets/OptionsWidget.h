@@ -48,7 +48,22 @@ protected:
 	void SetupComboBox(
 		UComboBoxString* ComboBox,
 		TMap<FString, TValue>& Map,
-		const TValue& CurrentValue);
+		const TValue& CurrentValue) {
+		if (!ComboBox) return;
+
+		ComboBox->ClearOptions();
+
+		for (const auto& Pair : Map) ComboBox->AddOption(Pair.Key);
+
+		for (const auto& Pair : Map)
+		{
+			if (Pair.Value == CurrentValue)
+			{
+				ComboBox->SetSelectedOption(Pair.Key);
+				break;
+			}
+		}
+	};
 
 	UFUNCTION()
 	void OnWindowModeChanged(FString SelectedItem, ESelectInfo::Type SelectionType);

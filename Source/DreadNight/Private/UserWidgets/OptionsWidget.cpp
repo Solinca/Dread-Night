@@ -52,28 +52,6 @@ void UOptionsWidget::NativeConstruct()
 	}
 }
 
-template<typename TValue>
-void UOptionsWidget::SetupComboBox(
-	UComboBoxString* ComboBox,
-	TMap<FString, TValue>& Map,
-	const TValue& CurrentValue)
-{
-	if (!ComboBox) return;
-
-	ComboBox->ClearOptions();
-
-	for (const auto& Pair : Map) ComboBox->AddOption(Pair.Key);
-
-	for (const auto& Pair : Map)
-	{
-		if (Pair.Value == CurrentValue)
-		{
-			ComboBox->SetSelectedOption(Pair.Key);
-			break;
-		}
-	}
-}
-
 void UOptionsWidget::OnWindowModeChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
 {
 	if (!WindowModeMap.Contains(SelectedItem)) return;
