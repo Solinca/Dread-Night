@@ -1,7 +1,7 @@
 
-#include "Glossary/CraftingFunctionLibrary.h"
+#include "UI/Glossary/CraftingFunctionLibrary.h"
 
-#include "Glossary/CraftingRecipeItem.h"
+#include "UI/Glossary/CraftingRecipeItem.h"
 
 TArray<UCraftingRecipeItem*> UCraftingFunctionLibrary::ConvertDataTableToRecipeItems(UDataTable* DataTable)
 {
