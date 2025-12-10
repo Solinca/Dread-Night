@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Items/Data/Recipe.h"
+#include "Crafting/Data/Recipe.h"
 #include "CraftingComponent.generated.h"
 
 class UInventoryComponent;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class DREADNIGHT_API UCraftingComponent : public UActorComponent
 {
 
@@ -33,5 +33,5 @@ protected:
 private:
 
 	//TObjectPtr<UCraftingWidget> CraftingWidget;
-		
+
 };

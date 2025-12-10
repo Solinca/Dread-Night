@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Components/CraftingComponent.h"
+#include "Crafting/Components/CraftingComponent.h"
 
 
 
@@ -54,6 +54,6 @@ void UCraftingComponent::BeginPlay()
 {
 
 	Super::BeginPlay();
-	
+
 }
 
