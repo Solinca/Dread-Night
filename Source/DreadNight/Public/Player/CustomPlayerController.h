@@ -7,11 +7,13 @@
 #include "InputActionValue.h"
 #include "InputAction.h"
 #include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 #include "PlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "CustomPlayerController.generated.h"
 
 
+class UPauseMenu;
 
 USTRUCT(BlueprintType)
 struct FInputActionSetup
@@ -53,10 +55,16 @@ protected:
 	FVector2D ViewPitch = FVector2D(-55, 55);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
-	TObjectPtr<class UInputMappingContext> MappingContext = nullptr;
+	TObjectPtr<class UInputMappingContext> MappingContextBase = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
+	TObjectPtr<class UInputMappingContext> MappingContextMenu = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
 	TArray<FInputActionSetup> IA_Setup;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
+	TArray<FInputActionSetup> IA_SetupMenu;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
 	float BaseMoveSpeed = 600.f;
@@ -67,9 +75,59 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
 	float CrouchMoveSpeed = 300.f;
 
+	//=========//
+	//==Stats==//
+	//=========//
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
+	float JumpStaminaCost = 20.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
+	float AttackStaminaCost = 20.f;//REPLACE WITH WEAPON STAMINA COST LATER
+
+	/// <summary>
+	/// Cost in amount/s
+	/// </summary>
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
+	float SprintStaminaCost = 10.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mana")
+	float SpellManaCost = 20.f;//REPLACE WITH WEAPON MANA COST LATER
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hunger")
+	float HungerSprintCost = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hunger")
+	float HungerJumpCost = 0.5f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hunger")
+	float HungerAttackCost = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sanity")
+	float SanityOnDamageCost = 5.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sanity")
+	float SanityOnDarknessCost = 1.f;
+
+	//==================//
+
+	
+	//=========//
+	//==Widget==//
+	//=========//
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UPauseMenu> PauseMenuClass;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UPauseMenu> PauseMenuWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI|Logic")
+	TSoftObjectPtr<UWorld> WorldMenu;
+	
+	//==================//
 private:
-
+	TQueue<TPair<UUserWidget*,TFunction<void()>>> MenuList; 
+	
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
 
 #if WITH_EDITOR
@@ -124,4 +182,65 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void SelectedHotbar(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintCallable)
+	void SaveGame();
+	
+	UFUNCTION(BlueprintCallable)
+	void LoadGame();
+
+	UFUNCTION()
+	void GoBackToMenu();
+
+	//Function to add a Menu to the menu list, so we can leave it with escape
+	template<typename T>
+	requires std::is_base_of_v<UUserWidget, T>
+	void PushNewMenu(TObjectPtr<T>& Widget, TFunction<void()>&& OnCloseAction = []{})
+	{
+		if (MenuList.IsEmpty() && GetLocalPlayer())
+		{
+			if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			{
+				if (!MappingContextMenu)
+				{
+					return;
+				}
+				InputSystem->ClearAllMappings();
+				InputSystem->AddMappingContext(MappingContextMenu, 0);
+				SetInputMode(FInputModeGameAndUI());
+			}
+			SetShowMouseCursor(true);
+		}
+	
+		Widget->AddToViewport();	 
+		auto SafeCloseWidgetAction = [&, CloseAction = MoveTemp(OnCloseAction), IsFirstPass = true]() mutable
+		{
+			if (!IsFirstPass)
+			{
+				return; 
+			}
+
+			IsFirstPass = false; 
+			if (CloseAction)
+			{
+				CloseAction();
+			}
+			Widget = nullptr;
+		};
+
+		MenuList.Enqueue({Widget, MoveTemp(SafeCloseWidgetAction)});
+	}
+
+	//Call this function when you need to delete the last menu who has been push in the list
+	UFUNCTION()
+	void PopLastMenu();
+
+	UFUNCTION()
+	void ResumeGame();
+
+	UFUNCTION()
+	void PauseGame();
+
+	UFUNCTION()
+	void LeaveGame();
 };

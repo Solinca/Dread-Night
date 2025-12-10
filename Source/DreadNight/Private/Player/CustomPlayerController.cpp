@@ -1,6 +1,11 @@
 #include "Player/CustomPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "UI/Widgets/PauseMenu.h"
 #include <EnhancedInputSubsystems.h>
+
+#include "Global/MyGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void ACustomPlayerController::BeginPlay()
@@ -14,11 +19,11 @@ void ACustomPlayerController::BeginPlay()
 	{
 		if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 		{
-			if (!MappingContext)
+			if (!MappingContextBase)
 			{
 				return;
 			}
-			InputSystem->AddMappingContext(MappingContext, 0);
+			InputSystem->AddMappingContext(MappingContextBase, 0);
 		}
 
 	}
@@ -40,6 +45,10 @@ void ACustomPlayerController::SetupInputComponent()
 	if (TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
 		for (FInputActionSetup i : IA_Setup)
+		{
+			EnhancedInputComponent->BindAction(i.Action, i.Event, this, i.ActionName.GetMemberName());
+		}
+		for (FInputActionSetup i : IA_SetupMenu)
 		{
 			EnhancedInputComponent->BindAction(i.Action, i.Event, this, i.ActionName.GetMemberName());
 		}
@@ -69,6 +78,19 @@ void ACustomPlayerController::Jump(const FInputActionValue& Value)
 	if (MyPlayer)
 	{
 		MyPlayer->Jump();
+		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
+		StaminaComponent->RemoveStamina(JumpStaminaCost);
+		StaminaComponent->SetCanRegen(false);
+
+		//START REGEN STAMINA
+		GetWorldTimerManager().SetTimer(
+			StaminaComponent->CoolDownTimer,
+			[=] {StaminaComponent->SetCanRegen(true); },
+			StaminaComponent->GetRegenCoolDown(),
+			false
+		);
+
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(HungerJumpCost);
 	}
 }
 
@@ -76,8 +98,13 @@ void ACustomPlayerController::Sprint(const FInputActionValue& Value)
 {
 	if (MyPlayer)
 	{
+		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = SprintMoveSpeed;
 		MyPlayer->SetIsSprinting(true);
+		StaminaComponent->SetCanRegen(false);
+
+		StaminaComponent->RemoveStamina(SprintStaminaCost * GetWorld()->GetDeltaSeconds());
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(HungerSprintCost * GetWorld()->GetDeltaSeconds());
 	}
 }
 
@@ -87,6 +114,15 @@ void ACustomPlayerController::SprintEnd(const FInputActionValue& Value)
 	{
 		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = BaseMoveSpeed;
 		MyPlayer->SetIsSprinting(false);
+
+		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
+		//START REGEN STAMINA
+		GetWorldTimerManager().SetTimer(
+			StaminaComponent->CoolDownTimer,
+			[=] {StaminaComponent->SetCanRegen(true); },
+			StaminaComponent->GetRegenCoolDown(),
+			false
+		);
 	}
 }
 
@@ -126,6 +162,22 @@ void ACustomPlayerController::Aim(const FInputActionValue& Value)
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Attacking");
+
+	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
+
+	StaminaComponent->RemoveStamina(AttackStaminaCost);
+
+	StaminaComponent->SetCanRegen(false);
+
+	//START REGEN STAMINA
+	GetWorldTimerManager().SetTimer(
+		StaminaComponent->CoolDownTimer,
+		[=] {StaminaComponent->SetCanRegen(true); },
+		StaminaComponent->GetRegenCoolDown(),
+		false
+	);
+
+	MyPlayer->GetConditionStateComponent()->RemoveHungerValue(HungerAttackCost);
 }
 
 
@@ -145,13 +197,25 @@ void ACustomPlayerController::DisplayGlossary(const FInputActionValue& Value)
 }
 
 void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
-{
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Display Menu");
+{	
+	if (!PauseMenuWidget)
+	{
+		PauseMenuWidget = CreateWidget<UPauseMenu>(this, PauseMenuClass);
+		PauseMenuWidget->OnResume.AddDynamic(this, &ThisClass::ResumeGame);
+		PauseMenuWidget->OnQuitToMenu.AddDynamic(this, &ThisClass::GoBackToMenu);
+		PauseMenuWidget->OnQuitToDesktop.AddDynamic(this, &ThisClass::LeaveGame);
+		PauseGame();
+
+		PushNewMenu(PauseMenuWidget, [this]{
+			UGameplayStatics::SetGamePaused(GetWorld(), false);
+			;});
+	}
 }
 
 void ACustomPlayerController::GoBackToPrecedentMenu(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Go Back To Precedent Menu");
+	//TODO IF MENU QUEUE == LAST (if user is in the last menu before going back to the game)
+	PopLastMenu();	
 }
 
 void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
@@ -161,3 +225,73 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Hotbar : " + FString::FromInt(index));
 }
 
+void ACustomPlayerController::SaveGame()
+{
+	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
+	{
+		GameInstance->Save(GetWorld());
+	}	
+}
+
+void ACustomPlayerController::LoadGame()
+{
+	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
+	{
+		GameInstance->Load(GetWorld());
+	}
+}
+
+void ACustomPlayerController::GoBackToMenu()
+{
+	SaveGame();
+	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), WorldMenu);	
+}
+
+
+void ACustomPlayerController::PopLastMenu()
+{
+	if (MenuList.IsEmpty())
+		return;
+
+	auto& LastMenu = *MenuList.Peek();
+
+	LastMenu.Key->RemoveFromParent();
+	LastMenu.Value();
+	MenuList.Pop();
+	
+	if (MenuList.IsEmpty())
+	{
+		if (GetLocalPlayer())
+		{
+			if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			{
+				if (!MappingContextBase)
+				{
+					return;
+				}
+				InputSystem->ClearAllMappings();
+				InputSystem->AddMappingContext(MappingContextBase, 0); 
+				SetInputMode(FInputModeGameOnly());
+			}
+		}
+		SetShowMouseCursor(false);
+	}
+}
+
+void ACustomPlayerController::ResumeGame()
+{
+	UGameplayStatics::SetGamePaused(GetWorld(), false);
+	PopLastMenu();
+}
+
+void ACustomPlayerController::PauseGame()
+{
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
+}
+
+void ACustomPlayerController::LeaveGame()
+{
+	SaveGame();
+	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
+}
+ 

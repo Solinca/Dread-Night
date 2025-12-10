@@ -11,6 +11,11 @@ APlayerCharacter::APlayerCharacter()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
 	SpringArm->SetupAttachment(RootComponent);
 	Camera->SetupAttachment(SpringArm);
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health");
+	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>("Stamina");
+	ManaComponent = CreateDefaultSubobject<UManaComponent>("Mana");
+	ConditionStateComponent = CreateDefaultSubobject<UConditionStateComponent>("ConditionState");
 }
 
 bool APlayerCharacter::GetIsCrouching()
@@ -53,6 +58,26 @@ void APlayerCharacter::UpdateCrouching(float deltatime)
 		else
 			SetCurentCapsuleHalfHeight(FMath::FInterpTo(CurrentCapsuleHalfHeight, CapsuleMaxHalfHeight, deltatime, LerpCrouchSpeed));
 	}
+}
+
+UStaminaComponent* APlayerCharacter::GetStaminaComponent()
+{
+	return StaminaComponent;
+}
+
+UManaComponent* APlayerCharacter::GetManaComponent()
+{
+	return ManaComponent;
+}
+
+UHealthComponent* APlayerCharacter::GetHealthComponent()
+{
+	return HealthComponent;
+}
+
+UConditionStateComponent* APlayerCharacter::GetConditionStateComponent()
+{
+	return ConditionStateComponent;
 }
 
 
