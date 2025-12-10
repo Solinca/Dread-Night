@@ -18,16 +18,16 @@ bool ACollectibleResource::TryApplyDamage(float Damage, AActor* DamageInstigator
 		
 		UItemInstance* ItemInstance = FItemInstanceFactory::CreateItem(ItemDataAsset, ResourceCollected);
 
+		UE_LOG(LogTemp, Log, TEXT("Resource type = %s, collected %d"), *ItemDataAsset->Type.GetTagLeafName().ToString(), ResourceCollected);
+
+		CurrentItemQuantity -= ResourceCollected;
+		if (CurrentItemQuantity <= 0)
+		{
+			Destroy();
+		}
 		return true;
 	}
 	
-	UE_LOG(LogTemp, Log, TEXT("Resource type = %s, collected %d"), *ItemDataAsset->Type.GetTagLeafName().ToString(), ResourceCollected);
-
-	CurrentItemQuantity -= ResourceCollected;
-	if (CurrentItemQuantity <= 0)
-	{
-		Destroy();
-	}
 
 	return false;
 }
