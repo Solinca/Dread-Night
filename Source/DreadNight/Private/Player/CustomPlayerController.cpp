@@ -202,7 +202,18 @@ void ACustomPlayerController::Interact(const FInputActionValue& Value)
 
 void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Display Inventory");
+	if (Inventory)
+	{
+		Inventory->RemoveFromParent();
+		SetShowMouseCursor(false);
+	}
+	Inventory = CreateWidget<UInventory>(this, InventoryClass);
+	Inventory->BindToInventory(MyPlayer->GetComponentByClass<UInventoryComponent>());
+	SetShowMouseCursor(true);
+	
+	PushNewMenu(Inventory, [this]{
+			UGameplayStatics::SetGamePaused(GetWorld(), false);
+			;});
 }
 
 void ACustomPlayerController::DisplayGlossary(const FInputActionValue& Value)

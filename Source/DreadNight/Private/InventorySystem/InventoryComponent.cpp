@@ -69,6 +69,9 @@ void UInventoryComponent::RemoveItemsByType(UItemDataAsset* Item)
 
 void UInventoryComponent::RemoveItemsAt(int SlotIndex, int Amount)
 {
+	if (!Items[SlotIndex])
+		return;
+	
 	Items[SlotIndex]->TryUse(Amount);
 	
 	if (Items[SlotIndex] && Items[SlotIndex]->IsEmpty())

@@ -1,14 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/CanvasPanel.h"
-#include "Components/Image.h"
 #include "Components/WrapBox.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "UI/Widgets/InventorySlot.h"
+#include "UI/Widgets/InventoryAction.h"
 #include "Inventory.generated.h"
 
 UCLASS()
@@ -20,7 +17,12 @@ protected:
 	TObjectPtr<UWrapBox> InventoryWrapBox;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UInventorySlot> InventorySlot;
+	TSubclassOf<UInventorySlot> InventorySlotClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UInventoryAction> InventoryActionClass;
+	
+	TObjectPtr<UInventoryComponent> BindInventoryComponent = nullptr;
+	TObjectPtr<UInventoryAction> InventoryAction;
 public:
 	UFUNCTION(BlueprintCallable)
 	virtual void NativePreConstruct() override;
@@ -39,6 +41,8 @@ public:
 	void OnItemModified(UItemInstance* Item, int SlotIndex);
 	UFUNCTION(BlueprintCallable)
 	void OnItemsCleared();
-	
-	TObjectPtr<UInventoryComponent> InventoryComponent;
+	UFUNCTION(BlueprintCallable)
+	void BindToInventory(UInventoryComponent* InventoryComponent);
+	UFUNCTION(BlueprintCallable)
+	void OnItemActionCreated(int SlotIndex);
 };

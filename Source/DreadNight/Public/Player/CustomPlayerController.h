@@ -10,6 +10,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SlateWrapperTypes.h"
+#include "UI/Widgets/Inventory.h"
 #include "CustomPlayerController.generated.h"
 
 class UPauseMenu;
@@ -126,6 +127,12 @@ protected:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UPauseMenu> PauseMenuWidget;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UInventory> InventoryClass;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UInventory> Inventory;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UOptionsWidget> OptionsWidget;

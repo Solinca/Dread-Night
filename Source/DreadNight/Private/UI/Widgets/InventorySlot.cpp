@@ -1,7 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "UI/Widgets/InventorySlot.h"
+
 
 void UInventorySlot::NativePreConstruct()
 {
@@ -11,11 +9,28 @@ void UInventorySlot::NativePreConstruct()
 void UInventorySlot::NativeConstruct()
 {
 	Super::NativeConstruct();
+	
+	ItemButton->OnClicked.AddDynamic(this, &UInventorySlot::SlotAction);
 }
 
 void UInventorySlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+}
+
+FReply UInventorySlot::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	FReply Reply = FReply::Unhandled();
+	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton || InMouseEvent.IsTouchEvent())
+	{
+		HasRightClicked = true;
+		ItemButton->OnClicked.Broadcast();
+	}
+	else
+	{
+		HasRightClicked = false;
+	}
+	return Reply;
 }
 
 void UInventorySlot::SetItemImage(UTexture2D* Texture)
@@ -26,4 +41,16 @@ void UInventorySlot::SetItemImage(UTexture2D* Texture)
 void UInventorySlot::SetStackText(int Stack)
 {
 	StackText->SetText(FText::FromString(FString::FromInt(Stack)));
+}
+
+void UInventorySlot::SlotAction()
+{
+	if (HasRightClicked)
+		OnItemActionCreated.Broadcast(SlotIndex);
+}
+
+void UInventorySlot::BindToInventory(UInventoryComponent* InventoryComponent)
+{
+	BindInventoryComponent = InventoryComponent;
+	
 }
