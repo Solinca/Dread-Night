@@ -64,4 +64,6 @@ protected:
 
 public:
 	FOnNightStartSignature OnNightStart;
+
+	static ThisClass* Get(UObject* WorldContext);
 };

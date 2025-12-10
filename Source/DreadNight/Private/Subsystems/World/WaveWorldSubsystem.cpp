@@ -1,12 +1,15 @@
 #include "Subsystems/World/WaveWorldSubsystem.h"
 #include "Subsystems/World/DayCycleSubSystem.h"
 #include "Global/BaseLevelWorldSettings.h"
+#include "Data/Wave/WaveDataAsset.h"
 
 void UWaveWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
 	Super::OnWorldBeginPlay(InWorld);
 
-	InWorld.GetSubsystem<UDayCycleSubSystem>()->OnNightStart.AddDynamic(this, &UWaveWorldSubsystem::OnNightStart);
+	BaseWorldSettings = Cast<ABaseLevelWorldSettings>(InWorld.GetWorldSettings());
+
+	UDayCycleSubSystem::Get(&InWorld)->OnNightStart.AddDynamic(this, &UWaveWorldSubsystem::OnNightStart);
 }
 
 bool UWaveWorldSubsystem::ShouldCreateSubsystem(UObject* Outer) const
@@ -18,16 +21,53 @@ bool UWaveWorldSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 
 void UWaveWorldSubsystem::OnNightStart()
 {
-	// TODO: Replace with SpawningSystem with Wave Data Asset
+	CurrentDeathCount = 0;
 
-	FTimerHandle Handle;
+	for (FWaveMonsterData& Monster : BaseWorldSettings->WaveList[WaveIndex]->MonsterList)
+	{
+		RequiredDeathCount += Monster.Count;
 
-	GetWorld()->GetTimerManager().SetTimer(Handle, this, &UWaveWorldSubsystem::EndNight, 5, false);
+		for (int i = 0; i < Monster.Count; i++)
+		{
+			int SpawnerIndex = FMath::RandRange(0, SpawnerList.Num() - 1);
+
+			ABaseAICharacter* SpawnedMonster = SpawnerList[SpawnerIndex]->SpawnCharacter(Monster.CharacterClass, Monster.Data);
+
+			SpawnedMonster->OnDestroyed.AddDynamic(this, &UWaveWorldSubsystem::MonsterDeath);
+		}
+	}
 }
 
-void UWaveWorldSubsystem::EndNight()
+void UWaveWorldSubsystem::MonsterDeath(AActor* Monster)
 {
-	// TODO: Replace with Monster death count
+	CurrentDeathCount++;
 
-	OnWaveEnd.Broadcast();
+	if (CurrentDeathCount >= RequiredDeathCount)
+	{
+		OnWaveEnd.Broadcast();
+
+		WaveIndex++;
+
+		if (WaveIndex >= BaseWorldSettings->WaveList.Num())
+		{
+			WaveIndex = 0;
+
+			//TODO: Increase difficulty
+		}
+	}
+}
+
+void UWaveWorldSubsystem::RegisterSpawner(ASpawner* Spawn)
+{
+	SpawnerList.Push(Spawn);
+}
+
+UWaveWorldSubsystem::ThisClass* UWaveWorldSubsystem::Get(UObject* WorldContext)
+{
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		return World->GetSubsystem<UWaveWorldSubsystem>();
+	}
+
+	return nullptr;
 }

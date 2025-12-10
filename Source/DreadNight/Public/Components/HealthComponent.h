@@ -5,6 +5,7 @@
 #include "HealthComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedSignature, float, CurrentHealth, float, MaxHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathSignature);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class DREADNIGHT_API UHealthComponent : public UActorComponent
@@ -23,6 +24,9 @@ protected:
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChangedSignature OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnDeathSignature OnDeath;
 
 	void SetMaxHealth(float amount);
 

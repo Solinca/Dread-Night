@@ -47,6 +47,11 @@ void UHealthComponent::RemoveHealth(float amount)
 	CurrentHealth = FMath::Clamp(CurrentHealth, 0.f, MaxHealth);
 
 	OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
+
+	if (CurrentHealth <= 0)
+	{
+		OnDeath.Broadcast();
+	}
 }
 
 float UHealthComponent::GetHealthRatio()

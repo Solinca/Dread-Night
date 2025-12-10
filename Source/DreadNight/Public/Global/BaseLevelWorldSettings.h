@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/WorldSettings.h"
+#include "Data/Wave/WaveDataAsset.h"
 #include "BaseLevelWorldSettings.generated.h"
 
 UCLASS()
@@ -12,6 +13,9 @@ class DREADNIGHT_API ABaseLevelWorldSettings : public AWorldSettings
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	TObjectPtr<UWorld> MapToLoadSubsystems = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Wave System")
+	TArray<TObjectPtr<UWaveDataAsset>> WaveList;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Day Cycle System")
 	float DayTimeInSeconds = 900;

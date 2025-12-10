@@ -26,9 +26,14 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UHealthComponent> HealthComponent = nullptr;
+
+	UFUNCTION()
+	void OnDeath();
 	
 public:
 	ABaseAICharacter();
+
+	virtual void BeginPlay() override;
 
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
 
@@ -39,6 +44,8 @@ public:
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 
 	virtual void PossessedBy(AController* NewController) override;
+
+	void SetMonsterData(UMonsterDataAsset* Data);
 
 	UMonsterDataAsset* GetMonsterData() const;
 protected:

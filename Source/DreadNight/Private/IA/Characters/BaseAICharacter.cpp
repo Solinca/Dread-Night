@@ -1,6 +1,6 @@
 ﻿#include "IA/Characters/BaseAICharacter.h"
-
 #include "AIController.h"
+#include "Subsystems/World/WaveWorldSubsystem.h"
 
 ABaseAICharacter::ABaseAICharacter()
 {
@@ -9,6 +9,18 @@ ABaseAICharacter::ABaseAICharacter()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
+}
+
+void ABaseAICharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	HealthComponent->OnDeath.AddDynamic(this, &ABaseAICharacter::OnDeath);
+}
+
+void ABaseAICharacter::OnDeath()
+{
+	Destroy();
 }
 
 bool ABaseAICharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
@@ -41,6 +53,11 @@ void ABaseAICharacter::PossessedBy(AController* NewController)
 
 	UBlackboardComponent* BlackboardComponent{AIController->GetBlackboardComponent()};
 	BP_OnDataAssetInitialization(BlackboardComponent, UsedDataAsset);
+}
+
+void ABaseAICharacter::SetMonsterData(UMonsterDataAsset* Data)
+{
+	UsedDataAsset = Data;
 }
 
 UMonsterDataAsset* ABaseAICharacter::GetMonsterData() const

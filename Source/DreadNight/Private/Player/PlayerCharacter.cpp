@@ -7,15 +7,15 @@ APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>("Camera Component");
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm Component");
+	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
 	SpringArm->SetupAttachment(RootComponent);
 	Camera->SetupAttachment(SpringArm);
 
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
-	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>("Stamina Component");
-	ManaComponent = CreateDefaultSubobject<UManaComponent>("Mana Component");
-	ConditionStateComponent = CreateDefaultSubobject<UConditionStateComponent>("ConditionState Component");
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health");
+	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>("Stamina");
+	ManaComponent = CreateDefaultSubobject<UManaComponent>("Mana");
+	ConditionStateComponent = CreateDefaultSubobject<UConditionStateComponent>("ConditionState");
 }
 
 bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
