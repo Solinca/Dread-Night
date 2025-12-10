@@ -178,7 +178,7 @@ TOptional<int> UInventoryComponent::GetEmptySlot() const
 			return i;
 	}
 	
-	return TOptional<int>();
+	return NullOpt;
 }
 
 UItemInstance* UInventoryComponent::GetItemAtSlot(int SlotIndex) const
@@ -197,7 +197,7 @@ UItemDataAsset* UInventoryComponent::GetItemTypeAtSlot(int SlotIndex) const
 TOptional<int> UInventoryComponent::GetItemSlot(UItemDataAsset* Item) const
 {
 	if (!Item)
-		return TOptional<int>();
+		return NullOpt;
 	
 	for (int i = 0; i < Items.Num(); ++i)
 	{
@@ -207,13 +207,13 @@ TOptional<int> UInventoryComponent::GetItemSlot(UItemDataAsset* Item) const
 		}
 	}
 	
-	return TOptional<int>();
+	return NullOpt;
 }
 
 TOptional<int> UInventoryComponent::GetStackableItemSlot(UItemDataAsset* Item) const
 {
 	if (!Item)
-		return TOptional<int>();
+		return NullOpt;
 	
 	for (int i = 0; i < Items.Num(); ++i)
 	{
@@ -226,7 +226,7 @@ TOptional<int> UInventoryComponent::GetStackableItemSlot(UItemDataAsset* Item) c
 		}
 	}
 	
-	return TOptional<int>();
+	return NullOpt;
 }
 
 bool UInventoryComponent::Contains(UItemDataAsset* Item, int StackNumber) const
