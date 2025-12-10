@@ -1,8 +1,13 @@
 ﻿#include "Actors/ProjectileActor.h"
 
+UProjectileMovementComponent* AProjectileActor::GetProjectileMovementComponent() const
+{
+	return ProjectileMovementComponent;
+}
+
 AProjectileActor::AProjectileActor()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	ProjectileMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Projectile Mesh Component");
 	RootComponent = ProjectileMeshComponent;

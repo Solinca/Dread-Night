@@ -18,5 +18,8 @@ protected:
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 	
 public:
+
+	UProjectileMovementComponent* GetProjectileMovementComponent() const;
+	
 	AProjectileActor();
 };

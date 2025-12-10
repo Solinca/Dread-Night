@@ -41,7 +41,7 @@ void UBowCombatComponent::Shoot()
 	if (!CurrentArrow.IsValid())
 		return;
 	CurrentArrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	CurrentArrow->ProjectileMovementComponent->Activate();
+	CurrentArrow->GetProjectileMovementComponent()->Activate();
 	CurrentArrow = nullptr;
 	bCanShoot = false;
 
@@ -78,7 +78,7 @@ void UBowCombatComponent::SpawnArrow()
 	);
 	if (!CurrentArrow.IsValid())
 		return;
-	CurrentArrow->ProjectileMovementComponent->Deactivate();
+	CurrentArrow->GetProjectileMovementComponent()->Deactivate();
 	CurrentArrow->AttachToComponent(
 		MeshComp,
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
