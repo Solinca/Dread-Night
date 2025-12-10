@@ -5,6 +5,8 @@
 void AWarriorAICharacter::OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent,
                                                     UMonsterDataAsset* MonsterDataAsset)
 {
+	Super::OnDataAssetInitialization(BlackboardComponent, MonsterDataAsset);
+
 	//The player character has a chance to not be set at the time SetupBlackboard is set.
 	auto RetrievePlayer{[BlackboardComponent, this]
 	{
