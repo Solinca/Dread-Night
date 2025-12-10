@@ -6,43 +6,52 @@ UHealthComponent::UHealthComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UHealthComponent::TakeDamage(float Damage, AActor* DamageInstigator)
+void UHealthComponent::SetMaxHealth(float amount)
 {
-	TryApplyDamage(Damage, DamageInstigator);
-
-	CurrentHealth = FMath::Clamp(CurrentHealth, 0.f, MaxHealth);
-
-	//If the damage dealer is not the player. Then the player is the one to take damage
-	if (!Cast<APlayerCharacter>(DamageInstigator))
-	{
-		OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
-		OnDamageTaken.Broadcast(CurrentHealth, MaxHealth);
-	}
+	MaxHealth = CurrentHealth = amount;
 }
 
-void UHealthComponent::AddMaxHealth(float amount)
+void UHealthComponent::AddMaxHealth(float amount, bool doesModifyCurrentHealth)
 {
 	MaxHealth += amount;
-	AddHealth(amount);
+
+	if (doesModifyCurrentHealth)
+	{
+		AddHealth(amount);
+	}
 }
 
 void UHealthComponent::AddHealth(float amount)
 {
 	CurrentHealth += amount;
+
 	CurrentHealth = FMath::Clamp(CurrentHealth, 0.f, MaxHealth);
+
 	OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
 }
 
-void UHealthComponent::RemoveMaxHealth(float amount)
+void UHealthComponent::RemoveMaxHealth(float amount, bool doesModifyCurrentHealth)
 {
 	MaxHealth -= amount;
-	CurrentHealth = FMath::Clamp(CurrentHealth, 0.f, MaxHealth);
-	OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
+
+	if (doesModifyCurrentHealth)
+	{
+		RemoveHealth(amount);
+	}
 }
 
-void UHealthComponent::Death()
+void UHealthComponent::RemoveHealth(float amount)
 {
-	//Apply death logic
+	CurrentHealth -= amount;
+
+	CurrentHealth = FMath::Clamp(CurrentHealth, 0.f, MaxHealth);
+
+	OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
+
+	if (CurrentHealth <= 0)
+	{
+		OnDeath.Broadcast();
+	}
 }
 
 float UHealthComponent::GetHealthRatio()

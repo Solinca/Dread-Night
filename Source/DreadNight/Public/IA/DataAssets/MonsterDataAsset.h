@@ -1,15 +1,10 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "Engine/DataAsset.h"
 #include "MonsterDataAsset.generated.h"
 
-/**
- * 
- */
 UCLASS(Blueprintable, BlueprintType, Category = "Data Asset", ClassGroup = "Data Asset")
 class DREADNIGHT_API UMonsterDataAsset : public UDataAsset
 {
@@ -25,8 +20,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Name;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxHealth = 100.f;
+
 public:
 	[[nodiscard]] USkeletalMesh* GetMesh() const;
 	[[nodiscard]] UBehaviorTree* GetBehaviorTree() const;
 	[[nodiscard]] const FName& GetName() const;
+	[[nodiscard]] float GetMaxHealth() const;
 };

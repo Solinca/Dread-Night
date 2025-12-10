@@ -18,6 +18,4 @@ void ARangeAICharacter::OnDataAssetInitialization(UBlackboardComponent* Blackboa
 
 	BlackboardComponent->SetValueAsFloat("AttackRange", BBMonsterDataAsset->GetAttackRange());
 	BlackboardComponent->SetValueAsFloat("AcceptableRadius", BBMonsterDataAsset->GetAcceptableRadius());
-
-	GetMesh()->SetSkeletalMesh(MonsterDataAsset->GetMesh());
 }

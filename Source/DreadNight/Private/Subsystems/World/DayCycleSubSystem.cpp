@@ -30,7 +30,7 @@ void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 
 	InitSkyAtmoshpere(InWorld);
 
-	InWorld.GetSubsystem<UWaveWorldSubsystem>()->OnWaveEnd.AddDynamic(this, &UDayCycleSubSystem::StartDayCycle);
+	UWaveWorldSubsystem::Get(&InWorld)->OnWaveEnd.AddDynamic(this, &UDayCycleSubSystem::StartDayCycle);
 
 	StartDayCycle();
 }
@@ -175,4 +175,14 @@ void UDayCycleSubSystem::InitSkyAtmoshpere(UWorld& InWorld)
 	Sky = InWorld.SpawnActor<ASkyAtmosphere>()->GetComponentByClass<USkyAtmosphereComponent>();
 
 	Sky->SetRayleighScatteringScale(BaseWorldSettings->RayleighScatteringScale);
+}
+
+UDayCycleSubSystem::ThisClass* UDayCycleSubSystem::Get(UObject* WorldContext)
+{
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		return World->GetSubsystem<UDayCycleSubSystem>();
+	}
+
+	return nullptr;
 }

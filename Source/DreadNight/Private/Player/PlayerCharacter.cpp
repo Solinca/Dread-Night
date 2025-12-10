@@ -18,6 +18,13 @@ APlayerCharacter::APlayerCharacter()
 	ConditionStateComponent = CreateDefaultSubobject<UConditionStateComponent>("ConditionState");
 }
 
+bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
+{
+	HealthComponent->RemoveHealth(Damage);
+
+	return true;
+}
+
 bool APlayerCharacter::GetIsCrouching()
 {
 	return bIsCrouching;
