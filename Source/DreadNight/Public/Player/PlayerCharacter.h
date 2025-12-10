@@ -72,7 +72,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	TObjectPtr<UItemDataAsset> StartingWeaponDataAsset = nullptr;
 
-	UItemInstance_Weapon* CurrentIstanceWeapon;
+	UPROPERTY(Transient)
+	UItemInstance_Weapon* CurrentInstanceWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	TObjectPtr<UStaticMeshComponent> CurrentWeaponMesh = nullptr;

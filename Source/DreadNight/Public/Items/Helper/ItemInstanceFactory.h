@@ -9,5 +9,5 @@ class UItemInstance;
 class DREADNIGHT_API FItemInstanceFactory
 {
 public:
-	static UItemInstance* CreateItem(UItemDataAsset* ItemDataAsset, const int StartStackSize);
+	static UItemInstance* CreateItem(UObject* Outer,UItemDataAsset* ItemDataAsset, const int StartStackSize);
 };
