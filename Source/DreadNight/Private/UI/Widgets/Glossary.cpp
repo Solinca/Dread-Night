@@ -24,9 +24,6 @@ void UGlossary::OnListScrolled(const float ItemOffset, const float DistanceRemai
 	{
 		return;
 	}
-	
-	constexpr float TopThreshold = 2.5f; 
-	constexpr float BottomThreshold = 0.1f;
 
 	const float TopStrength = FMath::SmoothStep(0.0f, TopThreshold, ItemOffset);
 	DynamicMaterial->SetScalarParameterValue("TopStrength", TopStrength);

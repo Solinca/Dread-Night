@@ -27,6 +27,9 @@ private:
 	UPROPERTY()
 	TObjectPtr<UMaterialInstanceDynamic> DynamicMaterial;
 
+	static constexpr float TopThreshold = 2.5f; 
+	static constexpr float BottomThreshold = 0.1f;
+
 protected:
 	virtual void NativeConstruct() override;
 

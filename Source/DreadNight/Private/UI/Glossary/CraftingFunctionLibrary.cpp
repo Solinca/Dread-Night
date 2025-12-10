@@ -14,7 +14,7 @@ TArray<UCraftingRecipeItem*> UCraftingFunctionLibrary::ConvertDataTableToRecipeI
 	
 	static const FString ContextString(TEXT("CraftingContext"));
 
-	for (const TArray<FName> RowNames = DataTable->GetRowNames(); const FName& RowName : RowNames)
+	for (const FName& RowName : DataTable->GetRowNames())
 	{
 		if (const FCraftingRecipe* RowData = DataTable->FindRow<FCraftingRecipe>(RowName, ContextString))
 		{
