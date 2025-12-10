@@ -7,10 +7,14 @@
 #include "Global/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
-
 void ACustomPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (!MappingContextBase)
+	{
+		return;
+	}
 
 	MyPlayer = Cast<APlayerCharacter>(GetPawn());
 	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchMoveSpeed;
@@ -19,16 +23,14 @@ void ACustomPlayerController::BeginPlay()
 	{
 		if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 		{
-			if (!MappingContextBase)
-			{
-				return;
-			}
 			InputSystem->AddMappingContext(MappingContextBase, 0);
 		}
-
 	}
+
 	PlayerCameraManager->ViewPitchMin = ViewPitch.X;
 	PlayerCameraManager->ViewPitchMax = ViewPitch.Y;
+
+	SetInputMode(FInputModeGameOnly());
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
@@ -64,14 +66,12 @@ void ACustomPlayerController::Move(const FInputActionValue& Value)
 	GetPawn()->AddMovementInput(RotatedVector);
 }
 
-
 void ACustomPlayerController::Look(const FInputActionValue& Value)
 {
 	FVector2D mouseInput = Value.Get<FVector2D>();
 	AddYawInput(mouseInput.X * GetWorld()->GetDeltaSeconds() * CameraSensitivity);
 	AddPitchInput(mouseInput.Y * GetWorld()->GetDeltaSeconds() * CameraSensitivity);
 }
-
 
 void ACustomPlayerController::Jump(const FInputActionValue& Value)
 {
@@ -116,6 +116,7 @@ void ACustomPlayerController::SprintEnd(const FInputActionValue& Value)
 		MyPlayer->SetIsSprinting(false);
 
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
+
 		//START REGEN STAMINA
 		GetWorldTimerManager().SetTimer(
 			StaminaComponent->CoolDownTimer,
@@ -129,7 +130,9 @@ void ACustomPlayerController::SprintEnd(const FInputActionValue& Value)
 void ACustomPlayerController::Crouch(const FInputActionValue& Value)
 {
 	if (MyPlayer)
+	{
 		MyPlayer->SetIsCrouching(Value.Get<bool>());
+	}
 }
 
 void ACustomPlayerController::CrouchEnd(const FInputActionValue& Value)
@@ -144,11 +147,15 @@ void ACustomPlayerController::UpdateCrouching(float deltatime)
 		MyPlayer->UpdateCrouching(deltatime);
 
 		if (MyPlayer->GetIsCrouching())
+		{
 			MyPlayer->GetCharacterMovement()->MaxWalkSpeed = CrouchMoveSpeed;
+		}
 		else
 		{
 			if (!MyPlayer->GetIsSprinting())
+			{
 				MyPlayer->GetCharacterMovement()->MaxWalkSpeed = BaseMoveSpeed;
+			}
 		}
 	}
 }
@@ -157,7 +164,6 @@ void ACustomPlayerController::Aim(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Aiming");
 }
-
 
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
 {
@@ -207,9 +213,10 @@ void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
 		PauseMenuWidget->OnQuitToDesktop.AddDynamic(this, &ThisClass::LeaveGame);
 		PauseGame();
 
-		PushNewMenu(PauseMenuWidget, [this]{
+		PushNewMenu(PauseMenuWidget, [this]
+		{
 			UGameplayStatics::SetGamePaused(GetWorld(), false);
-			;});
+		});
 	}
 }
 
@@ -248,11 +255,12 @@ void ACustomPlayerController::GoBackToMenu()
 	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), WorldMenu);	
 }
 
-
 void ACustomPlayerController::PopLastMenu()
 {
 	if (MenuList.IsEmpty())
+	{
 		return;
+	}
 
 	auto& LastMenu = *MenuList.Peek();
 
@@ -270,11 +278,13 @@ void ACustomPlayerController::PopLastMenu()
 				{
 					return;
 				}
+
 				InputSystem->ClearAllMappings();
 				InputSystem->AddMappingContext(MappingContextBase, 0); 
 				SetInputMode(FInputModeGameOnly());
 			}
 		}
+
 		SetShowMouseCursor(false);
 	}
 }
@@ -297,9 +307,10 @@ void ACustomPlayerController::AccessOptions()
 		OptionsWidget = CreateWidget<UOptionsWidget>(this, OptionsClass);
 		OptionsWidget->OnReturn.AddDynamic(this, &ThisClass::QuitOptions);
 
-		PushNewMenu(OptionsWidget, [this] {
+		PushNewMenu(OptionsWidget, [this] 
+		{
 			&ACustomPlayerController::QuitOptions;
-			; });
+		});
 
 		PopLastMenu();
 	}
