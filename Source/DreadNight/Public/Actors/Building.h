@@ -4,7 +4,6 @@
 #include "GameFramework/Actor.h"
 #include "Building.generated.h"
 
-class USceneComponent;
 class UStaticMeshComponent;
 
 UCLASS()
@@ -13,9 +12,6 @@ class DREADNIGHT_API ABuilding : public AActor
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	USceneComponent* RootComp;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UStaticMeshComponent* MeshComp;
 

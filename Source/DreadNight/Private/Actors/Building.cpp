@@ -1,13 +1,9 @@
 #include "Actors/Building.h"
-#include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 
 ABuilding::ABuilding()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-	RootComp = CreateDefaultSubobject<USceneComponent>("RootComp");
-	RootComponent = RootComp;
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	MeshComp->SetupAttachment(RootComponent);
