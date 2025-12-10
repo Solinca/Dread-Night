@@ -9,9 +9,11 @@
 UCLASS()
 class DREADNIGHT_API UItemDataAsset : public UDataAsset
 {
+
 	GENERATED_BODY()
 	
 public:
+
 	UPROPERTY(EditAnywhere, meta=(Categories="Item"))
 	FGameplayTag Type;
 
@@ -25,5 +27,9 @@ public:
 	FName ItemName;
 
 	UPROPERTY(EditAnywhere)
+	FString ItemDescription;
+
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UTexture2D> ItemIcon;
+
 };
