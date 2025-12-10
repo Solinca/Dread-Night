@@ -15,9 +15,6 @@ class DREADNIGHT_API UHotBar : public UUserWidget
 protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UHorizontalBox> SlotsContainer;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FKey> HotBarKeys;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "4", ClampMax = "10"))
 	int32 HotBarSlotCount = 4;
