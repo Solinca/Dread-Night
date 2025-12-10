@@ -23,20 +23,23 @@ void UInventoryAction::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 void UInventoryAction::OnUsePressed()
 {
 	InventoryComponent->UseItemAt(SlotIndex);
+	RemoveFromParent();
 }
 
 void UInventoryAction::OnTransferPressed()
 {
-	
+	RemoveFromParent();
 }
 
 void UInventoryAction::OnDropPressed()
 {
 	InventoryComponent->DropItems(SlotIndex, 1);
+	RemoveFromParent();
 }
 
 void UInventoryAction::OnRemovePressed()
 {
 	InventoryComponent->RemoveItemsAt(SlotIndex, 1);
+	RemoveFromParent();
 }
 

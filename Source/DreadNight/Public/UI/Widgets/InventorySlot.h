@@ -52,5 +52,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void BindToInventory(UInventoryComponent* InventoryComponent);
 	
+	UFUNCTION(BlueprintCallable)
+	void Reset(const FSlateBrush& Brush);
+	
+	const FSlateBrush& GetImageBrush() const;
+	
 	FOnItemActionCreatedEventSignature OnItemActionCreated;
 };

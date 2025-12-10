@@ -2,6 +2,7 @@
 
 #include "IDetailTreeNode.h"
 #include "Items/Data/ItemDataAsset.h"
+#include "Items/Data/ItemGameplayTag.h"
 
 void UInventory::NativePreConstruct()
 {
@@ -27,6 +28,11 @@ void UInventory::SetSize(int Size)
 		UInventorySlot* TempSlot = CreateWidget<UInventorySlot>(this, InventorySlotClass);
 		TempSlot->SetSlotIndex(i);
 		TempSlot->BindToInventory(BindInventoryComponent);
+		if (BindInventoryComponent->GetItemAtSlot(i))
+		{
+			TempSlot->SetItemImage(BindInventoryComponent->GetItemTypeAtSlot(i)->ItemIcon);
+			TempSlot->SetStackText(BindInventoryComponent->GetItemAtSlot(i)->GetStackNumber());
+		}
 		TempSlot->OnItemActionCreated.AddDynamic(this, &UInventory::OnItemActionCreated);
 		InventoryWrapBox->AddChildToWrapBox(TempSlot);
 	}
@@ -45,7 +51,8 @@ void UInventory::OnItemRemoved(int SlotIndex)
 {
 	if (UInventorySlot* TempSlot = Cast<UInventorySlot>(InventoryWrapBox->GetChildAt(SlotIndex)))
 	{
-		TempSlot =  CreateWidget<UInventorySlot>(this, InventorySlotClass);
+		UInventorySlot* SlotToClone = CreateWidget<UInventorySlot>(this, InventorySlotClass);
+		TempSlot->Reset(SlotToClone->GetImageBrush());
 	}
 }
 
@@ -76,6 +83,9 @@ void UInventory::BindToInventory(UInventoryComponent* InventoryComponent)
 
 void UInventory::OnItemActionCreated(int SlotIndex)
 {
+	if (!BindInventoryComponent->GetItemAtSlot(SlotIndex))
+		return;
+	
 	if (InventoryAction)
 		InventoryAction->RemoveFromParent();
 	
@@ -86,4 +96,21 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	GetOwningPlayer()->GetMousePosition(MousePos.X, MousePos.Y);
 	InventoryAction->SetRenderTranslation(MousePos);
 	InventoryAction->AddToViewport();
+	
+	
+	UItemDataAsset* ItemData = BindInventoryComponent->GetItemTypeAtSlot(SlotIndex);
+	if (ItemData->Type.MatchesTag(GT_Item_Weapon) || ItemData->Type.MatchesTag(GT_Item_Armor))
+	{
+		InventoryAction->GetUseText()->SetText(FText::FromString("Equip"));
+	}
+	if (ItemData->Type.MatchesTag(GT_Item_Food) || ItemData->Type.MatchesTag(GT_Item_Drink))
+	{
+		InventoryAction->GetUseText()->SetText(FText::FromString("Consume"));
+	}
+}
+
+void UInventory::RemoveItemAction()
+{
+	if (InventoryAction)
+		InventoryAction->RemoveFromParent();
 }

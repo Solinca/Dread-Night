@@ -79,6 +79,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
 	float CrouchMoveSpeed = 300.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Test")
+	UItemDataAsset* ItemData = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Test")
+	UItemDataAsset* ItemData2 = nullptr;
 	//=========//
 	//==Stats==//
 	//=========//
@@ -270,7 +275,7 @@ private:
 	//Call this function when you need to delete the last menu who has been push in the list
 	UFUNCTION()
 	void PopLastMenu();
-
+	
 	UFUNCTION()
 	void ResumeGame();
 

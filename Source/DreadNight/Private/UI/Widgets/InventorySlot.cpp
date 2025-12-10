@@ -54,3 +54,14 @@ void UInventorySlot::BindToInventory(UInventoryComponent* InventoryComponent)
 	BindInventoryComponent = InventoryComponent;
 	
 }
+
+void UInventorySlot::Reset(const FSlateBrush& Brush)
+{
+	ItemImage->SetBrush(Brush);
+	StackText->SetText(FText::FromString(FString::FromInt(0)));
+}
+
+const FSlateBrush& UInventorySlot::GetImageBrush() const
+{
+	return ItemImage->GetBrush();
+}

@@ -11,8 +11,6 @@ void ACustomPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PauseCounter = 0;
-
 	if (!MappingContextBase)
 	{
 		return;
@@ -57,12 +55,6 @@ void ACustomPlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(i.Action, i.Event, this, i.ActionName.GetMemberName());
 		}
 	}
-}
-
-void ACustomPlayerController::UpdateGamePauseState()
-{
-	const bool bShouldPause = (PauseCounter > 0);	
-	UGameplayStatics::SetGamePaused(GetWorld(), bShouldPause);
 }
 
 void ACustomPlayerController::Move(const FInputActionValue& Value)
@@ -176,6 +168,7 @@ void ACustomPlayerController::Aim(const FInputActionValue& Value)
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
 {
 	MyPlayer->GetSwordCombatComponent()->Attack();
+	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Attacking");
 
 	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
@@ -183,7 +176,7 @@ void ACustomPlayerController::Attack(const FInputActionValue& Value)
 
 	StaminaComponent->SetCanRegen(false);
 
-	// START REGEN STAMINA
+	//START REGEN STAMINA
 	GetWorldTimerManager().SetTimer(
 		StaminaComponent->CoolDownTimer,
 		[=] {StaminaComponent->SetCanRegen(true); },
@@ -230,16 +223,18 @@ void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
 		PauseMenuWidget->OnOptions.AddDynamic(this, &ThisClass::AccessOptions);
 		PauseMenuWidget->OnQuitToMenu.AddDynamic(this, &ThisClass::GoBackToMenu);
 		PauseMenuWidget->OnQuitToDesktop.AddDynamic(this, &ThisClass::LeaveGame);
+		PauseGame();
 
-		PushNewMenu(PauseMenuWidget, true, [this]
+		PushNewMenu(PauseMenuWidget, [this]
 		{
-			PauseMenuWidget = nullptr;
+			UGameplayStatics::SetGamePaused(GetWorld(), false);
 		});
 	}
 }
 
 void ACustomPlayerController::GoBackToPrecedentMenu(const FInputActionValue& Value)
 {
+	//TODO IF MENU QUEUE == LAST (if user is in the last menu before going back to the game)
 	PopLastMenu();	
 }
 
@@ -274,56 +269,46 @@ void ACustomPlayerController::GoBackToMenu()
 
 void ACustomPlayerController::PopLastMenu()
 {
-	if (MenuStack.IsEmpty())
+	if (MenuList.IsEmpty())
 	{
 		return;
 	}
 
-	FStackedMenu LastMenu = MenuStack.Pop();
+	auto& LastMenu = *MenuList.Peek();
 
-	if (LastMenu.Widget)
+	if (UInventory* TempInventory = Cast<UInventory>(LastMenu.Key))
 	{
-		LastMenu.Widget->RemoveFromParent();
-		LastMenu.OnCloseAction();
-		if (LastMenu.bTriggerPause)
-		{
-			PauseCounter--;
-		}
+		TempInventory->RemoveItemAction();
 	}
-
-	if (MenuStack.IsEmpty())
+	
+	LastMenu.Key->RemoveFromParent();
+	LastMenu.Value();
+	MenuList.Pop();
+	
+	if (MenuList.IsEmpty())
 	{
-		PauseCounter = 0;
 		if (GetLocalPlayer())
 		{
-			if (const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 			{
-				if (MappingContextBase)
+				if (!MappingContextBase)
 				{
-					InputSystem->ClearAllMappings();
-					InputSystem->AddMappingContext(MappingContextBase, 0); 
+					return;
 				}
+
+				InputSystem->ClearAllMappings();
+				InputSystem->AddMappingContext(MappingContextBase, 0); 
+				SetInputMode(FInputModeGameOnly());
 			}
 		}
-		SetInputMode(FInputModeGameOnly());
-		SetShowMouseCursor(false);
-		
-		UGameplayStatics::SetGamePaused(GetWorld(), false);
-	}
-	else
-	{
-		FStackedMenu& NewTopMenu = MenuStack.Last();
-		if (NewTopMenu.Widget)
-		{
-			NewTopMenu.Widget->SetVisibility(ESlateVisibility::Visible);
-		}
 
-		UpdateGamePauseState();
+		SetShowMouseCursor(false);
 	}
 }
 
 void ACustomPlayerController::ResumeGame()
 {
+	UGameplayStatics::SetGamePaused(GetWorld(), false);
 	PopLastMenu();
 }
 
@@ -339,15 +324,18 @@ void ACustomPlayerController::AccessOptions()
 		OptionsWidget = CreateWidget<UOptionsWidget>(this, OptionsClass);
 		OptionsWidget->OnReturn.AddDynamic(this, &ThisClass::QuitOptions);
 
-		PushNewMenu(OptionsWidget, true, [this] 
+		PushNewMenu(OptionsWidget, [this] 
 		{
-			OptionsWidget = nullptr;
+			&ACustomPlayerController::QuitOptions;
 		});
+
+		PopLastMenu();
 	}
 }
 
 void ACustomPlayerController::QuitOptions()
 {
+	DisplayMenu(FInputActionValue{});
 	PopLastMenu();
 }
 
@@ -356,3 +344,4 @@ void ACustomPlayerController::LeaveGame()
 	SaveGame();
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
 }
+ 

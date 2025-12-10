@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "Components/Textblock.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "InventoryAction.generated.h"
 
@@ -19,6 +20,15 @@ protected:
 	TObjectPtr<UButton> DropButton;
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UButton> RemoveButton;
+	
+	UPROPERTY(meta =(BindWidgetOptional))
+	TObjectPtr<UTextBlock> UseText;
+	UPROPERTY(meta =(BindWidgetOptional))
+	TObjectPtr<UTextBlock> TransferText;
+	UPROPERTY(meta =(BindWidgetOptional))
+	TObjectPtr<UTextBlock> DropText;
+	UPROPERTY(meta =(BindWidgetOptional))
+	TObjectPtr<UTextBlock> RemoveText;
 	
 	int SlotIndex;
 public:
@@ -40,6 +50,10 @@ public:
 	
 	int GetSlotIndex() const { return SlotIndex; }
 	void SetSlotIndex(int Index) { SlotIndex = Index; }
+	TObjectPtr<UTextBlock> GetUseText() const { return UseText; }
+	TObjectPtr<UTextBlock> GetTransferText() const { return TransferText; }
+	TObjectPtr<UTextBlock> GetDropText() const { return DropText; }
+	TObjectPtr<UTextBlock> GetRemoveText() const { return RemoveText; }
 	
 	TObjectPtr<UInventoryComponent> InventoryComponent;
 };

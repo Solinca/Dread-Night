@@ -45,4 +45,6 @@ public:
 	void BindToInventory(UInventoryComponent* InventoryComponent);
 	UFUNCTION(BlueprintCallable)
 	void OnItemActionCreated(int SlotIndex);
+	UFUNCTION(BlueprintCallable)
+	void RemoveItemAction();
 };

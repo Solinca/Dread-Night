@@ -82,7 +82,7 @@ bool UItemInstance::TryStackWith(UItemInstance* Other)
 
 bool UItemInstance::TryAdd(const int NumberOfInstanceToAdd)
 {
-	if (StackNumber + NumberOfInstanceToAdd <= ItemData->StackLimit)
+	if (StackNumber + NumberOfInstanceToAdd >= ItemData->StackLimit)
 		return false;
 
 	StackNumber += NumberOfInstanceToAdd;

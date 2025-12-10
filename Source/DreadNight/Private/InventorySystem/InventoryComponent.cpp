@@ -73,6 +73,7 @@ void UInventoryComponent::RemoveItemsAt(int SlotIndex, int Amount)
 		return;
 	
 	Items[SlotIndex]->TryUse(Amount);
+	OnItemModified.Broadcast(Items[SlotIndex],SlotIndex);
 	
 	if (Items[SlotIndex] && Items[SlotIndex]->IsEmpty())
 	{
@@ -116,6 +117,7 @@ void UInventoryComponent::UseItemAt(int SlotIndex)
 	{
 		UsableItem->Use(GetOwner());
 		Items[SlotIndex]->TryUse(1);
+		OnItemModified.Broadcast(Items[SlotIndex],SlotIndex);
 	}
 	
 	if (Items[SlotIndex]->IsEmpty())
@@ -183,6 +185,9 @@ UItemInstance* UInventoryComponent::GetItemAtSlot(int SlotIndex) const
 
 UItemDataAsset* UInventoryComponent::GetItemTypeAtSlot(int SlotIndex) const
 {
+	if (!Items[SlotIndex])
+		return nullptr;
+	
 	return Items[SlotIndex]->GetItemDataAsset();
 }
 
