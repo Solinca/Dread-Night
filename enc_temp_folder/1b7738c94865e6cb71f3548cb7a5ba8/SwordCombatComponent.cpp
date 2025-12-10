@@ -27,7 +27,6 @@ void USwordCombatComponent::Attack()
 		return;
 	bCanAttack = false;
 	bIsAttacking = true;
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Attacking");
 	HitActors.Empty();
 	//activate collision during the attack
 	//EnableSwordCollision();
