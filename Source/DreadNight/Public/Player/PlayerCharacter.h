@@ -9,17 +9,15 @@
 #include "Components/StaminaComponent.h"
 #include "Components/ManaComponent.h"
 #include "Components/ConditionStateComponent.h"
+#include "DamageSystem/Interface/Damageable.h"
 #include "PlayerCharacter.generated.h"
 
-
-
 UCLASS()
-class DREADNIGHT_API APlayerCharacter : public ACharacter
+class DREADNIGHT_API APlayerCharacter : public ACharacter, public IDamageable
 {
 	GENERATED_BODY()
 
 protected:
-
 	APlayerCharacter();
 
 	//===============//
@@ -64,10 +62,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Values")
 	float LerpCrouchSpeed = 8.f;
 
-
-
 public:
-
+	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
 
 	UFUNCTION()
 	bool GetIsCrouching();

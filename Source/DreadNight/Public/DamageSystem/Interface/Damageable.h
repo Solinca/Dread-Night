@@ -15,6 +15,7 @@ class DREADNIGHT_API IDamageable
 	GENERATED_BODY()
  
 public:
-
+	// Implements this function to check if can apply
+	// damage then apply damage inside the function
 	virtual bool TryApplyDamage(float Damage,AActor* DamageInstigator);
 };

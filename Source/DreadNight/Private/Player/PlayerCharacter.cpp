@@ -7,15 +7,22 @@ APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
+	Camera = CreateDefaultSubobject<UCameraComponent>("Camera Component");
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm Component");
 	SpringArm->SetupAttachment(RootComponent);
 	Camera->SetupAttachment(SpringArm);
 
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health");
-	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>("Stamina");
-	ManaComponent = CreateDefaultSubobject<UManaComponent>("Mana");
-	ConditionStateComponent = CreateDefaultSubobject<UConditionStateComponent>("ConditionState");
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
+	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>("Stamina Component");
+	ManaComponent = CreateDefaultSubobject<UManaComponent>("Mana Component");
+	ConditionStateComponent = CreateDefaultSubobject<UConditionStateComponent>("ConditionState Component");
+}
+
+bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
+{
+	HealthComponent->RemoveHealth(Damage);
+
+	return true;
 }
 
 bool APlayerCharacter::GetIsCrouching()

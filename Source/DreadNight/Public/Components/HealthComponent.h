@@ -2,13 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "DamageSystem/Interface/Damageable.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHealthChanged, float, CurrentHealth, float, MaxHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedSignature, float, CurrentHealth, float, MaxHealth);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class DREADNIGHT_API UHealthComponent : public UActorComponent, public IDamageable
+class DREADNIGHT_API UHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -16,35 +15,25 @@ protected:
 	UHealthComponent();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values", meta = (ClampMin = 1.f))
-	float MaxHealth;
+	float MaxHealth = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values")
-	float CurrentHealth;
+	float CurrentHealth = 100.f;
 	
 public:
-
-
 	UPROPERTY(BlueprintAssignable)
-	FHealthChanged OnHealthChanged;
+	FOnHealthChangedSignature OnHealthChanged;
 
-	UPROPERTY(BlueprintAssignable)
-	FHealthChanged OnDamageTaken;
+	void SetMaxHealth(float amount);
 
-	UFUNCTION()
-	void TakeDamage(float Damage, AActor* DamageInstigator);
+	void AddMaxHealth(float amount, bool doesModifyCurrentHealth = false);
 
-	UFUNCTION()
-	void AddMaxHealth(float amount);
-
-	UFUNCTION()
 	void AddHealth(float amount);
 
-	UFUNCTION()
-	void RemoveMaxHealth(float amount);
+	void RemoveMaxHealth(float amount, bool doesModifyCurrentHealth = false);
 
-	UFUNCTION()
-	void Death();
+	void RemoveHealth(float amount);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	float GetHealthRatio();
 };

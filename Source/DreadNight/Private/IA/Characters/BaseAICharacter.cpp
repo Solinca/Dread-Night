@@ -7,6 +7,15 @@ ABaseAICharacter::ABaseAICharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
+}
+
+bool ABaseAICharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
+{
+	HealthComponent->RemoveHealth(Damage);
+
+	return true;
 }
 
 void ABaseAICharacter::SetGenericTeamId(const FGenericTeamId& TeamID)
@@ -37,6 +46,13 @@ void ABaseAICharacter::PossessedBy(AController* NewController)
 UMonsterDataAsset* ABaseAICharacter::GetMonsterData() const
 {
 	return UsedDataAsset;
+}
+
+void ABaseAICharacter::OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset)
+{
+	GetMesh()->SetSkeletalMesh(MonsterDataAsset->GetMesh());
+
+	HealthComponent->SetMaxHealth(MonsterDataAsset->GetMaxHealth());
 }
 
 void ABaseAICharacter::BP_OnDataAssetInitialization_Implementation(UBlackboardComponent* BlackboardComponent,
