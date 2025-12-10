@@ -14,6 +14,7 @@ class DREADNIGHT_API UItemInstance_Weapon : public UItemInstance, public IUsable
 public:
 	virtual FName GetActionName() override;
 	virtual void Use(AActor* Player) override;
+	UWeaponDataAsset* GetDataAsset();
 	
 private:
 	GENERATED_BODY()

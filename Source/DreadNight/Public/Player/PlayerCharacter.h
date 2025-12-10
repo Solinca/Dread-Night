@@ -10,6 +10,9 @@
 #include "Components/ManaComponent.h"
 #include "Components/ConditionStateComponent.h"
 #include "DamageSystem/Interface/Damageable.h"
+#include "Components/SwordCombatComponent.h"
+#include "Items/Object/ItemInstance_Weapon.h"
+#include "Items/Data/WeaponDataAsset.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -19,6 +22,7 @@ class DREADNIGHT_API APlayerCharacter : public ACharacter, public IDamageable
 
 protected:
 	APlayerCharacter();
+	virtual void BeginPlay() override;
 
 	//===============//
 	//  Components   //
@@ -42,6 +46,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UConditionStateComponent> ConditionStateComponent = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<USwordCombatComponent> SwordCombatComponent;
+
 	//===============//
 
 	UPROPERTY(BlueprintReadWrite)
@@ -61,6 +68,14 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Values")
 	float LerpCrouchSpeed = 8.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TObjectPtr<UItemDataAsset> StartingWeaponDataAsset = nullptr;
+
+	UItemInstance_Weapon* CurrentIstanceWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TObjectPtr<UStaticMeshComponent> CurrentWeaponMesh = nullptr;
 
 public:
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
@@ -98,4 +113,13 @@ public:
 	UFUNCTION()
 	UConditionStateComponent* GetConditionStateComponent();
 
+	UFUNCTION()
+	void EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon);
+
+	UFUNCTION()
+	USwordCombatComponent* GetSwordCombatComponent();
+
+	UFUNCTION()
+	void OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };
