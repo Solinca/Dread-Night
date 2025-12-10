@@ -22,6 +22,7 @@ bool UWaveWorldSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 void UWaveWorldSubsystem::OnNightStart()
 {
 	CurrentDeathCount = 0;
+	RequiredDeathCount = 0;
 
 	for (FWaveMonsterData& Monster : BaseWorldSettings->WaveList[WaveIndex]->MonsterList)
 	{
