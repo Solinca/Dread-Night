@@ -19,6 +19,12 @@ bool ACollectibleResource::TryApplyDamage(float Damage, AActor* DamageInstigator
 		UItemInstance* ItemInstance = FItemInstanceFactory::CreateItem(ItemDataAsset, ResourceCollected);
 
 		UE_LOG(LogTemp, Log, TEXT("Resource type = %s, collected %d"), *ItemDataAsset->Type.GetTagLeafName().ToString(), ResourceCollected);
+		FString Msg = FString::Printf(
+			TEXT("Resource type = %s, collected %d"),
+			*ItemDataAsset->Type.GetTagLeafName().ToString(),
+			ResourceCollected
+		);
+		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, Msg);
 
 		CurrentItemQuantity -= ResourceCollected;
 		if (CurrentItemQuantity <= 0)

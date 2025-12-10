@@ -26,11 +26,6 @@ void ABaseAICharacter::OnDeath()
 bool ABaseAICharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 {
 	HealthComponent->RemoveHealth(Damage);
-	FString Msg = FString::Printf(
-		TEXT("enemy hit, dealt %f damages"),
-		Damage
-	);
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, Msg);
 
 	return true;
 }

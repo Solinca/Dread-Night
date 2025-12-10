@@ -29,6 +29,8 @@ void APlayerCharacter::BeginPlay()
 
 	CurrentIstanceWeapon = Cast<UItemInstance_Weapon>(FItemInstanceFactory::CreateItem(StartingWeaponDataAsset, 1));
 	EquipWeapon(CurrentIstanceWeapon);
+
+	CurrentWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnSwordOverlap);
 }
 
 bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
@@ -125,4 +127,12 @@ USwordCombatComponent* APlayerCharacter::GetSwordCombatComponent()
 	return SwordCombatComponent;
 }
 
-
+// Solution temporaire pour la build, on va le gérer avec le swordCombatComponent
+void APlayerCharacter::OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (SwordCombatComponent->GetIsAttacking() && OtherActor->Implements<UDamageable>() && OtherActor != this)
+	{
+		Cast<IDamageable>(OtherActor)->TryApplyDamage(CurrentIstanceWeapon->GetDataAsset()->Damage, this);
+	}
+}

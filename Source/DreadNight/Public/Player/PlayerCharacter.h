@@ -74,6 +74,7 @@ protected:
 
 	UItemInstance_Weapon* CurrentIstanceWeapon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	TObjectPtr<UStaticMeshComponent> CurrentWeaponMesh = nullptr;
 
 public:
@@ -117,4 +118,8 @@ public:
 
 	UFUNCTION()
 	USwordCombatComponent* GetSwordCombatComponent();
+
+	UFUNCTION()
+	void OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };
