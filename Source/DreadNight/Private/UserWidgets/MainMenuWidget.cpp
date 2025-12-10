@@ -20,7 +20,7 @@ void UMainMenuWidget::OnContinueClicked()
 
 void UMainMenuWidget::OnNewGameClicked()
 {
-
+	UGameplayStatics::OpenLevel(this, TEXT("BaseLevel"));
 }
 
 void UMainMenuWidget::OnOptionsClicked()
