@@ -5,7 +5,8 @@
 
 ATrap::ATrap()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	TrapCollisionComponent = CreateDefaultSubobject<UBoxComponent>("Trap Collision Component");
 	TrapCollisionComponent->SetCollisionProfileName("Trap");
