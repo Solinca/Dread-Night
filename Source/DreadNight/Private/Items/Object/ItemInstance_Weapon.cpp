@@ -11,6 +11,11 @@ void UItemInstance_Weapon::Use(AActor* Player)
 {
 }
 
+UWeaponDataAsset* UItemInstance_Weapon::GetDataAsset()
+{
+	return WeaponDataAsset;
+}
+
 void UItemInstance_Weapon::OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack)
 {
 	if (WeaponDataAsset = Cast<UWeaponDataAsset>(DataAsset); !WeaponDataAsset)
