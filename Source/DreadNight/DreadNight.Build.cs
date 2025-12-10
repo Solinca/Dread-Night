@@ -16,7 +16,8 @@ public class DreadNight : ModuleRules
 			"AIModule", 
 			"GameplayTags", 
 			"GameplayTasks", 
-			"UMG"
+			"UMG", 
+			"PCG"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
