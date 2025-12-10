@@ -1,12 +1,12 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/Widgets/CustomListView.h"
+#include "UI/Widgets/Glossary.h"
 
 #include "Components/ListViewBase.h"
 #include "Components/RetainerBox.h"
 
-void UCustomListView::NativeConstruct()
+void UGlossary::NativeConstruct()
 {
 	Super::NativeConstruct();
 
@@ -18,16 +18,19 @@ void UCustomListView::NativeConstruct()
 	OnListScrolled(0.f, 1.f);
 }
 
-void UCustomListView::OnListScrolled(const float ItemOffset, const float DistanceRemaining) const
+void UGlossary::OnListScrolled(const float ItemOffset, const float DistanceRemaining) const
 {
 	if (!DynamicMaterial)
 	{
 		return;
 	}
 	
-	const float TopStrength = FMath::Clamp(ItemOffset, 0.0f, 1.0f);
+	constexpr float TopThreshold = 2.5f; 
+	constexpr float BottomThreshold = 0.1f;
+
+	const float TopStrength = FMath::SmoothStep(0.0f, TopThreshold, ItemOffset);
 	DynamicMaterial->SetScalarParameterValue("TopStrength", TopStrength);
-	
-	const float BottomStrength = FMath::Clamp(DistanceRemaining, 0.0f, 1.0f);
+    
+	const float BottomStrength = FMath::SmoothStep(0.0f, BottomThreshold, DistanceRemaining);
 	DynamicMaterial->SetScalarParameterValue("BottomStrength", BottomStrength);
 }

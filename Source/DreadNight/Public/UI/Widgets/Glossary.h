@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "CustomListView.generated.h"
+#include "Glossary.generated.h"
 
 
 class URetainerBox;
@@ -12,7 +12,7 @@ class UListView;
 class UScrollBox;
 
 UCLASS()
-class DREADNIGHT_API UCustomListView : public UUserWidget
+class DREADNIGHT_API UGlossary : public UUserWidget
 {
 	GENERATED_BODY()
 
