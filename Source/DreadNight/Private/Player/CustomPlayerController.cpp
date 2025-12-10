@@ -3,7 +3,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/Widgets/PauseMenu.h"
 #include <EnhancedInputSubsystems.h>
-
+#include "UserWidgets/OptionsWidget.h"
 #include "Global/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -202,6 +202,7 @@ void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
 	{
 		PauseMenuWidget = CreateWidget<UPauseMenu>(this, PauseMenuClass);
 		PauseMenuWidget->OnResume.AddDynamic(this, &ThisClass::ResumeGame);
+		PauseMenuWidget->OnOptions.AddDynamic(this, &ThisClass::AccessOptions);
 		PauseMenuWidget->OnQuitToMenu.AddDynamic(this, &ThisClass::GoBackToMenu);
 		PauseMenuWidget->OnQuitToDesktop.AddDynamic(this, &ThisClass::LeaveGame);
 		PauseGame();
@@ -287,6 +288,27 @@ void ACustomPlayerController::ResumeGame()
 void ACustomPlayerController::PauseGame()
 {
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
+}
+
+void ACustomPlayerController::AccessOptions()
+{
+	if (!OptionsWidget)
+	{
+		OptionsWidget = CreateWidget<UOptionsWidget>(this, OptionsClass);
+		OptionsWidget->OnReturn.AddDynamic(this, &ThisClass::QuitOptions);
+
+		PushNewMenu(OptionsWidget, [this] {
+			&ACustomPlayerController::QuitOptions;
+			; });
+
+		PopLastMenu();
+	}
+}
+
+void ACustomPlayerController::QuitOptions()
+{
+	DisplayMenu(FInputActionValue{});
+	PopLastMenu();
 }
 
 void ACustomPlayerController::LeaveGame()

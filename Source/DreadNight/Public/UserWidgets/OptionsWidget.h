@@ -10,6 +10,8 @@
 
 class UMainMenuWidget;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReturn);
+
 UCLASS()
 class DREADNIGHT_API UOptionsWidget : public UUserWidget
 {
@@ -82,4 +84,7 @@ protected:
 
 public:
 	UOptionsWidget(const FObjectInitializer& ObjectInitializer);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnReturn OnReturn;
 };

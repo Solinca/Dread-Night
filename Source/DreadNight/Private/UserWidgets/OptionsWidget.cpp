@@ -91,12 +91,13 @@ void UOptionsWidget::OnCheckboxVSyncChanged(bool bIsChecked)
 
 void UOptionsWidget::OnReturnClicked()
 {
-	RemoveFromParent();
+	//RemoveFromParent();
+	OnReturn.Broadcast();
 
-	if (UMainMenuWidget* MMW = CreateWidget<UMainMenuWidget>(GetWorld(), MainMenuWidgetClass))
+	/*if (UMainMenuWidget* MMW = CreateWidget<UMainMenuWidget>(GetWorld(), MainMenuWidgetClass))
 	{
 		MMW->AddToViewport();
-	}
+	}*/
 }
 
 UOptionsWidget::UOptionsWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
