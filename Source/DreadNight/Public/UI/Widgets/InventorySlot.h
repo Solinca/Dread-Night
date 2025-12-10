@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
-#include "Components/Textblock.h"
+#include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "InventorySlot.generated.h"

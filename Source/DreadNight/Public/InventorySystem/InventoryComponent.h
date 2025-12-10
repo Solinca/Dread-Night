@@ -5,10 +5,10 @@
 #include "Items/Object/ItemInstance.h"
 #include "InventoryComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FItemAddedEventSignature, class UItemInstance*, InventoryComponent, int, ItemSlot);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemRemovedEventSignature, int, ItemSlot);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FItemClearedEventSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FItemModifiedEventSignature, class UItemInstance*, InventoryComponent, int, ItemSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemAddedEventSignature, class UItemInstance*, InventoryComponent, int, ItemSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemovedEventSignature, int, ItemSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemClearedEventSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemModifiedEventSignature, class UItemInstance*, InventoryComponent, int, ItemSlot);
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -31,7 +31,7 @@ protected:
 public:	
 	
 	void AddItem(UItemInstance* Item);
-	void RemoveItemsByType(UItemDataAsset* Item);
+	void RemoveItemsByType(UItemDataAsset* Item, int Amount);
 	void RemoveItemsAt(int SlotIndex, int Amount);
 	void UseItemByType(UItemDataAsset* Item);
 	void UseItemAt(int SlotIndex);
@@ -42,18 +42,18 @@ public:
 	void SwapItem(UInventoryComponent* InventoryComponent, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex);
 	
 	int GetSize() const { return Size; }
-	int GetEmptySlot() const;
+	TOptional<int> GetEmptySlot() const;
 	UItemInstance* GetItemAtSlot(int SlotIndex) const;
 	UItemDataAsset* GetItemTypeAtSlot(int SlotIndex) const;
-	int GetItemSlot(UItemDataAsset* Item) const;
-	int GetStackableItemSlot(UItemDataAsset* Item) const;
+	TOptional<int> GetItemSlot(UItemDataAsset* Item) const;
+	TOptional<int> GetStackableItemSlot(UItemDataAsset* Item) const;
 	
 	bool Contains(UItemDataAsset* Item, int StackNumber) const;
 	bool IsSlotEmpty(int SlotIndex) const;
 	bool IsFull() const;
 	
-	FItemAddedEventSignature OnItemAdded;
-	FItemRemovedEventSignature OnItemRemoved;
-	FItemModifiedEventSignature OnItemModified;
-	FItemClearedEventSignature OnItemCleared;
+	FOnItemAddedEventSignature OnItemAdded;
+	FOnItemRemovedEventSignature OnItemRemoved;
+	FOnItemModifiedEventSignature OnItemModified;
+	FOnItemClearedEventSignature OnItemCleared;
 };

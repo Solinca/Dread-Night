@@ -32,11 +32,8 @@ protected:
 	
 	int SlotIndex;
 public:
-	UFUNCTION(BlueprintCallable)
 	virtual void NativePreConstruct() override;
-	UFUNCTION(BlueprintCallable)
 	virtual void NativeConstruct() override;
-	UFUNCTION(BlueprintCallable)
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 	UFUNCTION(BlueprintCallable)

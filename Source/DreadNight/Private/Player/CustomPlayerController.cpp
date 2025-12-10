@@ -195,18 +195,20 @@ void ACustomPlayerController::Interact(const FInputActionValue& Value)
 
 void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 {
-	if (Inventory)
-	{
-		Inventory->RemoveFromParent();
-		SetShowMouseCursor(false);
-	}
-	Inventory = CreateWidget<UInventory>(this, InventoryClass);
-	Inventory->BindToInventory(MyPlayer->GetComponentByClass<UInventoryComponent>());
+	if (!InventoryWidget)
+		return;
+	
+	InventoryWidget = CreateWidget<UInventory>(this, InventoryWidgetClass);
+	InventoryWidget->BindToInventory(MyPlayer->GetComponentByClass<UInventoryComponent>());
 	SetShowMouseCursor(true);
 	
-	PushNewMenu(Inventory, [this]{
+	PushNewMenu(InventoryWidget, [this]{
 			UGameplayStatics::SetGamePaused(GetWorld(), false);
-			;});
+			if (UInventory* TempInventory = Cast<UInventory>(InventoryWidget))
+			{
+				TempInventory->RemoveItemAction();
+			}
+		});
 }
 
 void ACustomPlayerController::DisplayGlossary(const FInputActionValue& Value)
@@ -275,11 +277,6 @@ void ACustomPlayerController::PopLastMenu()
 	}
 
 	auto& LastMenu = *MenuList.Peek();
-
-	if (UInventory* TempInventory = Cast<UInventory>(LastMenu.Key))
-	{
-		TempInventory->RemoveItemAction();
-	}
 	
 	LastMenu.Key->RemoveFromParent();
 	LastMenu.Value();

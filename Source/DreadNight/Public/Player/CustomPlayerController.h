@@ -79,11 +79,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
 	float CrouchMoveSpeed = 300.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Test")
-	UItemDataAsset* ItemData = nullptr;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Test")
-	UItemDataAsset* ItemData2 = nullptr;
 	//=========//
 	//==Stats==//
 	//=========//
@@ -134,10 +129,10 @@ protected:
 	TObjectPtr<UPauseMenu> PauseMenuWidget;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UInventory> InventoryClass;
+	TSubclassOf<UInventory> InventoryWidgetClass;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UInventory> Inventory;
+	TObjectPtr<UInventory> InventoryWidget;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UOptionsWidget> OptionsWidget;

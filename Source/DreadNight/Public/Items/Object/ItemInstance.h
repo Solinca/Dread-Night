@@ -6,8 +6,8 @@
 
 class UItemDataAsset;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEmptyItemEventSignature, class UItemInstance*, ItemInstance);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FItemInstanceStackChangeEventSignature, class UItemInstance*, ItemInstance, int, NewInstanceNumber);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEmptyItemEventSignature, class UItemInstance*, ItemInstance);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemInstanceStackChangeEventSignature, class UItemInstance*, ItemInstance, int, NewInstanceNumber);
 
 
 UCLASS()
@@ -43,7 +43,9 @@ public:
 
 	bool TryStackWith(UItemInstance* Other);
 
-	bool TryUse(const int NumberOfInstanceToUse);
+	bool TryUse(const int NumberOfInstanceToUse, AActor* User);
+	
+	bool TryRemove(const int NumberOfInstanceToRemove);
 
 	bool TryAdd(const int NumberOfInstanceToAdd);
 
@@ -52,6 +54,6 @@ public:
 	TObjectPtr<UItemDataAsset> GetItemDataAsset() const;
 	int GetStackNumber() const;
 	
-	FEmptyItemEventSignature OnItemDepleted;
-	FItemInstanceStackChangeEventSignature OnItemStackChange; 
+	FOnEmptyItemEventSignature OnItemDepleted;
+	FOnItemInstanceStackChangeEventSignature OnItemStackChange; 
 };

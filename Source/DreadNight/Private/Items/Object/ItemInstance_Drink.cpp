@@ -9,6 +9,9 @@ FName UItemInstance_Drink::GetActionName()
 
 void UItemInstance_Drink::Use(AActor* Player)
 {
+	StackNumber--;
+	OnItemStackChange.Broadcast(this, StackNumber);
+	DestroyIfEmpty();
 }
 
 void UItemInstance_Drink::OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack)

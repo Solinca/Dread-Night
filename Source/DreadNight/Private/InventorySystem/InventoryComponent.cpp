@@ -23,7 +23,7 @@ void UInventoryComponent::AddItem(UItemInstance* Item)
 	{
 		for (int i = 0; i < Items.Num(); ++i)
 		{
-			if (Items[i] && Items[i]->GetItemDataAsset() == Item->GetItemDataAsset())
+			if (Items[i]->CanBeStackedWith(Item, UItemInstance::EStackMethod::SameType))
 			{
 				if (Items[i]->GetStackNumber() != Items[i]->GetItemDataAsset()->StackLimit)
 				{
@@ -40,12 +40,12 @@ void UInventoryComponent::AddItem(UItemInstance* Item)
 	if (Item->IsEmpty())
 		return;
 	
-	int index = GetEmptySlot();
-	Items[GetEmptySlot()] = Item;
+	int index = GetEmptySlot().GetValue();
+	Items[GetEmptySlot().GetValue()] = Item;
 	OnItemAdded.Broadcast(Item, index);
 }
 
-void UInventoryComponent::RemoveItemsByType(UItemDataAsset* Item)
+void UInventoryComponent::RemoveItemsByType(UItemDataAsset* Item, int Amount)
 {
 	if (!Item)
 		return;
@@ -54,8 +54,18 @@ void UInventoryComponent::RemoveItemsByType(UItemDataAsset* Item)
 	{
 		if (Items[i] && Items[i]->GetItemDataAsset() == Item)
 		{
-			Items[i]->TryUse(1);
+			//Decrement Stack
+			if (Items[i]->GetStackNumber() - Amount < 0)
+			{
+				Amount -= Items[i]->GetStackNumber();
+				Items[i]->TryRemove(Items[i]->GetStackNumber());
+			}
+			else
+			{
+				Items[i]->TryRemove(Amount);
+			}
 			
+			//If stack is Empty, Free Inventory Slot
 			if (Items[i]->IsEmpty())
 			{
 				Items[i] = nullptr;
@@ -72,10 +82,10 @@ void UInventoryComponent::RemoveItemsAt(int SlotIndex, int Amount)
 	if (!Items[SlotIndex])
 		return;
 	
-	Items[SlotIndex]->TryUse(Amount);
+	Items[SlotIndex]->TryRemove(Amount);
 	OnItemModified.Broadcast(Items[SlotIndex],SlotIndex);
 	
-	if (Items[SlotIndex] && Items[SlotIndex]->IsEmpty())
+	if (Items[SlotIndex]->IsEmpty())
 	{
 		Items[SlotIndex] = nullptr;
 		OnItemRemoved.Broadcast(SlotIndex);
@@ -91,20 +101,17 @@ void UInventoryComponent::UseItemByType(UItemDataAsset* Item)
 	{
 		if (Items[i] && Items[i]->GetItemDataAsset() == Item)
 		{
-			if (IUsableItem* UsableItem = Cast<IUsableItem>(Items[i]))
+			Items[i]->TryUse(1,GetOwner());
+				
+			if (Items[i]->IsEmpty())
 			{
-				UsableItem->Use(GetOwner());
-				Items[i]->TryUse(1);
-				
-				if (Items[i]->IsEmpty())
-				{
-					Items[i] = nullptr;
-					OnItemRemoved.Broadcast(i);
-				}
-				
-				return;
+				Items[i] = nullptr;
+				OnItemRemoved.Broadcast(i);
 			}
+				
+			return;
 		}
+		
 	}
 }
 
@@ -113,12 +120,8 @@ void UInventoryComponent::UseItemAt(int SlotIndex)
 	if (!Items[SlotIndex])
 		return;
 	
-	if (IUsableItem* UsableItem = Cast<IUsableItem>(Items[SlotIndex]))
-	{
-		UsableItem->Use(GetOwner());
-		Items[SlotIndex]->TryUse(1);
-		OnItemModified.Broadcast(Items[SlotIndex],SlotIndex);
-	}
+	Items[SlotIndex]->TryUse(1,GetOwner());
+	OnItemModified.Broadcast(Items[SlotIndex],SlotIndex);
 	
 	if (Items[SlotIndex]->IsEmpty())
 	{
@@ -137,7 +140,7 @@ void UInventoryComponent::DropItems(int SlotIndex, int Amount = 1)
 		if (!Items[SlotIndex]->IsEmpty())
 		{
 			GetWorld()->SpawnActor<AActor>(Items[SlotIndex]->GetItemDataAsset()->ItemClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
-			Items[SlotIndex]->TryUse(1);
+			Items[SlotIndex]->TryRemove(1);
 		}
 	}
 	
@@ -167,7 +170,7 @@ void UInventoryComponent::SwapItem(UInventoryComponent* InventoryComponent, UIte
 	//else we swap them
 }
 
-int UInventoryComponent::GetEmptySlot() const
+TOptional<int> UInventoryComponent::GetEmptySlot() const
 {
 	for (int i = 0; i < Items.Num(); ++i)
 	{
@@ -175,7 +178,7 @@ int UInventoryComponent::GetEmptySlot() const
 			return i;
 	}
 	
-	return -1;
+	return TOptional<int>();
 }
 
 UItemInstance* UInventoryComponent::GetItemAtSlot(int SlotIndex) const
@@ -191,10 +194,10 @@ UItemDataAsset* UInventoryComponent::GetItemTypeAtSlot(int SlotIndex) const
 	return Items[SlotIndex]->GetItemDataAsset();
 }
 
-int UInventoryComponent::GetItemSlot(UItemDataAsset* Item) const
+TOptional<int> UInventoryComponent::GetItemSlot(UItemDataAsset* Item) const
 {
 	if (!Item)
-		return -1;
+		return TOptional<int>();
 	
 	for (int i = 0; i < Items.Num(); ++i)
 	{
@@ -204,13 +207,13 @@ int UInventoryComponent::GetItemSlot(UItemDataAsset* Item) const
 		}
 	}
 	
-	return -1;
+	return TOptional<int>();
 }
 
-int UInventoryComponent::GetStackableItemSlot(UItemDataAsset* Item) const
+TOptional<int> UInventoryComponent::GetStackableItemSlot(UItemDataAsset* Item) const
 {
 	if (!Item)
-		return -1;
+		return TOptional<int>();
 	
 	for (int i = 0; i < Items.Num(); ++i)
 	{
@@ -223,7 +226,7 @@ int UInventoryComponent::GetStackableItemSlot(UItemDataAsset* Item) const
 		}
 	}
 	
-	return -1;
+	return TOptional<int>();
 }
 
 bool UInventoryComponent::Contains(UItemDataAsset* Item, int StackNumber) const

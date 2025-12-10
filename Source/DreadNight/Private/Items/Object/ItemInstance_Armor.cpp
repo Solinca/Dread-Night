@@ -9,6 +9,7 @@ FName UItemInstance_Armor::GetActionName()
 
 void UItemInstance_Armor::Use(AActor* Player)
 {
+	
 }
 
 void UItemInstance_Armor::OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack)

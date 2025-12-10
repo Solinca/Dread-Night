@@ -1,5 +1,5 @@
 ﻿#include "Items/Object/ItemInstance.h"
-
+#include "Items/Interface/UsableItem.h"
 #include "Items/Data/ItemDataAsset.h"
 
 bool UItemInstance::TryStealInstance(UItemInstance* Other)
@@ -10,14 +10,14 @@ bool UItemInstance::TryStealInstance(UItemInstance* Other)
 	if (CanBeStackedWith(Other, EStackMethod::Fully))
 	{
 		TryAdd(Other->StackNumber);
-		Other->TryUse(Other->StackNumber);		 
+		Other->TryRemove(Other->StackNumber);		 
 		return true;
 	}
 	if (CanBeStackedWith(Other, EStackMethod::Partially))
 	{
 		const int InstanceToAdd = StackNumber - ItemData->StackLimit;		
 		TryAdd(InstanceToAdd);
-		Other->TryUse(InstanceToAdd);	
+		Other->TryRemove(InstanceToAdd);	
 		return true;		
 	}
 
@@ -82,7 +82,7 @@ bool UItemInstance::TryStackWith(UItemInstance* Other)
 
 bool UItemInstance::TryAdd(const int NumberOfInstanceToAdd)
 {
-	if (StackNumber + NumberOfInstanceToAdd >= ItemData->StackLimit)
+	if (StackNumber + NumberOfInstanceToAdd > ItemData->StackLimit)
 		return false;
 
 	StackNumber += NumberOfInstanceToAdd;
@@ -105,12 +105,25 @@ int UItemInstance::GetStackNumber() const
 	return StackNumber;
 }
 
-bool UItemInstance::TryUse(const int NumberOfInstanceToUse)
+bool UItemInstance::TryUse(const int NumberOfInstanceToUse,AActor* User)
 {
 	if (NumberOfInstanceToUse > StackNumber)
 		return false;
 
-	StackNumber -= NumberOfInstanceToUse;
+	if (IUsableItem* UsableItem = Cast<IUsableItem>(this))
+	{
+		UsableItem->Use(User);
+	}
+	
+	return true;
+}
+
+bool UItemInstance::TryRemove(const int NumberOfInstanceToRemove)
+{
+	if (NumberOfInstanceToRemove > StackNumber)
+		return false;
+
+	StackNumber -= NumberOfInstanceToRemove;
 	OnItemStackChange.Broadcast(this, StackNumber);
 	DestroyIfEmpty();
 	return true;
