@@ -12,6 +12,6 @@ class DREADNIGHT_API UCraftingFunctionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION(BlueprintCallable, Category = "Crafting System")
+	UFUNCTION(BlueprintCallable)
 	static TArray<class UCraftingRecipeItem*> ConvertDataTableToRecipeItems(UDataTable* DataTable);
 };
