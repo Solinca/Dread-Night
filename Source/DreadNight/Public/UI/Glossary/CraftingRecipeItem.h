@@ -12,13 +12,13 @@ struct FCraftingRecipe : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
-	FString DisplayName;
+	FText DisplayName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
-	FString Description;
+	FText Description;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
-	FString Ingredients; 
+	FText Ingredients; 
 };
 
 
