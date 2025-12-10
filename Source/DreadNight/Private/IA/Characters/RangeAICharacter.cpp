@@ -1,9 +1,9 @@
-﻿#include "IA/Characters/WarriorAICharacter.h"
+﻿#include "IA/Characters/RangeAICharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "IA/DataAssets/BlackboardMonsterDataAsset.h"
 
-void AWarriorAICharacter::OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent,
-                                                    UMonsterDataAsset* MonsterDataAsset)
+void ARangeAICharacter::OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent,
+                                                  UMonsterDataAsset* MonsterDataAsset)
 {
 	//The player character has a chance to not be set at the time SetupBlackboard is set.
 	auto RetrievePlayer{[BlackboardComponent, this]

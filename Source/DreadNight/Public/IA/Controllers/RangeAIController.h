@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "BaseAIController.h"
-#include "WarriorAIController.generated.h"
+#include "RangeAIController.generated.h"
 
 UCLASS(Blueprintable, BlueprintType, Category = "AI", ClassGroup = "AIController")
-class DREADNIGHT_API AWarriorAIController : public ABaseAIController
+class DREADNIGHT_API ARangeAIController : public ABaseAIController
 {
 	GENERATED_BODY()
 };

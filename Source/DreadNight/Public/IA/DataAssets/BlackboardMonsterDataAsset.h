@@ -1,0 +1,27 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "MonsterDataAsset.h"
+#include "BlackboardMonsterDataAsset.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class DREADNIGHT_API UBlackboardMonsterDataAsset : public UMonsterDataAsset
+{
+	GENERATED_BODY()
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackRange{0.f};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AcceptableRadius{0.f};
+
+public:
+	[[nodiscard]] float GetAttackRange() const;
+	[[nodiscard]] float GetAcceptableRadius() const;
+};

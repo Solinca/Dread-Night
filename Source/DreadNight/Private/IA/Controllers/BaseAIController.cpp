@@ -1,6 +1,7 @@
 ﻿#include "IA/Controllers/BaseAIController.h"
 
 #include "CustomLogCategories.h"
+#include "IA/Characters/BaseAICharacter.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Hearing.h"
 #include "Perception/AISense_Sight.h"
@@ -17,16 +18,7 @@ ABaseAIController::ABaseAIController()
 
 void ABaseAIController::TryRunBehaviorTree()
 {
-	if (!UsedBehaviorTree)
-	{
-		UE_LOG(LogAIController, Error,
-			TEXT("ABaseAIController: Unable to run the behavior because the used behavior tree variable is equal to nullptr."))
-		return;
-	}
-
-	RunBehaviorTree(UsedBehaviorTree);
-
-	BP_SetupBlackboard(GetBlackboardComponent());
+	TryRunBehaviorTree(GetPawn());
 }
 
 void ABaseAIController::BeginPlay()
@@ -41,17 +33,15 @@ void ABaseAIController::BeginPlay()
 
 void ABaseAIController::OnPossess(APawn* InPawn)
 {
-	Super::OnPossess(InPawn);
-
 	if (bAutoRunBehaviorTree)
 	{
-		TryRunBehaviorTree();
+		//In order to avoid a crash because the super implementation has not been called and GetPawn return nullptr.
+		//I created an internal implementation taking a pawn in an argument.
+		TryRunBehaviorTree(InPawn);
 	}
-}
 
-void ABaseAIController::BP_SetupBlackboard_Implementation(UBlackboardComponent* BlackboardComponent)
-{
-	SetupBlackboard(BlackboardComponent);
+	//Then OnPossess will call PossessedBy in the character and the blackboard will not be nullptr since the RunBehavior function has been called.
+	Super::OnPossess(InPawn);
 }
 
 void ABaseAIController::BP_OnSightStimulusUpdated_Implementation(AActor* Actor, FAIStimulus& Stimulus, const ETeamAttitude::Type TeamAttitude)
@@ -79,6 +69,22 @@ ETeamAttitude::Type ABaseAIController::GetTeamAttitudeTowards(const AActor& Othe
 	const EGameTeam ThisTeam{UTeamFunctionLibrary::GetTeam(this)};
 	
 	return ThisTeam == OtherTeam ? ETeamAttitude::Friendly : ETeamAttitude::Hostile;
+}
+
+void ABaseAIController::TryRunBehaviorTree(APawn* InPawn)
+{
+	ABaseAICharacter* BaseAICharacter{Cast<ABaseAICharacter>(InPawn)};
+	UMonsterDataAsset* MonsterDataAsset{BaseAICharacter->GetMonsterData()};
+	UBehaviorTree* UsedBehaviorTree{MonsterDataAsset->GetBehaviorTree()};
+	
+	if (!UsedBehaviorTree)
+	{
+		UE_LOG(LogAIController, Error,
+			TEXT("ABaseAIController: Unable to run the behavior because the used behavior tree variable is equal to nullptr."))
+		return;
+	}
+	
+	RunBehaviorTree(UsedBehaviorTree);
 }
 
 void ABaseAIController::InternalOnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)

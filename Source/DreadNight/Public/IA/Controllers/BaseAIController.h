@@ -19,12 +19,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Behavior Tree")
 	bool bAutoRunBehaviorTree{true};
 
-	/**
-	 * The behavior tree used by this AI controller.
-	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Behavior Tree")
-	TObjectPtr<UBehaviorTree> UsedBehaviorTree;
-	
 public:
 	ABaseAIController();
 
@@ -32,25 +26,11 @@ public:
 	 * Attempts to run the assigned behavior tree.
 	 */
 	void TryRunBehaviorTree();
+	
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void OnPossess(APawn* InPawn) override;
-
-	/**
-	 * Blueprint-native event for setting up the blackboard component.
-	 *
-	 * @param BlackboardComponent - The blackboard component to set up.
-	 */
-	UFUNCTION(BlueprintNativeEvent, DisplayName = "SetupBlackboard")
-	void BP_SetupBlackboard(UBlackboardComponent* BlackboardComponent);
-
-	/**
-	 * Sets up the blackboard component.
-	 *
-	 * @param BlackboardComponent - The blackboard component to set up.
-	 */
-	virtual void SetupBlackboard(UBlackboardComponent* BlackboardComponent) {}
 
 #pragma region AI Perception Base Callback
 	
@@ -112,6 +92,11 @@ protected:
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 	
 private:
+	/**
+	 * Internal implementation to be call in the OnPossess function.
+	 */
+	void TryRunBehaviorTree(APawn* InPawn);
+	
 	UFUNCTION()
 	void InternalOnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 };

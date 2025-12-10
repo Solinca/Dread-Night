@@ -1,11 +1,13 @@
-﻿#pragma once
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
 
 #include "CoreMinimal.h"
 #include "BaseAICharacter.h"
-#include "WarriorAICharacter.generated.h"
+#include "RangeAICharacter.generated.h"
 
 UCLASS(BlueprintType, Blueprintable, Category = "AI", ClassGroup = "AICharacter")
-class DREADNIGHT_API AWarriorAICharacter : public ABaseAICharacter
+class DREADNIGHT_API ARangeAICharacter : public ABaseAICharacter
 {
 	GENERATED_BODY()
 
