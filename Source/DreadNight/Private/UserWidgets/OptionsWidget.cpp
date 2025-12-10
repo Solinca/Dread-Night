@@ -7,6 +7,27 @@ void UOptionsWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	WindowModeMap = {
+		{TEXT("Fullscreen"), EWindowMode::Fullscreen},
+		{TEXT("Windowed Fullscreen"), EWindowMode::WindowedFullscreen},
+		{TEXT("Windowed"), EWindowMode::Windowed}
+	};
+
+	TArray<FIntPoint> Array;
+	UKismetSystemLibrary::GetSupportedFullscreenResolutions(Array);
+	for (auto& i : Array)
+	{
+		ResolutionMap.Add(FString::Printf(TEXT("%dx%d"), i.X, i.Y), i);
+	}
+
+	GraphicsMap = {
+		{TEXT("Low"), 0},
+		{TEXT("Medium"), 1},
+		{TEXT("High"), 2},
+		{TEXT("Epic"), 3},
+		{TEXT("Cinematic"), 4},
+	};
+	
 	if (ButtonReturn) ButtonReturn->OnClicked.AddDynamic(this, &UOptionsWidget::OnReturnClicked);
 
 	UGameUserSettings* Settings = GEngine->GetGameUserSettings();
@@ -105,26 +126,7 @@ void UOptionsWidget::OnReturnClicked()
 
 UOptionsWidget::UOptionsWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	WindowModeMap = {
-		{TEXT("Fullscreen"), EWindowMode::Fullscreen},
-		{TEXT("Windowed Fullscreen"), EWindowMode::WindowedFullscreen},
-		{TEXT("Windowed"), EWindowMode::Windowed}
-	};
 
-	TArray<FIntPoint> Array;
-	UKismetSystemLibrary::GetSupportedFullscreenResolutions(Array);
-	for (auto& i : Array)
-	{
-		ResolutionMap.Add(FString::Printf(TEXT("%dx%d"), i.X, i.Y), i);
-	}
-
-	GraphicsMap = {
-		{TEXT("Low"), 0},
-		{TEXT("Medium"), 1},
-		{TEXT("High"), 2},
-		{TEXT("Epic"), 3},
-		{TEXT("Cinematic"), 4},
-	};
 }
 
 void UOptionsWidget::SetMainMenuWidgetClass(TSubclassOf<UMainMenuWidget> MMWC)

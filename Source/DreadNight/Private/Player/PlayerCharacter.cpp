@@ -27,8 +27,8 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentIstanceWeapon = Cast<UItemInstance_Weapon>(FItemInstanceFactory::CreateItem(StartingWeaponDataAsset, 1));
-	EquipWeapon(CurrentIstanceWeapon);
+	CurrentInstanceWeapon = Cast<UItemInstance_Weapon>(FItemInstanceFactory::CreateItem(this,StartingWeaponDataAsset, 1));
+	EquipWeapon(CurrentInstanceWeapon);
 
 	CurrentWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnSwordOverlap);
 }
@@ -104,12 +104,12 @@ UConditionStateComponent* APlayerCharacter::GetConditionStateComponent()
 
 void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon)
 {
-	if (CurrentIstanceWeapon)
+	if (CurrentInstanceWeapon)
 	{
 		CurrentWeaponMesh->GetStaticMesh() = nullptr;
 	}
 
-	CurrentIstanceWeapon = itemInstanceWeapon;
+	CurrentInstanceWeapon = itemInstanceWeapon;
 	CurrentWeaponMesh->SetStaticMesh(itemInstanceWeapon->GetDataAsset()->WeaponMesh);
 
 	FName HandSocketName = TEXT("WeaponHandR");
@@ -127,12 +127,15 @@ USwordCombatComponent* APlayerCharacter::GetSwordCombatComponent()
 	return SwordCombatComponent;
 }
 
-// Solution temporaire pour la build, on va le gérer avec le swordCombatComponent
+// Solution temporaire pour la build, on va le gï¿½rer avec le swordCombatComponent
 void APlayerCharacter::OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
+    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{ 
 	if (SwordCombatComponent->GetIsAttacking() && OtherActor->Implements<UDamageable>() && OtherActor != this)
 	{
-		Cast<IDamageable>(OtherActor)->TryApplyDamage(CurrentIstanceWeapon->GetDataAsset()->Damage, this);
-	}
+		if (IDamageable* Damageable = Cast<IDamageable>(OtherActor))
+		{
+			Damageable->TryApplyDamage(CurrentInstanceWeapon->GetDataAsset()->Damage, this);
+		}
+	}  
 }
