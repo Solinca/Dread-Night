@@ -5,10 +5,11 @@
 
 ATrap::ATrap()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	TrapCollisionComponent = CreateDefaultSubobject<UBoxComponent>("Trap Collision Component");
 	TrapCollisionComponent->SetCollisionProfileName("Trap");
+	TrapCollisionComponent->SetupAttachment(RootComponent);
 }
 
 void ATrap::Tick(float DeltaSeconds)
@@ -17,7 +18,7 @@ void ATrap::Tick(float DeltaSeconds)
 	
 	OnTrapTick();
 
-	
+	CheckToFinishTrapTicking();
 }
 
 void ATrap::BeginPlay()
@@ -40,6 +41,7 @@ void ATrap::StartTrapTicking()
 	
 	if (!bTrapIsUsingTimer || bTrapTickInfinitely)
 	{
+		TrapTickCurrentCount = 0;
 		return;
 	}
 	
