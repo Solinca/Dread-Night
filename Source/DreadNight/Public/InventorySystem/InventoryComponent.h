@@ -26,7 +26,7 @@ protected:
 
 public:	
 	
-	void AddItem(TObjectPtr<UItemInstance> Item, int Amount);
+	void AddItem(TObjectPtr<UItemInstance> Item);
 	void RemoveItemsByType(TObjectPtr<UItemDataAsset> Item);
 	void RemoveItemsAt(int SlotIndex, int Amount);
 	void UseItemByType(TObjectPtr<UItemDataAsset> Item);
@@ -39,6 +39,8 @@ public:
 	
 	int GetSize() const { return Size; }
 	int GetEmptySlot() const;
+	int GetItemSlot(TObjectPtr<UItemDataAsset> Item) const;
+	int GetStackableItemSlot(TObjectPtr<UItemDataAsset> Item) const;
 	
 	bool Contains(TObjectPtr<UItemDataAsset> Item, int StackNumber) const;
 	bool IsSlotEmpty(int SlotIndex) const;

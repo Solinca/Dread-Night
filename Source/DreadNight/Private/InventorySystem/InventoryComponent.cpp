@@ -14,7 +14,7 @@ void UInventoryComponent::BeginPlay()
 	Items.SetNum(Size);
 }
 
-void UInventoryComponent::AddItem(TObjectPtr<UItemInstance> Item, int Amount = -1)
+void UInventoryComponent::AddItem(TObjectPtr<UItemInstance> Item)
 {
 	if (!Item || IsFull())
 		return;
@@ -27,7 +27,7 @@ void UInventoryComponent::AddItem(TObjectPtr<UItemInstance> Item, int Amount = -
 			{
 				if (tempItem->GetStackNumber() != tempItem->GetItemDataAsset()->StackLimit)
 				{
-					Item->TryStackWith(tempItem);
+					tempItem->TryStackWith(Item);
 					
 					if (Item->IsEmpty())
 						return;
@@ -154,6 +154,41 @@ int UInventoryComponent::GetEmptySlot() const
 	return -1;
 }
 
+int UInventoryComponent::GetItemSlot(TObjectPtr<UItemDataAsset> Item) const
+{
+	if (!Item)
+		return -1;
+	
+	for (int i = 0; i < Items.Num(); ++i)
+	{
+		if (Items[i]->GetItemDataAsset() == Item)
+		{
+			return i;
+		}
+	}
+	
+	return -1;
+}
+
+int UInventoryComponent::GetStackableItemSlot(TObjectPtr<UItemDataAsset> Item) const
+{
+	if (!Item)
+		return -1;
+	
+	for (int i = 0; i < Items.Num(); ++i)
+	{
+		if (Items[i]->GetItemDataAsset() == Item)
+		{
+			if (Items[i]->GetStackNumber() < Items[i]->GetItemDataAsset()->StackLimit)
+			{
+				return i;
+			}
+		}
+	}
+	
+	return -1;
+}
+
 bool UInventoryComponent::Contains(TObjectPtr<UItemDataAsset> Item, int StackNumber) const
 {
 	int Counter = 0;
@@ -177,7 +212,7 @@ bool UInventoryComponent::Contains(TObjectPtr<UItemDataAsset> Item, int StackNum
 
 bool UInventoryComponent::IsSlotEmpty(int SlotIndex) const
 {
-	return !Items.IsValidIndex(SlotIndex);
+	return !Items[SlotIndex];
 }
 
 bool UInventoryComponent::IsFull() const
