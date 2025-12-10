@@ -4,46 +4,33 @@
 #include "Components/ActorComponent.h"
 #include "SwordCombatComponent.generated.h"
 
-class UBoxComponent;
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DREADNIGHT_API USwordCombatComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-protected:	
-	USwordCombatComponent();
-	virtual void BeginPlay() override;
-
+private:
 	FTimerHandle AttackCooldownTimerHandle;
-	FTimerHandle CollisionCooldownTimerHandle;
 
-	bool bCanAttack;
-	bool bIsAttacking;
+	float CurrentDamage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	float AttackCooldown = 1.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	float AttackDamage = 25.0f;
-	UPROPERTY()
-	TWeakObjectPtr<UBoxComponent> SwordHitBox;
-	UPROPERTY()
-	TArray<AActor*> HitActors;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	float CollisionEnableTime = 0.3f;
+	float AttackCooldown;
 
-	void EnableSwordCollision();
-	void DisableSwordCollision();
+	bool IsAttacking = false;
+
 	void ResetAttack();
 
-	UFUNCTION()
-	void OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+protected:	
+	USwordCombatComponent();
 
-public:
-	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void Attack();
-	void SetHitBoxComponent(UBoxComponent* HitBox);
+	UFUNCTION()
+	void OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 	UFUNCTION(BlueprintCallable)
 	bool GetIsAttacking();
+
+public:
+	void Attack();
+
+	void SetWeapon(UStaticMeshComponent* Mesh, float Damage, float Cooldown);
 };

@@ -11,7 +11,6 @@
 #include "Components/ConditionStateComponent.h"
 #include "DamageSystem/Interface/Damageable.h"
 #include "Components/SwordCombatComponent.h"
-#include "Items/Object/ItemInstance_Weapon.h"
 #include "Items/Data/WeaponDataAsset.h"
 #include "PlayerCharacter.generated.h"
 
@@ -22,6 +21,7 @@ class DREADNIGHT_API APlayerCharacter : public ACharacter, public IDamageable
 
 protected:
 	APlayerCharacter();
+
 	virtual void BeginPlay() override;
 
 	//===============//
@@ -72,11 +72,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	TObjectPtr<UItemDataAsset> StartingWeaponDataAsset = nullptr;
 
-	UPROPERTY(Transient)
-	UItemInstance_Weapon* CurrentInstanceWeapon;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	TObjectPtr<UStaticMeshComponent> CurrentWeaponMesh = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FName HandSocketName = TEXT("WeaponHandR");
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	float WeaponAttackCooldown = 1.f;
 
 public:
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
@@ -115,12 +118,8 @@ public:
 	UConditionStateComponent* GetConditionStateComponent();
 
 	UFUNCTION()
-	void EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon);
-
-	UFUNCTION()
 	USwordCombatComponent* GetSwordCombatComponent();
 
 	UFUNCTION()
-	void OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon);
 };

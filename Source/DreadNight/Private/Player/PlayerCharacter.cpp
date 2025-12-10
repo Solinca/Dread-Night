@@ -1,8 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "Player/PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Items/Helper/ItemInstanceFactory.h"
+#include "Items/Object/ItemInstance_Weapon.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -27,10 +26,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentInstanceWeapon = Cast<UItemInstance_Weapon>(FItemInstanceFactory::CreateItem(this,StartingWeaponDataAsset, 1));
-	EquipWeapon(CurrentInstanceWeapon);
-
-	CurrentWeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnSwordOverlap);
+	EquipWeapon(Cast<UItemInstance_Weapon>(FItemInstanceFactory::CreateItem(this, StartingWeaponDataAsset, 1)));
 }
 
 bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
@@ -68,6 +64,7 @@ float APlayerCharacter::GetCurentCapsuleHalfHeight()
 void APlayerCharacter::SetCurentCapsuleHalfHeight(float value)
 {
 	CurrentCapsuleHalfHeight = value;
+
 	GetCapsuleComponent()->SetCapsuleHalfHeight(value);
 }
 
@@ -76,9 +73,13 @@ void APlayerCharacter::UpdateCrouching(float deltatime)
 	if (UCharacterMovementComponent* MovementComp = GetCharacterMovement())
 	{
 		if (bIsCrouching)
+		{
 			SetCurentCapsuleHalfHeight(FMath::FInterpTo(CurrentCapsuleHalfHeight, CapsuleCrouchedHalfHeight, deltatime, LerpCrouchSpeed));
+		}
 		else
+		{
 			SetCurentCapsuleHalfHeight(FMath::FInterpTo(CurrentCapsuleHalfHeight, CapsuleMaxHalfHeight, deltatime, LerpCrouchSpeed));
+		}
 	}
 }
 
@@ -102,40 +103,16 @@ UConditionStateComponent* APlayerCharacter::GetConditionStateComponent()
 	return ConditionStateComponent;
 }
 
-void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon)
-{
-	if (CurrentInstanceWeapon)
-	{
-		CurrentWeaponMesh->GetStaticMesh() = nullptr;
-	}
-
-	CurrentInstanceWeapon = itemInstanceWeapon;
-	CurrentWeaponMesh->SetStaticMesh(itemInstanceWeapon->GetDataAsset()->WeaponMesh);
-
-	FName HandSocketName = TEXT("WeaponHandR");
-	FVector SpawnLocation = GetMesh()->GetSocketLocation(HandSocketName);
-	FRotator SpawnRotation = GetMesh()->GetSocketRotation(HandSocketName);
-	CurrentWeaponMesh->AttachToComponent(
-		GetMesh(),
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-		HandSocketName
-	);
-}
-
 USwordCombatComponent* APlayerCharacter::GetSwordCombatComponent()
 {
 	return SwordCombatComponent;
 }
 
-// Solution temporaire pour la build, on va le g�rer avec le swordCombatComponent
-void APlayerCharacter::OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{ 
-	if (SwordCombatComponent->GetIsAttacking() && OtherActor->Implements<UDamageable>() && OtherActor != this)
-	{
-		if (IDamageable* Damageable = Cast<IDamageable>(OtherActor))
-		{
-			Damageable->TryApplyDamage(CurrentInstanceWeapon->GetDataAsset()->Damage, this);
-		}
-	}  
+void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
+{
+	CurrentWeaponMesh->SetStaticMesh(Weapon->GetDataAsset()->WeaponMesh);
+
+	CurrentWeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, HandSocketName);
+
+	SwordCombatComponent->SetWeapon(CurrentWeaponMesh, Weapon->GetDataAsset()->Damage, WeaponAttackCooldown);
 }
