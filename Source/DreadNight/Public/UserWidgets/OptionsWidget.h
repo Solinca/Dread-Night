@@ -41,9 +41,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UButton* ButtonReturn = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
-
 	virtual void NativeConstruct() override;
 
 	template<typename TValue>
@@ -87,4 +84,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnReturn OnReturn;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
+
+	void SetMainMenuWidgetClass(TSubclassOf<UMainMenuWidget> MMWC);
 };

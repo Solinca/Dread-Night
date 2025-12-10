@@ -91,13 +91,16 @@ void UOptionsWidget::OnCheckboxVSyncChanged(bool bIsChecked)
 
 void UOptionsWidget::OnReturnClicked()
 {
-	//RemoveFromParent();
 	OnReturn.Broadcast();
 
-	/*if (UMainMenuWidget* MMW = CreateWidget<UMainMenuWidget>(GetWorld(), MainMenuWidgetClass))
+	if (!MainMenuWidgetClass) return;
+
+	if (UMainMenuWidget* MMW = CreateWidget<UMainMenuWidget>(GetWorld(), MainMenuWidgetClass))
 	{
 		MMW->AddToViewport();
-	}*/
+		MainMenuWidgetClass = nullptr;
+		RemoveFromParent();
+	}
 }
 
 UOptionsWidget::UOptionsWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -122,4 +125,9 @@ UOptionsWidget::UOptionsWidget(const FObjectInitializer& ObjectInitializer) : Su
 		{TEXT("Epic"), 3},
 		{TEXT("Cinematic"), 4},
 	};
+}
+
+void UOptionsWidget::SetMainMenuWidgetClass(TSubclassOf<UMainMenuWidget> MMWC)
+{
+	MainMenuWidgetClass = MMWC;
 }
