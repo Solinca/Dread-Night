@@ -27,6 +27,9 @@ protected:
 
 	virtual void OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack);
 public:
+	UItemDataAsset* GetDataAsset() const { return ItemData; };
+	int GetStackNumber() const { return StackNumber; };
+	
 	void SetupItemInstance(UItemDataAsset* DataAsset,const int InitialStack);
 	
 	enum class EStackMethod
