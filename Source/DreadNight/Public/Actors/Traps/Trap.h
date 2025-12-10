@@ -59,12 +59,9 @@ protected:
 	 */
 	void StopTrapTicking();
 
-	virtual void OnTrapTick() {}
+	virtual void OnTrapTick(float DeltaSeconds) {}
 
 	virtual void OnTrapTickFinish() {}
-	
-	UFUNCTION(BlueprintNativeEvent, DisplayName = "OnTrapTrigger")
-	void BP_OnTrapTrigger(ABaseAICharacter* TrapTriggerInvestigator);
 
 	virtual void OnTrapTrigger(ABaseAICharacter* TrapTriggerInvestigator) {}
 private:

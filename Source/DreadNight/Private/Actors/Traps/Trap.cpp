@@ -17,7 +17,7 @@ void ATrap::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	
-	OnTrapTick();
+	OnTrapTick(DeltaSeconds);
 
 	CheckToFinishTrapTicking();
 }
@@ -58,11 +58,6 @@ void ATrap::StopTrapTicking()
 	SetActorTickEnabled(false);
 }
 
-void ATrap::BP_OnTrapTrigger_Implementation(ABaseAICharacter* TrapTriggerInvestigator)
-{
-	OnTrapTrigger(TrapTriggerInvestigator);
-}
-
 void ATrap::CheckToFinishTrapTicking()
 {
 	if (bTrapIsUsingTimer || bTrapTickInfinitely)
@@ -81,6 +76,6 @@ void ATrap::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 {
 	if (ABaseAICharacter* BaseAICharacter{Cast<ABaseAICharacter>(OtherActor)})
 	{
-		BP_OnTrapTrigger(BaseAICharacter);
+		OnTrapTrigger(BaseAICharacter);
 	}
 }
