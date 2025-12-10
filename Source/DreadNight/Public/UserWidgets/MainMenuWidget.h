@@ -32,6 +32,9 @@ protected:
 	TObjectPtr<UButton> ButtonQuit = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSubclassOf<UOptionsWidget> OptionsWidgetClass;
 
 public:

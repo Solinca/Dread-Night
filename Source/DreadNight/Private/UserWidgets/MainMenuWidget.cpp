@@ -15,7 +15,7 @@ void UMainMenuWidget::NativeConstruct()
 
 void UMainMenuWidget::OnContinueClicked()
 {
-
+	UGameplayStatics::OpenLevel(this, TEXT("BaseLevel"));
 }
 
 void UMainMenuWidget::OnNewGameClicked()
@@ -26,8 +26,14 @@ void UMainMenuWidget::OnNewGameClicked()
 void UMainMenuWidget::OnOptionsClicked()
 {
 	RemoveFromParent();
-	UOptionsWidget* OW = CreateWidget<UOptionsWidget>(GetWorld(), OptionsWidgetClass);
-	if (OW) OW->AddToViewport();
+
+	if (!OptionsWidgetClass) return;
+
+	if (UOptionsWidget* OW = CreateWidget<UOptionsWidget>(GetWorld(), OptionsWidgetClass))
+	{
+		OW->AddToViewport();
+		OW->SetMainMenuWidgetClass(MainMenuWidgetClass);
+	}
 }
 
 void UMainMenuWidget::OnQuitClicked()

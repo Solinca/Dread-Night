@@ -14,6 +14,7 @@
 
 
 class UPauseMenu;
+class UOptionsWidget;
 
 USTRUCT(BlueprintType)
 struct FInputActionSetup
@@ -118,8 +119,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UPauseMenu> PauseMenuClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UOptionsWidget> OptionsClass;
+
 	UPROPERTY(Transient)
 	TObjectPtr<UPauseMenu> PauseMenuWidget;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UOptionsWidget> OptionsWidget;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI|Logic")
 	TSoftObjectPtr<UWorld> WorldMenu;
@@ -240,6 +247,12 @@ private:
 
 	UFUNCTION()
 	void PauseGame();
+
+	UFUNCTION()
+	void AccessOptions();
+
+	UFUNCTION()
+	void QuitOptions();
 
 	UFUNCTION()
 	void LeaveGame();

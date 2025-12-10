@@ -10,6 +10,8 @@
 
 class UMainMenuWidget;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReturn);
+
 UCLASS()
 class DREADNIGHT_API UOptionsWidget : public UUserWidget
 {
@@ -38,9 +40,6 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* ButtonReturn = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
 
 	virtual void NativeConstruct() override;
 
@@ -82,4 +81,12 @@ protected:
 
 public:
 	UOptionsWidget(const FObjectInitializer& ObjectInitializer);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnReturn OnReturn;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
+
+	void SetMainMenuWidgetClass(TSubclassOf<UMainMenuWidget> MMWC);
 };
