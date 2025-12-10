@@ -2,6 +2,7 @@
 
 #include "Player/PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Items/Helper/ItemInstanceFactory.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -16,6 +17,18 @@ APlayerCharacter::APlayerCharacter()
 	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>("Stamina");
 	ManaComponent = CreateDefaultSubobject<UManaComponent>("Mana");
 	ConditionStateComponent = CreateDefaultSubobject<UConditionStateComponent>("ConditionState");
+
+	SwordCombatComponent = CreateDefaultSubobject<USwordCombatComponent>("SwordCombatComponent");
+
+	CurrentWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>("WeaponMesh");
+}
+
+void APlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	CurrentIstanceWeapon = Cast<UItemInstance_Weapon>(FItemInstanceFactory::CreateItem(StartingWeaponDataAsset, 1));
+	EquipWeapon(CurrentIstanceWeapon);
 }
 
 bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
@@ -85,6 +98,31 @@ UHealthComponent* APlayerCharacter::GetHealthComponent()
 UConditionStateComponent* APlayerCharacter::GetConditionStateComponent()
 {
 	return ConditionStateComponent;
+}
+
+void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon)
+{
+	if (CurrentIstanceWeapon)
+	{
+		CurrentWeaponMesh->GetStaticMesh() = nullptr;
+	}
+
+	CurrentIstanceWeapon = itemInstanceWeapon;
+	CurrentWeaponMesh->SetStaticMesh(itemInstanceWeapon->GetDataAsset()->WeaponMesh);
+
+	FName HandSocketName = TEXT("WeaponHandR");
+	FVector SpawnLocation = GetMesh()->GetSocketLocation(HandSocketName);
+	FRotator SpawnRotation = GetMesh()->GetSocketRotation(HandSocketName);
+	CurrentWeaponMesh->AttachToComponent(
+		GetMesh(),
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		HandSocketName
+	);
+}
+
+USwordCombatComponent* APlayerCharacter::GetSwordCombatComponent()
+{
+	return SwordCombatComponent;
 }
 
 

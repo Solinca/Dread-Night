@@ -167,6 +167,7 @@ void ACustomPlayerController::Aim(const FInputActionValue& Value)
 
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
 {
+	MyPlayer->GetSwordCombatComponent()->Attack();
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Attacking");
 
 	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();

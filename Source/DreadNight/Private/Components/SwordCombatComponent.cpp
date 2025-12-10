@@ -22,14 +22,15 @@ void USwordCombatComponent::BeginPlay()
 
 void USwordCombatComponent::Attack()
 {
-	if (!bCanAttack || !SwordHitBox.IsValid())
+	//if (!bCanAttack || !SwordHitBox.IsValid())
+	if (!bCanAttack)
 		return;
 	bCanAttack = false;
 	bIsAttacking = true;
 	HitActors.Empty();
 	//activate collision during the attack
-	EnableSwordCollision();
-	GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &USwordCombatComponent::DisableSwordCollision, CollisionEnableTime, false);
+	//EnableSwordCollision();
+	GetWorld()->GetTimerManager().SetTimer(CollisionCooldownTimerHandle, this, &USwordCombatComponent::DisableSwordCollision, CollisionEnableTime, false);
 	//Set timer to reset attack ability after cooldown
 	GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &USwordCombatComponent::ResetAttack, AttackCooldown, false);
 }
@@ -37,6 +38,11 @@ void USwordCombatComponent::Attack()
 void USwordCombatComponent::SetHitBoxComponent(UBoxComponent* HitBox)
 {
 	SwordHitBox = HitBox;
+}
+
+bool USwordCombatComponent::GetIsAttacking()
+{
+	return bIsAttacking;
 }
 
 void USwordCombatComponent::EnableSwordCollision()
@@ -50,8 +56,8 @@ void USwordCombatComponent::EnableSwordCollision()
 
 void USwordCombatComponent::DisableSwordCollision()
 {
-	if (SwordHitBox.IsValid())
-		SwordHitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//if (SwordHitBox.IsValid())
+	//	SwordHitBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	bIsAttacking = false;
 }
 

@@ -16,6 +16,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	FTimerHandle AttackCooldownTimerHandle;
+	FTimerHandle CollisionCooldownTimerHandle;
 
 	bool bCanAttack;
 	bool bIsAttacking;
@@ -43,4 +44,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void Attack();
 	void SetHitBoxComponent(UBoxComponent* HitBox);
+	UFUNCTION(BlueprintCallable)
+	bool GetIsAttacking();
 };
