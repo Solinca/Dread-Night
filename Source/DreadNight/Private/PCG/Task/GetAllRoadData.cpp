@@ -79,7 +79,8 @@ bool FPCGExcludeSplineElement::ExecuteInternal(FPCGContext* Context) const
 	}
 
 	TArray<UPCGPointData*> OutputPointDataArray;
-
+	bool bSearchOnlySplineWithTag = Settings->ActorTag != NAME_None;
+	
 	// Iterate through all actors in the world looking for AExcludeSpline
 	for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
 	{
@@ -91,7 +92,7 @@ bool FPCGExcludeSplineElement::ExecuteInternal(FPCGContext* Context) const
 			continue;
 		}
  
-		if (Settings->ActorTag != NAME_None && !Actor->ActorHasTag(Settings->ActorTag))
+		if (bSearchOnlySplineWithTag && !Actor->ActorHasTag(Settings->ActorTag))
 		{
 			continue;
 		}
@@ -118,15 +119,15 @@ bool FPCGExcludeSplineElement::ExecuteInternal(FPCGContext* Context) const
 			const float Distance = (SplineLength * i) / TotalSamples;
 			const FVector Location = SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
 			const FRotator Rotation = SplineComponent->GetRotationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
-			const FVector Scale = SplineComponent->GetScaleAtDistanceAlongSpline(Distance);
+			const FVector Scale = FVector(1.0f, 1.0f, 1.0f);
 
 			FPCGPoint& Point = Points.Emplace_GetRef();
 			Point.Transform = FTransform(Rotation, Location, Scale);
 			
-			// Set bounds to represent the road width
-			// Create an oriented bounding box around the spline point
-			Point.BoundsMin = FVector(-1, -RoadWidth * 0.5f, -10); // Half width on X axis
-			Point.BoundsMax = FVector(1, RoadWidth * 0.5f, 10);
+			// Alternative simple: bounds cubiques autour du point
+			const float HalfWidth = RoadWidth * 0.5f; 
+			Point.BoundsMin = FVector(-HalfWidth, -HalfWidth, -HalfWidth);
+			Point.BoundsMax = FVector(HalfWidth, HalfWidth, HalfWidth);
 			
 			Point.Density = 1.0f;
 		}
@@ -183,6 +184,11 @@ bool FPCGExcludeSplineElement::ExecuteInternal(FPCGContext* Context) const
 bool FPCGExcludeSplineElement::CanExecuteOnlyOnMainThread(FPCGContext* Context) const
 {
 	return true;
+}
+
+bool FPCGExcludeSplineElement::IsCacheable(const UPCGSettings* InSettings) const
+{
+	return false;
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -54,4 +54,6 @@ protected:
 	virtual bool ExecuteInternal(FPCGContext* Context) const override;
 
 	virtual bool CanExecuteOnlyOnMainThread(FPCGContext* Context) const override;
+
+	virtual bool IsCacheable(const UPCGSettings* InSettings) const override;
 };
