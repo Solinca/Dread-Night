@@ -34,11 +34,16 @@ private:
 
 	UVolumetricCloudComponent* Cloud = nullptr;
 
+	UPROPERTY(Transient)
+	TObjectPtr<UUserWidget> CurrentWidget;
+
 	bool hasDawnEnded, hasDuskStarted = false;
 
 	float CurrentPhaseTimeInSeconds;
 
 	float CurrentPhaseRotation, DawnRotation, DuskRotation, DayRotation;
+
+	int DayCounter = 0;
 
 	UFUNCTION()
 	void StartDayCycle();
@@ -66,4 +71,7 @@ public:
 	FOnNightStartSignature OnNightStart;
 
 	static ThisClass* Get(UObject* WorldContext);
+
+	UFUNCTION(BlueprintCallable, Category = "DayCycle")
+	int GetDayCounter() const { return DayCounter;}
 };

@@ -1,4 +1,6 @@
 #include "Subsystems/World/DayCycleSubSystem.h"
+
+#include "Blueprint/UserWidget.h"
 #include "Subsystems/World/WaveWorldSubsystem.h"
 #include "Global/BaseLevelWorldSettings.h"
 #include "Engine/DirectionalLight.h"
@@ -7,6 +9,7 @@
 #include "Components/ExponentialHeightFogComponent.h"
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/VolumetricCloudComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 {
@@ -44,6 +47,10 @@ bool UDayCycleSubSystem::ShouldCreateSubsystem(UObject* Outer) const
 
 void UDayCycleSubSystem::StartDayCycle()
 {
+	DayCounter++;
+	CurrentWidget = CreateWidget(UGameplayStatics::GetPlayerController(this, 0), BaseWorldSettings->WidgetToSpawn["WBP_NewDay"]);
+	CurrentWidget->AddToViewport();
+	
 	hasDawnEnded = hasDuskStarted = false;
 
 	CurrentPhaseTimeInSeconds = BaseWorldSettings->DawnTimeInSeconds;
@@ -110,9 +117,17 @@ void UDayCycleSubSystem::ProcessDayPerSecond()
 
 void UDayCycleSubSystem::StartMoonCycle()
 {
-	GetWorld()->GetTimerManager().ClearTimer(ProcessDayTimer);
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	TimerManager.ClearTimer(ProcessDayTimer);
 
 	OnNightStart.Broadcast();
+
+	FTimerHandle WidgetSpawnTimerHandle;
+	TimerManager.SetTimer(WidgetSpawnTimerHandle, [this]
+	{
+		CurrentWidget = CreateWidget(UGameplayStatics::GetPlayerController(this, 0), BaseWorldSettings->WidgetToSpawn["WBP_NewWave"]);
+		CurrentWidget->AddToViewport();
+	}, 1.f, false);
 }
 
 void UDayCycleSubSystem::InitSunDirectionalLight(UWorld& InWorld)

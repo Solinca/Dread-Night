@@ -16,7 +16,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Wave System")
 	TArray<TObjectPtr<UWaveDataAsset>> WaveList;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Wave System")
+	TMap<FString, TObjectPtr<USoundBase>> SoundsToPlay;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Day Cycle System")
+	TMap<FString, TSubclassOf<UUserWidget>> WidgetToSpawn;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Day Cycle System")
 	float DayTimeInSeconds = 900;
 

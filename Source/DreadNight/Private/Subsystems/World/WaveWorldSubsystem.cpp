@@ -1,7 +1,10 @@
 #include "Subsystems/World/WaveWorldSubsystem.h"
+
+#include "AssetTypeActions/AssetDefinition_SoundBase.h"
 #include "Subsystems/World/DayCycleSubSystem.h"
 #include "Global/BaseLevelWorldSettings.h"
 #include "Data/Wave/WaveDataAsset.h"
+#include "Kismet/GameplayStatics.h"
 
 void UWaveWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
@@ -21,22 +24,29 @@ bool UWaveWorldSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 
 void UWaveWorldSubsystem::OnNightStart()
 {
+	USoundBase* NewWaveSound = BaseWorldSettings->SoundsToPlay["NewWave"];
+	UGameplayStatics::PlaySound2D(this, NewWaveSound);
 	CurrentDeathCount = 0;
 	RequiredDeathCount = 0;
 
-	for (FWaveMonsterData& Monster : BaseWorldSettings->WaveList[WaveIndex]->MonsterList)
+	FTimerHandle Handle;
+	GetWorld()->GetTimerManager().SetTimer(Handle, [this, World = GetWorld()]
 	{
-		RequiredDeathCount += Monster.Count;
-
-		for (int i = 0; i < Monster.Count; i++)
+		for (FWaveMonsterData& Monster : BaseWorldSettings->WaveList[WaveIndex]->MonsterList)
 		{
-			int SpawnerIndex = FMath::RandRange(0, SpawnerList.Num() - 1);
+			RequiredDeathCount += Monster.Count;
 
-			ABaseAICharacter* SpawnedMonster = SpawnerList[SpawnerIndex]->SpawnCharacter(Monster.CharacterClass, Monster.Data);
+			for (int i = 0; i < Monster.Count; i++)
+			{
+				int SpawnerIndex = FMath::RandRange(0, SpawnerList.Num() - 1);
 
-			SpawnedMonster->OnDestroyed.AddDynamic(this, &UWaveWorldSubsystem::MonsterDeath);
+				if (ABaseAICharacter* SpawnedMonster = SpawnerList[SpawnerIndex]->SpawnCharacter(Monster.CharacterClass, Monster.Data))
+				{
+					SpawnedMonster->OnDestroyed.AddDynamic(World->GetSubsystem<UWaveWorldSubsystem>(), &UWaveWorldSubsystem::MonsterDeath);
+				}
+			}
 		}
-	}
+	}, NewWaveSound->GetDuration() * .75f, false);
 }
 
 void UWaveWorldSubsystem::MonsterDeath(AActor* Monster)
