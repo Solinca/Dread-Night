@@ -6,6 +6,7 @@
 #include "UI/Widgets/Inventory.h"
 #include "UI/Widgets/PauseMenu.h"
 #include "UserWidgets/OptionsWidget.h"
+#include "UI/Widgets/PlayerHud.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -37,6 +38,12 @@ void ACustomPlayerController::BeginPlay()
 	PlayerCameraManager->ViewPitchMax = PlayerData->ViewPitch.Y;
 
 	SetInputMode(FInputModeGameOnly());
+
+	HUDWidget = CreateWidget<UPlayerHud>(this, HUDClass);
+	if (HUDWidget)
+	{
+		HUDWidget->AddToViewport();
+	}
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
@@ -404,4 +411,11 @@ void ACustomPlayerController::ShowGameOver()
 	PushNewMenu(WidgetGameOver, true, [](){}, false);
 
 	UGameplayStatics::PlaySound2D(this, PlayerData->GameOverSound);
+}
+
+void ACustomPlayerController::BindUIEvents()
+{
+	MyPlayer->GetHealthComponent()->OnHealthChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateHealthBar);
+	MyPlayer->GetStaminaComponent()->OnStaminaChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateStaminaBar);
+	MyPlayer->GetManaComponent()->OnManaChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateManaBar);
 }

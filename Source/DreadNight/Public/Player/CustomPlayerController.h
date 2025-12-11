@@ -11,6 +11,7 @@
 #include "Components/SlateWrapperTypes.h"
 #include "CustomPlayerController.generated.h"
 
+class UPlayerHud;
 class UPauseMenu;
 class UOptionsWidget;
 class UInventory;
@@ -68,6 +69,64 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UPlayerDataAsset> PlayerData;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
+	float BaseMoveSpeed = 600.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
+	float SprintMoveSpeed = 1200.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
+	float CrouchMoveSpeed = 300.f;
+
+	//=========//
+	//==Stats==//
+	//=========//
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
+	float JumpStaminaCost = 20.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
+	float AttackStaminaCost = 20.f;//REPLACE WITH WEAPON STAMINA COST LATER
+
+	/// <summary>
+	/// Cost in amount/s
+	/// </summary>
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
+	float SprintStaminaCost = 10.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mana")
+	float SpellManaCost = 20.f;//REPLACE WITH WEAPON MANA COST LATER
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hunger")
+	float HungerSprintCost = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hunger")
+	float HungerJumpCost = 0.5f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hunger")
+	float HungerAttackCost = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sanity")
+	float SanityOnDamageCost = 5.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sanity")
+	float SanityOnDarknessCost = 1.f;
+
+	//==================//
+
+	
+	//=========//
+	//==Widget==//
+	//=========//
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UPauseMenu> PauseMenuClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UOptionsWidget> OptionsClass;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UPlayerHud> HUDClass;
+
 private:
 	UPROPERTY(Transient)
 	TObjectPtr<UPauseMenu> PauseMenuWidget;
@@ -77,6 +136,9 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UOptionsWidget> OptionsWidget;
+	
+	UPROPERTY(Transient)
+	TObjectPtr<UPlayerHud> HUDWidget;
 
 	TArray<FStackedMenu> MenuStack;
 
@@ -229,7 +291,10 @@ private:
 
 	UFUNCTION()
 	void LeaveGame();
-
+	
 	UFUNCTION()
 	void ShowGameOver();
+
+	void BindUIEvents();
+
 };
