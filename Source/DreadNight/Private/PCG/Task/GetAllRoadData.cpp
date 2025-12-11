@@ -173,10 +173,6 @@ bool FPCGExcludeSplineElement::ExecuteInternal(FPCGContext* Context) const
 			FText::AsNumber(OutputPointDataArray.Num())
 		));
 	}
-	else
-	{
-		PCGE_LOG(Warning, GraphAndLog, LOCTEXT("NoActorsFound", "No AExcludeSpline actors found in world"));
-	}
 
 	return true;
 }
