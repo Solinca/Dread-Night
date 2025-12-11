@@ -48,8 +48,8 @@ bool UDayCycleSubSystem::ShouldCreateSubsystem(UObject* Outer) const
 void UDayCycleSubSystem::StartDayCycle()
 {
 	DayCounter++;
-	CurrentWidget = CreateWidget(UGameplayStatics::GetPlayerController(this, 0), BaseWorldSettings->WidgetToSpawn["WBP_NewDay"]);
-	CurrentWidget->AddToViewport();
+	
+	SpawnPopUpWidget("WBP_NewDay");
 	
 	hasDawnEnded = hasDuskStarted = false;
 
@@ -125,8 +125,7 @@ void UDayCycleSubSystem::StartMoonCycle()
 	FTimerHandle WidgetSpawnTimerHandle;
 	TimerManager.SetTimer(WidgetSpawnTimerHandle, [this]
 	{
-		CurrentWidget = CreateWidget(UGameplayStatics::GetPlayerController(this, 0), BaseWorldSettings->WidgetToSpawn["WBP_NewWave"]);
-		CurrentWidget->AddToViewport();
+		SpawnPopUpWidget("WBP_NewWave");
 	}, 1.f, false);
 }
 
@@ -190,6 +189,15 @@ void UDayCycleSubSystem::InitSkyAtmoshpere(UWorld& InWorld)
 	Sky = InWorld.SpawnActor<ASkyAtmosphere>()->GetComponentByClass<USkyAtmosphereComponent>();
 
 	Sky->SetRayleighScatteringScale(BaseWorldSettings->RayleighScatteringScale);
+}
+
+void UDayCycleSubSystem::SpawnPopUpWidget(const FString& InKey)
+{
+	CurrentWidget = CreateWidget(UGameplayStatics::GetPlayerController(this, 0), BaseWorldSettings->WidgetToSpawn[InKey]);
+	if (CurrentWidget)
+	{
+		CurrentWidget->AddToViewport();
+	}
 }
 
 UDayCycleSubSystem::ThisClass* UDayCycleSubSystem::Get(UObject* WorldContext)

@@ -61,6 +61,8 @@ private:
 	void InitVolumetricCloud(UWorld& InWorld);
 
 	void InitSkyAtmoshpere(UWorld& InWorld);
+	
+	void SpawnPopUpWidget(const FString& InKey);
 
 protected:
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
