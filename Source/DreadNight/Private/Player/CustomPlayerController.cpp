@@ -209,7 +209,7 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 	InventoryWidget->BindToInventory(MyPlayer->GetComponentByClass<UInventoryComponent>());
 	SetShowMouseCursor(true);
 	
-	PushNewMenu(InventoryWidget, true,[this]
+	PushNewMenu(InventoryWidget, false,[this]
 		{
 			UGameplayStatics::SetGamePaused(GetWorld(), false);
 			if (UInventory* TempInventory = Cast<UInventory>(InventoryWidget))
