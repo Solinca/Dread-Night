@@ -7,7 +7,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "PlayerCharacter.h"
+#include "Blueprint/UserWidget.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SlateWrapperTypes.h"
 #include "CustomPlayerController.generated.h"
 
 class UPauseMenu;
@@ -26,6 +28,13 @@ struct FInputActionSetup
 
 	UPROPERTY(EditAnywhere, meta = (FunctionReference, PrototypeFunction = "/Script/DreadNight.CustomPlayerController.Prototype_InputAction"))
 	FMemberReference ActionName;
+};
+
+struct FStackedMenu
+{
+	TObjectPtr<UUserWidget> Widget;
+	TFunction<void()> OnCloseAction;
+	bool bTriggerPause;
 };
 
 UCLASS()
@@ -126,7 +135,9 @@ protected:
 	
 	//==================//
 private:
-	TQueue<TPair<UUserWidget*,TFunction<void()>>> MenuList; 
+	TArray<FStackedMenu> MenuStack;
+	int32 PauseCounter = 0;
+	void UpdateGamePauseState();
 	
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
 
@@ -195,40 +206,58 @@ private:
 	//Function to add a Menu to the menu list, so we can leave it with escape
 	template<typename T>
 	requires std::is_base_of_v<UUserWidget, T>
-	void PushNewMenu(TObjectPtr<T>& Widget, TFunction<void()>&& OnCloseAction = []{})
+	void PushNewMenu(TObjectPtr<T>& Widget, bool bPausesGame, TFunction<void()>&& OnCloseAction = []{})
 	{
-		if (MenuList.IsEmpty() && GetLocalPlayer())
+		if (MenuStack.IsEmpty() && GetLocalPlayer())
 		{
-			if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			if (const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 			{
-				if (!MappingContextMenu)
+				if (MappingContextMenu)
 				{
-					return;
+					InputSystem->ClearAllMappings();
+					InputSystem->AddMappingContext(MappingContextMenu, 0);
 				}
-				InputSystem->ClearAllMappings();
-				InputSystem->AddMappingContext(MappingContextMenu, 0);
-				SetInputMode(FInputModeGameAndUI());
 			}
+
+			SetInputMode(FInputModeGameAndUI());
 			SetShowMouseCursor(true);
 		}
+		else
+		{
+			FStackedMenu& TopMenu = MenuStack.Last();
+			if (TopMenu.Widget)
+			{
+				TopMenu.Widget->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
 	
-		Widget->AddToViewport();	 
+		if (!Widget->IsInViewport())
+		{
+			Widget->AddToViewport();
+		}
+		Widget->SetVisibility(ESlateVisibility::Visible);
+		
 		auto SafeCloseWidgetAction = [&, CloseAction = MoveTemp(OnCloseAction), IsFirstPass = true]() mutable
 		{
 			if (!IsFirstPass)
 			{
-				return; 
+				return;
 			}
-
 			IsFirstPass = false; 
 			if (CloseAction)
 			{
 				CloseAction();
 			}
-			Widget = nullptr;
 		};
 
-		MenuList.Enqueue({Widget, MoveTemp(SafeCloseWidgetAction)});
+		MenuStack.Push({ Widget, MoveTemp(SafeCloseWidgetAction), bPausesGame });
+
+		if (bPausesGame)
+		{
+			PauseCounter++;
+		}
+		
+		UpdateGamePauseState();
 	}
 
 	//Call this function when you need to delete the last menu who has been push in the list
