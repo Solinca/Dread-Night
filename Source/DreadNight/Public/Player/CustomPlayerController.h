@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -11,7 +9,6 @@
 #include "PlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "CustomPlayerController.generated.h"
-
 
 class UPauseMenu;
 class UOptionsWidget;
@@ -29,12 +26,8 @@ struct FInputActionSetup
 
 	UPROPERTY(EditAnywhere, meta = (FunctionReference, PrototypeFunction = "/Script/DreadNight.CustomPlayerController.Prototype_InputAction"))
 	FMemberReference ActionName;
-
-
 };
-/**
- * 
- */
+
 UCLASS()
 class DREADNIGHT_API ACustomPlayerController : public APlayerController
 {
