@@ -17,9 +17,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 	
-public:
+public:	
+	AProjectileActor();
 
 	UProjectileMovementComponent* GetProjectileMovementComponent() const;
+
+protected:
+	virtual void BeginPlay() override;
 	
-	AProjectileActor();
+private:
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

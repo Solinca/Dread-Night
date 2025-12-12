@@ -12,6 +12,8 @@ UBTDecorator_IsActorMoving::UBTDecorator_IsActorMoving()
 
 	bTickIntervals = true;
 	bNotifyTick = true;
+	bNotifyBecomeRelevant = true;
+	bNotifyCeaseRelevant = true;
 }
 
 void UBTDecorator_IsActorMoving::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -84,6 +86,20 @@ void UBTDecorator_IsActorMoving::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 	ActorMovingDecoratorMemory->OldActorLocation = NewOldActorLocation;
 
 	SetNextTickTime(NodeMemory, ActorMovingDecoratorMemory->TickInterval);
+}
+
+void UBTDecorator_IsActorMoving::InitializeFromAsset(UBehaviorTree& Asset)
+{
+	Super::InitializeFromAsset(Asset);
+
+	if (const UBlackboardData* BBAsset = GetBlackboardAsset())
+	{
+		Actor.ResolveSelectedKey(*BBAsset);
+	}
+	else
+	{
+		Actor.InvalidateResolvedKey();
+	}
 }
 
 uint16 UBTDecorator_IsActorMoving::GetInstanceMemorySize() const
