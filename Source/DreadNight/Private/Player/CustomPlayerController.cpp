@@ -3,6 +3,8 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/Widgets/PauseMenu.h"
 #include <EnhancedInputSubsystems.h>
+
+#include "Global/BaseLevelWorldSettings.h"
 #include "UserWidgets/OptionsWidget.h"
 #include "Global/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
@@ -33,6 +35,9 @@ void ACustomPlayerController::BeginPlay()
 	PlayerCameraManager->ViewPitchMax = ViewPitch.Y;
 
 	SetInputMode(FInputModeGameOnly());
+
+	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
+	ShowGameOver();
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
@@ -277,7 +282,7 @@ void ACustomPlayerController::GoBackToMenu()
 
 void ACustomPlayerController::PopLastMenu()
 {
-	if (MenuStack.IsEmpty())
+	if (MenuStack.IsEmpty() || !MenuStack.Last().bCanBeQuit)
 	{
 		return;
 	}
@@ -358,4 +363,21 @@ void ACustomPlayerController::LeaveGame()
 {
 	SaveGame();
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
+}
+
+void ACustomPlayerController::ShowGameOver()
+{
+	AWorldSettings* WorldSettings = GetWorld()->GetWorldSettings();
+	if (ABaseLevelWorldSettings* BaseLevelWorldSettings = Cast<ABaseLevelWorldSettings>(WorldSettings))
+	{
+		if (BaseLevelWorldSettings->WidgetToSpawn.Contains("WBP_GameOver"))
+		{
+			TObjectPtr<UUserWidget> WidgetGameOver = CreateWidget<UUserWidget>(this, BaseLevelWorldSettings->WidgetToSpawn["WBP_GameOver"]);
+			PushNewMenu(WidgetGameOver, true, [](){}, false);
+		}
+		if (BaseLevelWorldSettings->SoundsToPlay.Contains("GameOver"))
+		{
+			UGameplayStatics::PlaySound2D(this, BaseLevelWorldSettings->SoundsToPlay["GameOver"]);
+		}
+	}
 }
