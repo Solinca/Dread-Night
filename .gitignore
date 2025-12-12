@@ -2,6 +2,8 @@
 .vs/
 .idea/
 
+*.uproject.DotSettings.user
+
 # Compiled Object files
 *.slo
 *.lo
