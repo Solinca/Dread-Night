@@ -42,7 +42,7 @@ void UInventory::OnItemAdded(UItemInstance* Item, int SlotIndex)
 {
 	if (UInventorySlot* TempSlot = Cast<UInventorySlot>(InventoryWrapBox->GetChildAt(SlotIndex)))
 	{
-		TempSlot->SetItemImage(Item->GetItemDataAsset()->ItemIcon);
+		TempSlot->SetItemImage(Item->GetDataAsset()->ItemIcon);
 		TempSlot->SetStackText(Item->GetStackNumber());
 	}
 }

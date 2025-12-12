@@ -202,7 +202,7 @@ void ACustomPlayerController::Interact(const FInputActionValue& Value)
 
 void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 {
-	if (!InventoryWidget)
+	if (!InventoryWidgetClass)
 		return;
 	
 	InventoryWidget = CreateWidget<UInventory>(this, InventoryWidgetClass);

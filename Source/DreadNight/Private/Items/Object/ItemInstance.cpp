@@ -95,16 +95,6 @@ bool UItemInstance::IsEmpty() const
 	return StackNumber == 0;
 }
 
-TObjectPtr<UItemDataAsset> UItemInstance::GetItemDataAsset() const
-{
-	return ItemData;
-}
-
-int UItemInstance::GetStackNumber() const
-{
-	return StackNumber;
-}
-
 bool UItemInstance::TryUse(const int NumberOfInstanceToUse,AActor* User)
 {
 	if (NumberOfInstanceToUse > StackNumber)
