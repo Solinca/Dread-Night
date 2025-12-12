@@ -1,4 +1,6 @@
 #include "Subsystems/World/DayCycleSubSystem.h"
+
+#include "Blueprint/UserWidget.h"
 #include "Subsystems/World/WaveWorldSubsystem.h"
 #include "Global/BaseLevelWorldSettings.h"
 #include "Engine/DirectionalLight.h"
@@ -7,6 +9,7 @@
 #include "Components/ExponentialHeightFogComponent.h"
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/VolumetricCloudComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 {
@@ -44,6 +47,10 @@ bool UDayCycleSubSystem::ShouldCreateSubsystem(UObject* Outer) const
 
 void UDayCycleSubSystem::StartDayCycle()
 {
+	DayCounter++;
+	
+	SpawnPopUpWidget("WBP_NewDay");
+	
 	hasDawnEnded = hasDuskStarted = false;
 
 	CurrentPhaseTimeInSeconds = BaseWorldSettings->DawnTimeInSeconds;
@@ -110,9 +117,15 @@ void UDayCycleSubSystem::ProcessDayPerSecond()
 
 void UDayCycleSubSystem::StartMoonCycle()
 {
-	GetWorld()->GetTimerManager().ClearTimer(ProcessDayTimer);
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	TimerManager.ClearTimer(ProcessDayTimer);
 
 	OnNightStart.Broadcast();
+
+	TimerManager.SetTimer(WidgetSpawnDelayTimerHandle, [this]
+	{
+		SpawnPopUpWidget("WBP_NewWave");
+	}, WidgetSpawnDelay, false);
 }
 
 void UDayCycleSubSystem::InitSunDirectionalLight(UWorld& InWorld)
@@ -175,6 +188,20 @@ void UDayCycleSubSystem::InitSkyAtmoshpere(UWorld& InWorld)
 	Sky = InWorld.SpawnActor<ASkyAtmosphere>()->GetComponentByClass<USkyAtmosphereComponent>();
 
 	Sky->SetRayleighScatteringScale(BaseWorldSettings->RayleighScatteringScale);
+}
+
+void UDayCycleSubSystem::SpawnPopUpWidget(const FString& InKey)
+{
+	if (!BaseWorldSettings->WidgetToSpawn.Contains(InKey))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s: Key '%s' is missing from BaseWorldSettings configuration."), *FString(__FUNCTION__), *InKey);
+	}
+	
+	CurrentWidget = CreateWidget(UGameplayStatics::GetPlayerController(this, 0), BaseWorldSettings->WidgetToSpawn[InKey]);
+	if (CurrentWidget)
+	{
+		CurrentWidget->AddToViewport();
+	}
 }
 
 UDayCycleSubSystem::ThisClass* UDayCycleSubSystem::Get(UObject* WorldContext)

@@ -34,11 +34,22 @@ private:
 
 	UVolumetricCloudComponent* Cloud = nullptr;
 
+	UPROPERTY(Transient)
+	TObjectPtr<UUserWidget> CurrentWidget;
+
+	// ~Begin Variables for feedbacks
+	FTimerHandle WidgetSpawnDelayTimerHandle;
+	float WidgetSpawnDelay = 1.f;
+	// ~End Variables for feedbacks 
+	
+
 	bool hasDawnEnded, hasDuskStarted = false;
 
 	float CurrentPhaseTimeInSeconds;
 
 	float CurrentPhaseRotation, DawnRotation, DuskRotation, DayRotation;
+
+	int DayCounter = 0;
 
 	UFUNCTION()
 	void StartDayCycle();
@@ -56,6 +67,8 @@ private:
 	void InitVolumetricCloud(UWorld& InWorld);
 
 	void InitSkyAtmoshpere(UWorld& InWorld);
+	
+	void SpawnPopUpWidget(const FString& InKey);
 
 protected:
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
@@ -66,4 +79,7 @@ public:
 	FOnNightStartSignature OnNightStart;
 
 	static ThisClass* Get(UObject* WorldContext);
+
+	UFUNCTION(BlueprintCallable, Category = "DayCycle")
+	int GetDayCounter() const { return DayCounter;}
 };
