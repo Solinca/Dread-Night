@@ -37,6 +37,7 @@ void ACustomPlayerController::BeginPlay()
 	SetInputMode(FInputModeGameOnly());
 
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
+	ShowGameOver();
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
@@ -366,17 +367,7 @@ void ACustomPlayerController::LeaveGame()
 
 void ACustomPlayerController::ShowGameOver()
 {
-	AWorldSettings* WorldSettings = GetWorld()->GetWorldSettings();
-	if (ABaseLevelWorldSettings* BaseLevelWorldSettings = Cast<ABaseLevelWorldSettings>(WorldSettings))
-	{
-		if (BaseLevelWorldSettings->WidgetToSpawn.Contains("WBP_GameOver"))
-		{
-			TObjectPtr<UUserWidget> WidgetGameOver = CreateWidget<UUserWidget>(this, BaseLevelWorldSettings->WidgetToSpawn["WBP_GameOver"]);
-			PushNewMenu(WidgetGameOver, true, [](){}, false);
-		}
-		if (BaseLevelWorldSettings->SoundsToPlay.Contains("GameOver"))
-		{
-			UGameplayStatics::PlaySound2D(this, BaseLevelWorldSettings->SoundsToPlay["GameOver"]);
-		}
-	}
+	TObjectPtr<UUserWidget> WidgetGameOver = CreateWidget<UUserWidget>(this, GameOverClass);
+	PushNewMenu(WidgetGameOver, true, [](){}, false);
+	UGameplayStatics::PlaySound2D(this, GameOverSound);
 }

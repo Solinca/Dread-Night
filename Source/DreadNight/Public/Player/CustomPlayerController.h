@@ -119,12 +119,17 @@ protected:
 	//=========//
 	//==Widget==//
 	//=========//
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> GameOverClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UPauseMenu> PauseMenuClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UOptionsWidget> OptionsClass;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
+	TObjectPtr<USoundBase> GameOverSound;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UPauseMenu> PauseMenuWidget;
