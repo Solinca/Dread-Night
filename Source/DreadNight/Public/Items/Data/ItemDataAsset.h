@@ -26,4 +26,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UTexture2D> ItemIcon;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> ItemClass;
 };

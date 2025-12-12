@@ -10,6 +10,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SlateWrapperTypes.h"
+#include "UI/Widgets/Inventory.h"
 #include "CustomPlayerController.generated.h"
 
 class UPauseMenu;
@@ -126,6 +127,12 @@ protected:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UPauseMenu> PauseMenuWidget;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UInventory> InventoryWidgetClass;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UInventory> InventoryWidget;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UOptionsWidget> OptionsWidget;
@@ -263,7 +270,7 @@ private:
 	//Call this function when you need to delete the last menu who has been push in the list
 	UFUNCTION()
 	void PopLastMenu();
-
+	
 	UFUNCTION()
 	void ResumeGame();
 
