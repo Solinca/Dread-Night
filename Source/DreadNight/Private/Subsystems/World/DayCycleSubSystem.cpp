@@ -122,11 +122,10 @@ void UDayCycleSubSystem::StartMoonCycle()
 
 	OnNightStart.Broadcast();
 
-	FTimerHandle WidgetSpawnTimerHandle;
-	TimerManager.SetTimer(WidgetSpawnTimerHandle, [this]
+	TimerManager.SetTimer(WidgetSpawnDelayTimerHandle, [this]
 	{
 		SpawnPopUpWidget("WBP_NewWave");
-	}, 1.f, false);
+	}, WidgetSpawnDelay, false);
 }
 
 void UDayCycleSubSystem::InitSunDirectionalLight(UWorld& InWorld)
@@ -193,6 +192,11 @@ void UDayCycleSubSystem::InitSkyAtmoshpere(UWorld& InWorld)
 
 void UDayCycleSubSystem::SpawnPopUpWidget(const FString& InKey)
 {
+	if (!BaseWorldSettings->WidgetToSpawn.Contains(InKey))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s: Key '%s' is missing from BaseWorldSettings configuration."), *FString(__FUNCTION__), *InKey);
+	}
+	
 	CurrentWidget = CreateWidget(UGameplayStatics::GetPlayerController(this, 0), BaseWorldSettings->WidgetToSpawn[InKey]);
 	if (CurrentWidget)
 	{

@@ -21,7 +21,4 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnPopUp(const FText& InText);
-
-protected:
-	virtual void NativeConstruct() override;
 };

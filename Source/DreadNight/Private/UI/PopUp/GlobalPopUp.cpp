@@ -2,12 +2,6 @@
 
 #include "Components/TextBlock.h"
 
-
-void UGlobalPopUp::NativeConstruct()
-{
-	Super::NativeConstruct();
-}
-
 void UGlobalPopUp::SpawnPopUp(const FText& InText)
 {
 	if (!TopViewportText)

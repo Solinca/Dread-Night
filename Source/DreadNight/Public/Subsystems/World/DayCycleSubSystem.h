@@ -37,6 +37,12 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UUserWidget> CurrentWidget;
 
+	// ~Begin Variables for feedbacks
+	FTimerHandle WidgetSpawnDelayTimerHandle;
+	float WidgetSpawnDelay = 1.f;
+	// ~End Variables for feedbacks 
+	
+
 	bool hasDawnEnded, hasDuskStarted = false;
 
 	float CurrentPhaseTimeInSeconds;

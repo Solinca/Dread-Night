@@ -13,6 +13,8 @@ void UWaveWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	BaseWorldSettings = Cast<ABaseLevelWorldSettings>(InWorld.GetWorldSettings());
 
 	UDayCycleSubSystem::Get(&InWorld)->OnNightStart.AddDynamic(this, &UWaveWorldSubsystem::OnNightStart);
+
+	NewWaveSound = BaseWorldSettings->SoundsToPlay["NewWave"];
 }
 
 bool UWaveWorldSubsystem::ShouldCreateSubsystem(UObject* Outer) const
@@ -24,13 +26,11 @@ bool UWaveWorldSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 
 void UWaveWorldSubsystem::OnNightStart()
 {
-	USoundBase* NewWaveSound = BaseWorldSettings->SoundsToPlay["NewWave"];
 	UGameplayStatics::PlaySound2D(this, NewWaveSound);
 	CurrentDeathCount = 0;
 	RequiredDeathCount = 0;
 
-	FTimerHandle Handle;
-	GetWorld()->GetTimerManager().SetTimer(Handle, [this, World = GetWorld()]
+	GetWorld()->GetTimerManager().SetTimer(WaveSpawnDelayTimerHandle, [this, World = GetWorld()]
 	{
 		for (FWaveMonsterData& Monster : BaseWorldSettings->WaveList[WaveIndex]->MonsterList)
 		{
@@ -38,7 +38,7 @@ void UWaveWorldSubsystem::OnNightStart()
 
 			for (int i = 0; i < Monster.Count; i++)
 			{
-				int SpawnerIndex = FMath::RandRange(0, SpawnerList.Num() - 1);
+				const int SpawnerIndex = FMath::RandRange(0, SpawnerList.Num() - 1);
 
 				if (ABaseAICharacter* SpawnedMonster = SpawnerList[SpawnerIndex]->SpawnCharacter(Monster.CharacterClass, Monster.Data))
 				{
@@ -46,7 +46,7 @@ void UWaveWorldSubsystem::OnNightStart()
 				}
 			}
 		}
-	}, NewWaveSound->GetDuration() * .75f, false);
+	}, NewWaveSound->GetDuration() * WaveSpawnDelay, false);
 }
 
 void UWaveWorldSubsystem::MonsterDeath(AActor* Monster)
