@@ -43,6 +43,7 @@ void ACustomPlayerController::BeginPlay()
 	if (HUDWidget)
 	{
 		HUDWidget->AddToViewport();
+		BindUIEvents();
 	}
 }
 
@@ -54,9 +55,9 @@ void ACustomPlayerController::Tick(float DeltaTime)
 }
 
 void ACustomPlayerController::SetupInputComponent()
+
 {
 	Super::SetupInputComponent();
-
 	if (TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
 		for (FInputActionSetup i : IA_Setup)
