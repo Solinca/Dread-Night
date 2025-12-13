@@ -74,3 +74,6 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# https://stackoverflow.com/questions/22234617/do-i-need-to-maintain-resharpers-dotsettings-user-file-in-source-control
+*.DotSettings.user
