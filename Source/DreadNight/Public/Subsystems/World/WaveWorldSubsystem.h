@@ -44,7 +44,7 @@ public:
 
 	void RegisterSpawner(ASpawner* Spawn);
 
-	void SpawnMonster();
+	void SpawnWave();
 
 	UFUNCTION()
 	void MonsterDeath(AActor* Monster);

@@ -61,7 +61,7 @@ void UWaveWorldSubsystem::RegisterSpawner(ASpawner* Spawn)
 	SpawnerList.Push(Spawn);
 }
 
-void UWaveWorldSubsystem::SpawnMonster()
+void UWaveWorldSubsystem::SpawnWave()
 {
 	for (FWaveMonsterData& Monster : BaseWorldSettings->WaveSystemData->WaveList[WaveIndex].MonsterList)
 	{
