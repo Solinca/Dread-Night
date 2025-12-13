@@ -27,8 +27,6 @@ private:
 
 	float CurrentCapsuleHalfHeight;
 
-	TObjectPtr<UStaticMeshComponent> CurrentWeaponMesh = nullptr;
-
 protected:
 	APlayerCharacter();
 
@@ -54,6 +52,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<USwordCombatComponent> SwordCombatComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UStaticMeshComponent> CurrentWeaponMesh = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UPlayerDataAsset> PlayerData;
