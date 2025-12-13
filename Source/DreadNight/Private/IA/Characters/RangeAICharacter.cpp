@@ -20,6 +20,9 @@ void ARangeAICharacter::OnDataAssetInitialization(UBlackboardComponent* Blackboa
 	{
 		BlackboardComponent->SetValueAsFloat("AttackRange", RangeMonsterDataAsset->GetAttackRange());
 		BlackboardComponent->SetValueAsFloat("AcceptableRadius", RangeMonsterDataAsset->GetAcceptableRadius());
+		BlackboardComponent->SetValueAsFloat("AttackCooldown", RangeMonsterDataAsset->GetAttackCooldown());
+		BlackboardComponent->SetValueAsFloat("AttackDamage", RangeMonsterDataAsset->GetAttackDamage());
 		BlackboardComponent->SetValueAsFloat("FleeRange", RangeMonsterDataAsset->GetFleeRange());
+		BlackboardComponent->SetValueAsClass("SpawnedProjectile", RangeMonsterDataAsset->GetSpawnedProjectile());
 	}
 }

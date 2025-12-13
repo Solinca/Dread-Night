@@ -1,7 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "IA/Decorators/BTDecorator_IsActorMoving.h"
+﻿#include "IA/Decorators/BTDecorator_IsActorMoving.h"
 
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Float.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
@@ -18,7 +15,7 @@ UBTDecorator_IsActorMoving::UBTDecorator_IsActorMoving()
 
 void UBTDecorator_IsActorMoving::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	FBTIsActorMovingDecoratorMemory* ActorMovingDecoratorMemory{CastNodeMemory(NodeMemory)};
+	auto* ActorMovingDecoratorMemory{CastNodeMemory<FBTIsActorMovingDecoratorMemory>(NodeMemory)};
 	if (ActorMovingDecoratorMemory->bInitialized)
 	{
 		return;
@@ -34,19 +31,14 @@ void UBTDecorator_IsActorMoving::OnBecomeRelevant(UBehaviorTreeComponent& OwnerC
 	BlackboardComponent->RegisterObserver(Actor.GetSelectedKeyID(), this,
 		FOnBlackboardChangeNotification::CreateUObject(this, &UBTDecorator_IsActorMoving::OnActorKeyValueChange));
 
-	FBlackboard::FKey TickIntervalKey{TickInterval.GetKeyId(OwnerComp)};
-	if (TickIntervalKey != FBlackboard::InvalidKey)
-	{
-		BlackboardComponent->RegisterObserver(TickIntervalKey, this,
-			FOnBlackboardChangeNotification::CreateUObject(this, &UBTDecorator_IsActorMoving::OnTickIntervalKeyValueChange));
-	}
+	RegisterToKeyIdChecked(TickInterval, OwnerComp, BlackboardComponent, this, &UBTDecorator_IsActorMoving::OnTickIntervalKeyValueChange);
 
 	SetNextTickTime(NodeMemory, ActorMovingDecoratorMemory->TickInterval);
 }
 
 void UBTDecorator_IsActorMoving::OnCeaseRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	FBTIsActorMovingDecoratorMemory* ActorMovingDecoratorMemory{CastNodeMemory(NodeMemory)};
+	auto* ActorMovingDecoratorMemory{CastNodeMemory<FBTIsActorMovingDecoratorMemory>(NodeMemory)};
 	ActorMovingDecoratorMemory->bHasMoved = false;
 	ActorMovingDecoratorMemory->bInitialized = false;
 	
@@ -56,7 +48,7 @@ void UBTDecorator_IsActorMoving::OnCeaseRelevant(UBehaviorTreeComponent& OwnerCo
 
 bool UBTDecorator_IsActorMoving::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
-	const FBTIsActorMovingDecoratorMemory* ActorMovingDecoratorMemory{CastNodeMemory(NodeMemory)};
+	const auto* ActorMovingDecoratorMemory{CastNodeMemory<FBTIsActorMovingDecoratorMemory>(NodeMemory)};
 
 	const UBlackboardComponent* BlackboardComponent{OwnerComp.GetBlackboardComponent()};
 	const AActor* RetrievedActor{Cast<AActor>(BlackboardComponent->GetValue<UBlackboardKeyType_Object>(Actor.GetSelectedKeyID()))};
@@ -70,7 +62,7 @@ bool UBTDecorator_IsActorMoving::CalculateRawConditionValue(UBehaviorTreeCompone
 
 void UBTDecorator_IsActorMoving::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	FBTIsActorMovingDecoratorMemory* ActorMovingDecoratorMemory{CastNodeMemory(NodeMemory)};
+	auto* ActorMovingDecoratorMemory{CastNodeMemory<FBTIsActorMovingDecoratorMemory>(NodeMemory)};
 	if (!ActorMovingDecoratorMemory->bInitialized)
 	{
 		return;
@@ -112,7 +104,8 @@ EBlackboardNotificationResult UBTDecorator_IsActorMoving::OnActorKeyValueChange(
 {
 	UBehaviorTreeComponent* BehaviorTreeComponent{Cast<UBehaviorTreeComponent>(Blackboard.GetBrainComponent())};
 	uint8* NodeMemory{BehaviorTreeComponent->GetNodeMemory(this, BehaviorTreeComponent->FindInstanceContainingNode(this))};
-	FBTIsActorMovingDecoratorMemory* IsInRangeDecoratorMemory{CastNodeMemory(NodeMemory)};
+	auto* IsInRangeDecoratorMemory{CastNodeMemory<FBTIsActorMovingDecoratorMemory>(NodeMemory)};
+	
 	IsInRangeDecoratorMemory->Actor = Cast<AActor>(Blackboard.GetValue<UBlackboardKeyType_Object>(ChangedKeyID));
 
 	BehaviorTreeComponent->RequestExecution(this);
@@ -123,17 +116,10 @@ EBlackboardNotificationResult UBTDecorator_IsActorMoving::OnActorKeyValueChange(
 EBlackboardNotificationResult UBTDecorator_IsActorMoving::OnTickIntervalKeyValueChange(
 	const UBlackboardComponent& Blackboard, FBlackboard::FKey ChangedKeyID)
 {
-	const UBehaviorTreeComponent* BehaviorTreeComponent{Cast<UBehaviorTreeComponent>(Blackboard.GetBrainComponent())};
-	uint8* NodeMemory{BehaviorTreeComponent->GetNodeMemory(this, BehaviorTreeComponent->FindInstanceContainingNode(this))};
-	FBTIsActorMovingDecoratorMemory* IsInRangeDecoratorMemory{CastNodeMemory(NodeMemory)};
+	auto* IsInRangeDecoratorMemory{CastNodeMemory<FBTIsActorMovingDecoratorMemory>(&Blackboard)};
 	IsInRangeDecoratorMemory->TickInterval = Blackboard.GetValue<UBlackboardKeyType_Float>(ChangedKeyID);
 	
 	return EBlackboardNotificationResult::ContinueObserving;
-}
-
-FBTIsActorMovingDecoratorMemory* UBTDecorator_IsActorMoving::CastNodeMemory(uint8* NodeMemory) const
-{
-	return reinterpret_cast<FBTIsActorMovingDecoratorMemory*>(NodeMemory);
 }
 
 bool UBTDecorator_IsActorMoving::IsNearlyEqual(const FVector& First, const FVector& Second, const float ErrorTolerance)

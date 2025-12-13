@@ -19,7 +19,7 @@ UBTDecorator_IsInRange::UBTDecorator_IsInRange()
 
 void UBTDecorator_IsInRange::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	FBTIsInRangeDecoratorMemory* CastedNodeMemory{CastNodeMemory(NodeMemory)};
+	auto* CastedNodeMemory{CastNodeMemory<FBTIsInRangeDecoratorMemory>(NodeMemory)};
 	if (CastedNodeMemory->bInitialized)
 	{
 		return;
@@ -34,19 +34,12 @@ void UBTDecorator_IsInRange::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp,
 	BlackboardComponent->RegisterObserver(TargetActor.GetSelectedKeyID(), this,
 		FOnBlackboardChangeNotification::CreateUObject(this, &UBTDecorator_IsInRange::OnTargetActorKeyValueChange));
 
-	const FBlackboard::FKey RangeKey{Range.GetKeyId(OwnerComp)};
-	if (RangeKey == FBlackboard::InvalidKey)
-	{
-		return;
-	}
-
-	BlackboardComponent->RegisterObserver(RangeKey, this,
-		FOnBlackboardChangeNotification::CreateUObject(this, &UBTDecorator_IsInRange::OnRangeKeyValueChange));
+	RegisterToKeyIdChecked(Range, OwnerComp, BlackboardComponent, this, &UBTDecorator_IsInRange::OnRangeKeyValueChange);
 }
 
 void UBTDecorator_IsInRange::OnCeaseRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	FBTIsInRangeDecoratorMemory* CastedNodeMemory{CastNodeMemory(NodeMemory)};
+	auto* CastedNodeMemory{CastNodeMemory<FBTIsInRangeDecoratorMemory>(NodeMemory)};
 	CastedNodeMemory->bInitialized = false;
 	
 	UBlackboardComponent* BlackboardComponent{OwnerComp.GetBlackboardComponent()};
@@ -76,7 +69,7 @@ bool UBTDecorator_IsInRange::CalculateRawConditionValue(UBehaviorTreeComponent& 
 
 void UBTDecorator_IsInRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	const FBTIsInRangeDecoratorMemory* CastedNodeMemory{CastNodeMemory(NodeMemory)};
+	const auto* CastedNodeMemory{CastNodeMemory<FBTIsInRangeDecoratorMemory>(NodeMemory)};
 	if (!CastedNodeMemory->bInitialized)
 	{
 		return;
@@ -123,7 +116,8 @@ EBlackboardNotificationResult UBTDecorator_IsInRange::OnTargetActorKeyValueChang
 {
 	UBehaviorTreeComponent* BehaviorTreeComponent{Cast<UBehaviorTreeComponent>(Blackboard.GetBrainComponent())};
 	uint8* NodeMemory{BehaviorTreeComponent->GetNodeMemory(this, BehaviorTreeComponent->FindInstanceContainingNode(this))};
-	FBTIsInRangeDecoratorMemory* IsInRangeDecoratorMemory{CastNodeMemory(NodeMemory)};
+	auto* IsInRangeDecoratorMemory{CastNodeMemory<FBTIsInRangeDecoratorMemory>(NodeMemory)};
+	
 	IsInRangeDecoratorMemory->TargetActor = Cast<AActor>(Blackboard.GetValue<UBlackboardKeyType_Object>(ChangedKeyID));
 	
 	BehaviorTreeComponent->RequestExecution(this);
@@ -136,15 +130,11 @@ EBlackboardNotificationResult UBTDecorator_IsInRange::OnRangeKeyValueChange(cons
 {
 	UBehaviorTreeComponent* BehaviorTreeComponent{Cast<UBehaviorTreeComponent>(Blackboard.GetBrainComponent())};
 	uint8* NodeMemory{BehaviorTreeComponent->GetNodeMemory(this, BehaviorTreeComponent->FindInstanceContainingNode(this))};
-	FBTIsInRangeDecoratorMemory* IsInRangeDecoratorMemory{CastNodeMemory(NodeMemory)};
+	auto* IsInRangeDecoratorMemory{CastNodeMemory<FBTIsInRangeDecoratorMemory>(NodeMemory)};
+	
 	IsInRangeDecoratorMemory->Range = Blackboard.GetValue<UBlackboardKeyType_Float>(ChangedKeyID);
 	
 	BehaviorTreeComponent->RequestExecution(this);
 	
 	return EBlackboardNotificationResult::ContinueObserving;
-}
-
-FBTIsInRangeDecoratorMemory* UBTDecorator_IsInRange::CastNodeMemory(uint8* NodeMemory) const
-{
-	return reinterpret_cast<FBTIsInRangeDecoratorMemory*>(NodeMemory);
 }

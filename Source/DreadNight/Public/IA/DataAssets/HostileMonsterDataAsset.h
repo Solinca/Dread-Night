@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "MonsterDataAsset.h"
-#include "BlackboardMonsterDataAsset.generated.h"
+#include "HostileMonsterDataAsset.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DREADNIGHT_API UBlackboardMonsterDataAsset : public UMonsterDataAsset
+class DREADNIGHT_API UHostileMonsterDataAsset : public UMonsterDataAsset
 {
 	GENERATED_BODY()
 
@@ -21,7 +21,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AcceptableRadius{0.f};
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackCooldown;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackDamage;
+
 public:
+	[[nodiscard]] float GetAttackCooldown() const;
+	[[nodiscard]] float GetAttackDamage() const;
 	[[nodiscard]] float GetAttackRange() const;
 	[[nodiscard]] float GetAcceptableRadius() const;
 };

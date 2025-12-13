@@ -1,5 +1,7 @@
 ﻿#include "Actors/ProjectileActor.h"
 
+#include "DamageSystem/Interface/Damageable.h"
+
 AProjectileActor::AProjectileActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -30,18 +32,28 @@ void AProjectileActor::BeginPlay()
 void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 									UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor == this || IsPendingKillPending())
+	if (OtherActor == this || IsPendingKillPending() || !OtherActor->Implements<UDamageable>())
 	{
 		return;
 	}
 
-	const FString DebugMessage{FString::Printf(TEXT("Projectile shoot by %s hit %s."), *Owner->GetName(), *OtherActor->GetName())};
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Red, DebugMessage, true);
-
+	IDamageable* Damageable{Cast<IDamageable>(OtherActor)};
+	Damageable->TryApplyDamage(Damage, GetInstigator());
+	
 	Destroy();
 }
 
 UProjectileMovementComponent* AProjectileActor::GetProjectileMovementComponent() const
 {
 	return ProjectileMovementComponent;
+}
+
+void AProjectileActor::SetDamage(float NewDamage)
+{
+	Damage = NewDamage;
+}
+
+float AProjectileActor::GetDamage() const
+{
+	return Damage;
 }
