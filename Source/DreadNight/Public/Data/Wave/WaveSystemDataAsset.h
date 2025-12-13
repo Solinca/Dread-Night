@@ -4,7 +4,7 @@
 #include "Engine/DataAsset.h"
 #include "IA/DataAssets/MonsterDataAsset.h"
 #include "IA/Characters/BaseAICharacter.h"
-#include "WaveDataAsset.generated.h"
+#include "WaveSystemDataAsset.generated.h"
 
 USTRUCT(BlueprintType)
 struct FWaveMonsterData
@@ -21,12 +21,24 @@ struct FWaveMonsterData
 	int Count = 0;
 };
 
+USTRUCT(BlueprintType)
+struct FWaveData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TArray<FWaveMonsterData> MonsterList;
+};
+
 UCLASS()
-class DREADNIGHT_API UWaveDataAsset : public UDataAsset
+class DREADNIGHT_API UWaveSystemDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditAnywhere)
-	TArray<FWaveMonsterData> MonsterList;
+	TArray<FWaveData> WaveList;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USoundBase> NewWaveSound;
 };
