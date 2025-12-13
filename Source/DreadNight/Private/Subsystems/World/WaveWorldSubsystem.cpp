@@ -31,10 +31,7 @@ void UWaveWorldSubsystem::OnNightStart()
 	CurrentDeathCount = 0;
 	RequiredDeathCount = 0;
 
-	GetWorld()->GetTimerManager().SetTimer(WaveSpawnDelayTimerHandle, [this, World = GetWorld()]
-	{
-		SpawnMonster();
-	}, NewWaveSound->GetDuration() * BaseWorldSettings->WaveSystemData->GlobalWaveSpawnDelay, false);
+	GetWorld()->GetTimerManager().SetTimer(WaveSpawnDelayTimerHandle, this, &ThisClass::SpawnWave, NewWaveSound->GetDuration() * BaseWorldSettings->WaveSystemData->GlobalWaveSpawnDelay, false);
 }
 
 void UWaveWorldSubsystem::MonsterDeath(AActor* Monster)
