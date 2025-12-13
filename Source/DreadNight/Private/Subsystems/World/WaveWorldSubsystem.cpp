@@ -1,10 +1,10 @@
 #include "Subsystems/World/WaveWorldSubsystem.h"
-
-#include "AssetTypeActions/AssetDefinition_SoundBase.h"
 #include "Subsystems/World/DayCycleSubSystem.h"
 #include "Global/BaseLevelWorldSettings.h"
-#include "Data/Wave/WaveDataAsset.h"
 #include "Kismet/GameplayStatics.h"
+#include "AssetTypeActions/AssetDefinition_SoundBase.h"
+#include "Data/Wave/WaveSystemDataAsset.h"
+#include "Data/DayCycleSystem/DayCycleSystemDataAsset.h"
 
 void UWaveWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
@@ -14,7 +14,7 @@ void UWaveWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 
 	UDayCycleSubSystem::Get(&InWorld)->OnNightStart.AddDynamic(this, &UWaveWorldSubsystem::OnNightStart);
 
-	NewWaveSound = BaseWorldSettings->SoundsToPlay["NewWave"];
+	NewWaveSound = BaseWorldSettings->WaveSystemData->NewWaveSound;
 }
 
 bool UWaveWorldSubsystem::ShouldCreateSubsystem(UObject* Outer) const
@@ -27,12 +27,13 @@ bool UWaveWorldSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 void UWaveWorldSubsystem::OnNightStart()
 {
 	UGameplayStatics::PlaySound2D(this, NewWaveSound);
+
 	CurrentDeathCount = 0;
 	RequiredDeathCount = 0;
 
 	GetWorld()->GetTimerManager().SetTimer(WaveSpawnDelayTimerHandle, [this, World = GetWorld()]
 	{
-		for (FWaveMonsterData& Monster : BaseWorldSettings->WaveList[WaveIndex]->MonsterList)
+		for (FWaveMonsterData& Monster : BaseWorldSettings->WaveSystemData->WaveList[WaveIndex].MonsterList)
 		{
 			RequiredDeathCount += Monster.Count;
 
@@ -59,7 +60,7 @@ void UWaveWorldSubsystem::MonsterDeath(AActor* Monster)
 
 		WaveIndex++;
 
-		if (WaveIndex >= BaseWorldSettings->WaveList.Num())
+		if (WaveIndex >= BaseWorldSettings->WaveSystemData->WaveList.Num())
 		{
 			WaveIndex = 0;
 

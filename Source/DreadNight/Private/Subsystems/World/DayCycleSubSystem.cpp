@@ -1,15 +1,15 @@
 #include "Subsystems/World/DayCycleSubSystem.h"
-
-#include "Blueprint/UserWidget.h"
 #include "Subsystems/World/WaveWorldSubsystem.h"
 #include "Global/BaseLevelWorldSettings.h"
+#include "Kismet/GameplayStatics.h"
 #include "Engine/DirectionalLight.h"
-#include "Components/DirectionalLightComponent.h"
 #include "Engine/ExponentialHeightFog.h"
+#include "Components/DirectionalLightComponent.h"
 #include "Components/ExponentialHeightFogComponent.h"
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/VolumetricCloudComponent.h"
-#include "Kismet/GameplayStatics.h"
+#include "Data/DayCycleSystem/DayCycleSystemDataAsset.h"
+#include "Blueprint/UserWidget.h"
 
 void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 {
@@ -17,11 +17,11 @@ void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 
 	BaseWorldSettings = Cast<ABaseLevelWorldSettings>(InWorld.GetWorldSettings());
 
-	DawnRotation = FMath::Abs(BaseWorldSettings->StartSunRotation - BaseWorldSettings->DawnRotationThreshold);
+	DawnRotation = FMath::Abs(BaseWorldSettings->DayCycleSystemData->StartSunRotation - BaseWorldSettings->DayCycleSystemData->DawnRotationThreshold);
 
-	DuskRotation = FMath::Abs(BaseWorldSettings->EndSunRotation - BaseWorldSettings->DuskRotationhreshold);
+	DuskRotation = FMath::Abs(BaseWorldSettings->DayCycleSystemData->EndSunRotation - BaseWorldSettings->DayCycleSystemData->DuskRotationhreshold);
 
-	DayRotation = BaseWorldSettings->FullSunRotation - DawnRotation - DuskRotation;
+	DayRotation = BaseWorldSettings->DayCycleSystemData->FullSunRotation - DawnRotation - DuskRotation;
 
 	InitSunDirectionalLight(InWorld);
 
@@ -53,26 +53,26 @@ void UDayCycleSubSystem::StartDayCycle()
 	
 	hasDawnEnded = hasDuskStarted = false;
 
-	CurrentPhaseTimeInSeconds = BaseWorldSettings->DawnTimeInSeconds;
+	CurrentPhaseTimeInSeconds = BaseWorldSettings->DayCycleSystemData->DawnTimeInSeconds;
 
 	CurrentPhaseRotation = DawnRotation;
 
-	SunRotation = FRotator(BaseWorldSettings->StartSunRotation, 0, 0);
+	SunRotation = FRotator(BaseWorldSettings->DayCycleSystemData->StartSunRotation, 0, 0);
 
 	Sun->SetWorldRotation(SunRotation);
 
-	MoonRotation = FRotator(BaseWorldSettings->StartSunRotation - DayRotation, 0, 0);
+	MoonRotation = FRotator(BaseWorldSettings->DayCycleSystemData->StartSunRotation - DayRotation, 0, 0);
 
 	Moon->SetWorldRotation(MoonRotation);
 
-	FogComponent->SetFogDensity(BaseWorldSettings->MaximalFogDensity);
+	FogComponent->SetFogDensity(BaseWorldSettings->DayCycleSystemData->MaximalFogDensity);
 
-	GetWorld()->GetTimerManager().SetTimer(ProcessDayTimer, this, &UDayCycleSubSystem::ProcessDayPerSecond, BaseWorldSettings->ProcessedTimeInterval, true);
+	GetWorld()->GetTimerManager().SetTimer(ProcessDayTimer, this, &UDayCycleSubSystem::ProcessDayPerSecond, BaseWorldSettings->DayCycleSystemData->ProcessedTimeInterval, true);
 }
 
 void UDayCycleSubSystem::ProcessDayPerSecond()
 {
-	FRotator FrameRotation = FRotator((CurrentPhaseRotation / CurrentPhaseTimeInSeconds) * BaseWorldSettings->ProcessedTimeInterval, 0, 0);
+	FRotator FrameRotation = FRotator((CurrentPhaseRotation / CurrentPhaseTimeInSeconds) * BaseWorldSettings->DayCycleSystemData->ProcessedTimeInterval, 0, 0);
 
 	SunRotation -= FrameRotation;
 
@@ -84,32 +84,32 @@ void UDayCycleSubSystem::ProcessDayPerSecond()
 
 	if (hasDuskStarted)
 	{
-		FogComponent->SetFogDensity(FogComponent->FogDensity + (BaseWorldSettings->MaximalFogDensity / CurrentPhaseTimeInSeconds) * BaseWorldSettings->ProcessedTimeInterval);
+		FogComponent->SetFogDensity(FogComponent->FogDensity + (BaseWorldSettings->DayCycleSystemData->MaximalFogDensity / CurrentPhaseTimeInSeconds) * BaseWorldSettings->DayCycleSystemData->ProcessedTimeInterval);
 	}
 
 	if (!hasDawnEnded)
 	{
-		FogComponent->SetFogDensity(FogComponent->FogDensity - (BaseWorldSettings->MaximalFogDensity / CurrentPhaseTimeInSeconds) * BaseWorldSettings->ProcessedTimeInterval);
+		FogComponent->SetFogDensity(FogComponent->FogDensity - (BaseWorldSettings->DayCycleSystemData->MaximalFogDensity / CurrentPhaseTimeInSeconds) * BaseWorldSettings->DayCycleSystemData->ProcessedTimeInterval);
 	}
 
-	if (!hasDuskStarted && SunRotation.Pitch < BaseWorldSettings->DuskRotationhreshold)
+	if (!hasDuskStarted && SunRotation.Pitch < BaseWorldSettings->DayCycleSystemData->DuskRotationhreshold)
 	{
-		CurrentPhaseTimeInSeconds = BaseWorldSettings->DuskTimeInSeconds;
+		CurrentPhaseTimeInSeconds = BaseWorldSettings->DayCycleSystemData->DuskTimeInSeconds;
 
 		CurrentPhaseRotation = DuskRotation;
 
 		hasDuskStarted = true;
 	}
-	else if (!hasDawnEnded && SunRotation.Pitch < BaseWorldSettings->DawnRotationThreshold)
+	else if (!hasDawnEnded && SunRotation.Pitch < BaseWorldSettings->DayCycleSystemData->DawnRotationThreshold)
 	{
-		CurrentPhaseTimeInSeconds = BaseWorldSettings->DayTimeInSeconds;
+		CurrentPhaseTimeInSeconds = BaseWorldSettings->DayCycleSystemData->DayTimeInSeconds;
 
 		CurrentPhaseRotation = DayRotation;
 
 		hasDawnEnded = true;
 	}
 
-	if (SunRotation.Pitch < BaseWorldSettings->EndSunRotation)
+	if (SunRotation.Pitch < BaseWorldSettings->DayCycleSystemData->EndSunRotation)
 	{
 		StartMoonCycle();
 	}
@@ -134,11 +134,11 @@ void UDayCycleSubSystem::InitSunDirectionalLight(UWorld& InWorld)
 
 	Sun->SetMobility(EComponentMobility::Movable);
 
-	Sun->SetIntensity(BaseWorldSettings->SunIntensity);
+	Sun->SetIntensity(BaseWorldSettings->DayCycleSystemData->SunIntensity);
 
-	Sun->SetLightColor(BaseWorldSettings->SunColor);
+	Sun->SetLightColor(BaseWorldSettings->DayCycleSystemData->SunColor);
 
-	Sun->SetCastShadows(BaseWorldSettings->DoesSunCastShadow);
+	Sun->SetCastShadows(BaseWorldSettings->DayCycleSystemData->DoesSunCastShadow);
 }
 
 void UDayCycleSubSystem::InitMoonDirectionalLight(UWorld& InWorld)
@@ -147,11 +147,11 @@ void UDayCycleSubSystem::InitMoonDirectionalLight(UWorld& InWorld)
 
 	Moon->SetMobility(EComponentMobility::Movable);
 
-	Moon->SetIntensity(BaseWorldSettings->MoonIntensity);
+	Moon->SetIntensity(BaseWorldSettings->DayCycleSystemData->MoonIntensity);
 
-	Moon->SetLightColor(BaseWorldSettings->MoonColor);
+	Moon->SetLightColor(BaseWorldSettings->DayCycleSystemData->MoonColor);
 
-	Moon->SetCastShadows(BaseWorldSettings->DoesMoonCastShadow);
+	Moon->SetCastShadows(BaseWorldSettings->DayCycleSystemData->DoesMoonCastShadow);
 
 	Moon->SetForwardShadingPriority(1);
 
@@ -162,19 +162,19 @@ void UDayCycleSubSystem::InitExponentialHeightFog(UWorld& InWorld)
 {
 	FogComponent = InWorld.SpawnActor<AExponentialHeightFog>()->GetComponentByClass<UExponentialHeightFogComponent>();
 
-	FogComponent->SetFogDensity(BaseWorldSettings->MaximalFogDensity);
+	FogComponent->SetFogDensity(BaseWorldSettings->DayCycleSystemData->MaximalFogDensity);
 
-	FogComponent->SetFogHeightFalloff(BaseWorldSettings->FogHeightFalloff);
+	FogComponent->SetFogHeightFalloff(BaseWorldSettings->DayCycleSystemData->FogHeightFalloff);
 
-	FogComponent->SetSecondFogDensity(BaseWorldSettings->MaximalFogDensity);
+	FogComponent->SetSecondFogDensity(BaseWorldSettings->DayCycleSystemData->MaximalFogDensity);
 
-	if (BaseWorldSettings->HasVolumetricFog)
+	if (BaseWorldSettings->DayCycleSystemData->HasVolumetricFog)
 	{
-		FogComponent->SetVolumetricFog(BaseWorldSettings->HasVolumetricFog);
+		FogComponent->SetVolumetricFog(BaseWorldSettings->DayCycleSystemData->HasVolumetricFog);
 
-		FogComponent->SetVolumetricFogAlbedo(BaseWorldSettings->VolumetricFogAlbedo.ToFColor(false));
+		FogComponent->SetVolumetricFogAlbedo(BaseWorldSettings->DayCycleSystemData->VolumetricFogAlbedo.ToFColor(false));
 
-		FogComponent->SetVolumetricFogExtinctionScale(BaseWorldSettings->VolumetricFogExtinctionScale);
+		FogComponent->SetVolumetricFogExtinctionScale(BaseWorldSettings->DayCycleSystemData->VolumetricFogExtinctionScale);
 	}
 }
 
@@ -187,17 +187,18 @@ void UDayCycleSubSystem::InitSkyAtmoshpere(UWorld& InWorld)
 {
 	Sky = InWorld.SpawnActor<ASkyAtmosphere>()->GetComponentByClass<USkyAtmosphereComponent>();
 
-	Sky->SetRayleighScatteringScale(BaseWorldSettings->RayleighScatteringScale);
+	Sky->SetRayleighScatteringScale(BaseWorldSettings->DayCycleSystemData->RayleighScatteringScale);
 }
 
 void UDayCycleSubSystem::SpawnPopUpWidget(const FString& InKey)
 {
-	if (!BaseWorldSettings->WidgetToSpawn.Contains(InKey))
+	if (!BaseWorldSettings->DayCycleSystemData->WidgetToSpawn.Contains(InKey))
 	{
 		UE_LOG(LogTemp, Error, TEXT("%s: Key '%s' is missing from BaseWorldSettings configuration."), *FString(__FUNCTION__), *InKey);
 	}
 	
-	CurrentWidget = CreateWidget(UGameplayStatics::GetPlayerController(this, 0), BaseWorldSettings->WidgetToSpawn[InKey]);
+	CurrentWidget = CreateWidget(UGameplayStatics::GetPlayerController(this, 0), BaseWorldSettings->DayCycleSystemData->WidgetToSpawn[InKey]);
+
 	if (CurrentWidget)
 	{
 		CurrentWidget->AddToViewport();
