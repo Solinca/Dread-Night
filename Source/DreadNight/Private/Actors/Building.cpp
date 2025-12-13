@@ -5,6 +5,8 @@ ABuilding::ABuilding()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	RootComponent = CreateDefaultSubobject<USceneComponent>("Root Component");
+	
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	MeshComp->SetupAttachment(RootComponent);
 	
