@@ -56,6 +56,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> CurrentWeaponMesh = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UInventoryComponent> InventoryComponent = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UInventoryComponent> HotbarInventoryComponent = nullptr;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UPlayerDataAsset> PlayerData;
 
@@ -98,6 +104,12 @@ public:
 	UFUNCTION()
 	USwordCombatComponent* GetSwordCombatComponent();
 
+	UFUNCTION()
+	UInventoryComponent* GetInventoryComponent();
+	
+	UFUNCTION()
+	UInventoryComponent* GetHotbarInventoryComponent();
+	
 	UFUNCTION()
 	void EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon);
 };

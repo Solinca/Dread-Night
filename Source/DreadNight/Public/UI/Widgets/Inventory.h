@@ -22,6 +22,7 @@ protected:
 	TSubclassOf<UInventoryAction> InventoryActionClass;
 	
 	TObjectPtr<UInventoryComponent> BindInventoryComponent = nullptr;
+	TObjectPtr<UInventoryComponent> BindTargetInventoryComponent = nullptr;
 	TObjectPtr<UInventoryAction> InventoryAction;
 public:
 
@@ -41,6 +42,8 @@ public:
 	void OnItemsCleared();
 	UFUNCTION(BlueprintCallable)
 	void BindToInventory(UInventoryComponent* InventoryComponent);
+	UFUNCTION(BlueprintCallable)
+	void BindTargetInventory(UInventoryComponent* InventoryComponent);
 	UFUNCTION(BlueprintCallable)
 	void OnItemActionCreated(int SlotIndex);
 	UFUNCTION(BlueprintCallable)

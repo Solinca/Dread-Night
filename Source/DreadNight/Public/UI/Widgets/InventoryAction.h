@@ -37,6 +37,9 @@ public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 	UFUNCTION(BlueprintCallable)
+	void SetupAction(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index);
+	
+	UFUNCTION(BlueprintCallable)
 	void OnUsePressed();
 	UFUNCTION(BlueprintCallable)
 	void OnTransferPressed();
@@ -53,4 +56,5 @@ public:
 	TObjectPtr<UTextBlock> GetRemoveText() const { return RemoveText; }
 	
 	TObjectPtr<UInventoryComponent> InventoryComponent;
+	TObjectPtr<UInventoryComponent> TargetInventoryComponent;
 };

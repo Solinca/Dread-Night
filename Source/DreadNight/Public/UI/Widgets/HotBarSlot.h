@@ -1,9 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/Widgets/InventorySlot.h"
 #include "HotBarSlot.generated.h"
-
 
 class UImage;
 class UButton;
@@ -11,19 +10,13 @@ class UTextBlock;
 class UItemInstance;
 
 UCLASS()
-class DREADNIGHT_API UHotBarSlot : public UUserWidget
+class DREADNIGHT_API UHotBarSlot : public UInventorySlot
 {
 	GENERATED_BODY()
 
 protected:
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> ItemIcon;
-	
-	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> ShortcutText;
-	
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> StackText;
 	
 	UPROPERTY()
 	TObjectPtr<UItemInstance> CurrentItemInstance;

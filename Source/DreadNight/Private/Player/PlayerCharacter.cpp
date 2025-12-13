@@ -26,6 +26,10 @@ APlayerCharacter::APlayerCharacter()
 	SwordCombatComponent = CreateDefaultSubobject<USwordCombatComponent>("SwordCombatComponent");
 
 	CurrentWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>("WeaponMesh");
+	
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>("InventoryComponent");
+	
+	HotbarInventoryComponent = CreateDefaultSubobject<UInventoryComponent>("HotbarInventoryComponent");
 }
 
 void APlayerCharacter::BeginPlay()
@@ -33,6 +37,8 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentCapsuleHalfHeight = PlayerData->CapsuleMaxHalfHeight;
+	InventoryComponent->SetSize(PlayerData->InventorySize);
+	HotbarInventoryComponent->SetSize(PlayerData->HotbarInventorySize);
 
 	EquipWeapon(Cast<UItemInstance_Weapon>(FItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1)));
 }
@@ -114,6 +120,16 @@ UConditionStateComponent* APlayerCharacter::GetConditionStateComponent()
 USwordCombatComponent* APlayerCharacter::GetSwordCombatComponent()
 {
 	return SwordCombatComponent;
+}
+
+UInventoryComponent* APlayerCharacter::GetInventoryComponent()
+{
+	return InventoryComponent;
+}
+
+UInventoryComponent* APlayerCharacter::GetHotbarInventoryComponent()
+{
+	return HotbarInventoryComponent;
 }
 
 void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
