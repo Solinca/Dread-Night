@@ -3,6 +3,8 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/Widgets/PauseMenu.h"
 #include <EnhancedInputSubsystems.h>
+
+#include "Global/BaseLevelWorldSettings.h"
 #include "UserWidgets/OptionsWidget.h"
 #include "Global/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
@@ -33,6 +35,8 @@ void ACustomPlayerController::BeginPlay()
 	PlayerCameraManager->ViewPitchMax = ViewPitch.Y;
 
 	SetInputMode(FInputModeGameOnly());
+
+	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
@@ -277,7 +281,7 @@ void ACustomPlayerController::GoBackToMenu()
 
 void ACustomPlayerController::PopLastMenu()
 {
-	if (MenuStack.IsEmpty())
+	if (MenuStack.IsEmpty() || !MenuStack.Last().bCanBeQuit)
 	{
 		return;
 	}
@@ -358,4 +362,11 @@ void ACustomPlayerController::LeaveGame()
 {
 	SaveGame();
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
+}
+
+void ACustomPlayerController::ShowGameOver()
+{
+	TObjectPtr<UUserWidget> WidgetGameOver = CreateWidget<UUserWidget>(this, GameOverClass);
+	PushNewMenu(WidgetGameOver, true, [](){}, false);
+	UGameplayStatics::PlaySound2D(this, GameOverSound);
 }

@@ -34,8 +34,9 @@ struct FInputActionSetup
 struct FStackedMenu
 {
 	TObjectPtr<UUserWidget> Widget;
-	TFunction<void()> OnCloseAction;
 	bool bTriggerPause;
+	TFunction<void()> OnCloseAction;
+	bool bCanBeQuit = true;
 };
 
 UCLASS()
@@ -118,12 +119,17 @@ protected:
 	//=========//
 	//==Widget==//
 	//=========//
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> GameOverClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UPauseMenu> PauseMenuClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UOptionsWidget> OptionsClass;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
+	TObjectPtr<USoundBase> GameOverSound;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UPauseMenu> PauseMenuWidget;
@@ -213,7 +219,7 @@ private:
 	//Function to add a Menu to the menu list, so we can leave it with escape
 	template<typename T>
 	requires std::is_base_of_v<UUserWidget, T>
-	void PushNewMenu(TObjectPtr<T>& Widget, bool bPausesGame, TFunction<void()>&& OnCloseAction = []{})
+	void PushNewMenu(TObjectPtr<T>& Widget, bool bPausesGame, TFunction<void()>&& OnCloseAction = []{}, bool bCanBeQuit = true)
 	{
 		if (MenuStack.IsEmpty() && GetLocalPlayer())
 		{
@@ -257,7 +263,7 @@ private:
 			}
 		};
 
-		MenuStack.Push({ Widget, MoveTemp(SafeCloseWidgetAction), bPausesGame });
+		MenuStack.Push({ Widget, bPausesGame, MoveTemp(SafeCloseWidgetAction), bCanBeQuit });
 
 		if (bPausesGame)
 		{
@@ -285,4 +291,7 @@ private:
 
 	UFUNCTION()
 	void LeaveGame();
+
+	UFUNCTION()
+	void ShowGameOver();
 };
