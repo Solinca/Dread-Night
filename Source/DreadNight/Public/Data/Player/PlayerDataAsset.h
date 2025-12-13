@@ -7,6 +7,8 @@
 #include "UserWidgets/OptionsWidget.h"
 #include "PlayerDataAsset.generated.h"
 
+class UPlayerHud;
+
 UCLASS()
 class DREADNIGHT_API UPlayerDataAsset : public UDataAsset
 {
@@ -86,6 +88,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UInventory> InventoryWidgetClass;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UPlayerHud> PlayerHudClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
 	TObjectPtr<USoundBase> GameOverSound;

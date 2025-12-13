@@ -39,7 +39,7 @@ void ACustomPlayerController::BeginPlay()
 
 	SetInputMode(FInputModeGameOnly());
 
-	HUDWidget = CreateWidget<UPlayerHud>(this, HUDClass);
+	HUDWidget = CreateWidget<UPlayerHud>(this, PlayerData->PlayerHudClass);
 	if (HUDWidget)
 	{
 		HUDWidget->AddToViewport();
