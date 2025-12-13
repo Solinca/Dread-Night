@@ -118,15 +118,6 @@ protected:
 	//==Widget==//
 	//=========//
 
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UPauseMenu> PauseMenuClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UOptionsWidget> OptionsClass;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UPlayerHud> HUDClass;
-
 private:
 	UPROPERTY(Transient)
 	TObjectPtr<UPauseMenu> PauseMenuWidget;
