@@ -16,12 +16,17 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variable", meta = (ClampMin = 0.f))
+	float Damage{0.f};
 public:	
 	AProjectileActor();
 
 	UProjectileMovementComponent* GetProjectileMovementComponent() const;
 
+	void SetDamage(float NewDamage);
+
+	float GetDamage() const;
 protected:
 	virtual void BeginPlay() override;
 	
