@@ -1,6 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "BTTask_Base.h"
@@ -16,9 +14,6 @@ struct FBTAttackTaskMemory
 	bool bInitialized{false};
 };
 
-/**
- * 
- */
 UCLASS()
 class DREADNIGHT_API UBTTask_Attack : public UBTTask_Base
 {

@@ -1,7 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "IA/DataAssets/HostileMonsterDataAsset.h"
+﻿#include "IA/DataAssets/HostileMonsterDataAsset.h"
 
 float UHostileMonsterDataAsset::GetAttackCooldown() const
 {

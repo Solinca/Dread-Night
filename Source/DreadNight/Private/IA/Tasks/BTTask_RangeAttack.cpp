@@ -1,7 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "IA/Tasks/BTTask_RangeAttack.h"
+﻿#include "IA/Tasks/BTTask_RangeAttack.h"
 
 #include "AIController.h"
 #include "Actors/ProjectileActor.h"
