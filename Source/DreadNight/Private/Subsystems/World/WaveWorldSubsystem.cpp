@@ -33,20 +33,7 @@ void UWaveWorldSubsystem::OnNightStart()
 
 	GetWorld()->GetTimerManager().SetTimer(WaveSpawnDelayTimerHandle, [this, World = GetWorld()]
 	{
-		for (FWaveMonsterData& Monster : BaseWorldSettings->WaveSystemData->WaveList[WaveIndex].MonsterList)
-		{
-			RequiredDeathCount += Monster.Count;
-
-			for (int i = 0; i < Monster.Count; i++)
-			{
-				const int SpawnerIndex = FMath::RandRange(0, SpawnerList.Num() - 1);
-
-				if (ABaseAICharacter* SpawnedMonster = SpawnerList[SpawnerIndex]->SpawnCharacter(Monster.CharacterClass, Monster.Data))
-				{
-					SpawnedMonster->OnDestroyed.AddDynamic(World->GetSubsystem<UWaveWorldSubsystem>(), &UWaveWorldSubsystem::MonsterDeath);
-				}
-			}
-		}
+		SpawnMonster();
 	}, NewWaveSound->GetDuration() * BaseWorldSettings->WaveSystemData->GlobalWaveSpawnDelay, false);
 }
 
@@ -72,6 +59,24 @@ void UWaveWorldSubsystem::MonsterDeath(AActor* Monster)
 void UWaveWorldSubsystem::RegisterSpawner(ASpawner* Spawn)
 {
 	SpawnerList.Push(Spawn);
+}
+
+void UWaveWorldSubsystem::SpawnMonster()
+{
+	for (FWaveMonsterData& Monster : BaseWorldSettings->WaveSystemData->WaveList[WaveIndex].MonsterList)
+	{
+		RequiredDeathCount += Monster.Count;
+
+		for (int i = 0; i < Monster.Count; i++)
+		{
+			const int SpawnerIndex = FMath::RandRange(0, SpawnerList.Num() - 1);
+
+			if (ABaseAICharacter* SpawnedMonster = SpawnerList[SpawnerIndex]->SpawnCharacter(Monster.CharacterClass, Monster.Data))
+			{
+				SpawnedMonster->OnDestroyed.AddDynamic(this, &ThisClass::MonsterDeath);
+			}
+		}
+	}
 }
 
 UWaveWorldSubsystem::ThisClass* UWaveWorldSubsystem::Get(UObject* WorldContext)
