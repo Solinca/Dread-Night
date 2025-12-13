@@ -11,6 +11,7 @@ class UDirectionalLightComponent;
 class UExponentialHeightFogComponent;
 class USkyAtmosphereComponent;
 class UVolumetricCloudComponent;
+class ULightComponent;
 
 UCLASS()
 class DREADNIGHT_API UDayCycleSubSystem : public UWorldSubsystem
@@ -47,6 +48,8 @@ private:
 
 	int DayCounter = 0;
 
+	TMap<ULightComponent*, float> LightList;
+
 	UFUNCTION()
 	void StartDayCycle();
 
@@ -66,6 +69,8 @@ private:
 	
 	void SpawnPopUpWidget(const FString& InKey);
 
+	void ProcessEveryLightSource();
+
 protected:
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 
@@ -78,4 +83,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "DayCycle")
 	int GetDayCounter() const { return DayCounter; }
+
+	void RegisterLightSource(ULightComponent* Light);
 };

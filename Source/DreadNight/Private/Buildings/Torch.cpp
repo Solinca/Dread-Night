@@ -14,4 +14,6 @@ ATorch::ATorch()
 void ATorch::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetWorld()->GetSubsystem<UDayCycleSubSystem>()->RegisterLightSource(Light);
 }
