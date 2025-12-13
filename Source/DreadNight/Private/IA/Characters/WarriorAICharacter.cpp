@@ -16,9 +16,11 @@ void AWarriorAICharacter::OnDataAssetInitialization(UBlackboardComponent* Blackb
 
 	GetWorldTimerManager().SetTimerForNextTick(RetrievePlayer);
 
-	if (UHostileMonsterDataAsset* BBMonsterDataAsset{Cast<UHostileMonsterDataAsset>(MonsterDataAsset)})
+	if (UHostileMonsterDataAsset* HostileMonsterDataAsset{Cast<UHostileMonsterDataAsset>(MonsterDataAsset)})
 	{
-		BlackboardComponent->SetValueAsFloat("AttackRange", BBMonsterDataAsset->GetAttackRange());
-		BlackboardComponent->SetValueAsFloat("AcceptableRadius", BBMonsterDataAsset->GetAcceptableRadius());	
+		BlackboardComponent->SetValueAsFloat("AttackRange", HostileMonsterDataAsset->GetAttackRange());
+		BlackboardComponent->SetValueAsFloat("AcceptableRadius", HostileMonsterDataAsset->GetAcceptableRadius());
+		BlackboardComponent->SetValueAsFloat("AttackCooldown", HostileMonsterDataAsset->GetAttackCooldown());
+		BlackboardComponent->SetValueAsFloat("AttackDamage", HostileMonsterDataAsset->GetAttackDamage());
 	}
 }

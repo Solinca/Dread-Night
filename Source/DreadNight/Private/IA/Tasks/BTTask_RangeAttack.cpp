@@ -57,6 +57,8 @@ EBTNodeResult::Type UBTTask_RangeAttack::ExecuteTask(UBehaviorTreeComponent& Own
 	AIController->SetFocus(RangeAttackTaskMemory->AttackedTarget.Get());
 
 	RangeAttackTaskMemory->bInitialized = true;
+
+	SetNextTickTime(NodeMemory, RangeAttackTaskMemory->AttackCooldown);
 	
 	return EBTNodeResult::InProgress;
 }
