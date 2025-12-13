@@ -37,7 +37,6 @@ void ACustomPlayerController::BeginPlay()
 	SetInputMode(FInputModeGameOnly());
 
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
-	ShowGameOver();
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
