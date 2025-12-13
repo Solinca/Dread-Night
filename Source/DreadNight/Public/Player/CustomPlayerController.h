@@ -8,13 +8,12 @@
 #include "EnhancedInputSubsystems.h"
 #include "PlayerCharacter.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/SlateWrapperTypes.h"
-#include "UI/Widgets/Inventory.h"
 #include "CustomPlayerController.generated.h"
 
 class UPauseMenu;
 class UOptionsWidget;
+class UInventory;
 
 USTRUCT(BlueprintType)
 struct FInputActionSetup
@@ -22,7 +21,7 @@ struct FInputActionSetup
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
-	TObjectPtr<class UInputAction> Action;
+	TObjectPtr<UInputAction> Action;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
 	ETriggerEvent Event;
@@ -34,8 +33,11 @@ struct FInputActionSetup
 struct FStackedMenu
 {
 	TObjectPtr<UUserWidget> Widget;
+
 	bool bTriggerPause;
+
 	TFunction<void()> OnCloseAction;
+
 	bool bCanBeQuit = true;
 };
 
@@ -45,19 +47,11 @@ class DREADNIGHT_API ACustomPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 protected:
-
 	virtual void BeginPlay() override;
+
 	virtual void Tick(float DeltaTime) override;
+
 	virtual void SetupInputComponent() override;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
-	float CameraSensitivity = 75.f;
-
-	/// <summary>
-	/// Value Min and Max to restrain the pitch camera angle
-	/// </summary>
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
-	FVector2D ViewPitch = FVector2D(-55, 55);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
 	TObjectPtr<class UInputMappingContext> MappingContextBase = nullptr;
@@ -71,71 +65,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
 	TArray<FInputActionSetup> IA_SetupMenu;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
-	float BaseMoveSpeed = 600.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
+	TObjectPtr<UPlayerDataAsset> PlayerData;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
-	float SprintMoveSpeed = 1200.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
-	float CrouchMoveSpeed = 300.f;
-
-	//=========//
-	//==Stats==//
-	//=========//
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
-	float JumpStaminaCost = 20.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
-	float AttackStaminaCost = 20.f;//REPLACE WITH WEAPON STAMINA COST LATER
-
-	/// <summary>
-	/// Cost in amount/s
-	/// </summary>
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stamina")
-	float SprintStaminaCost = 10.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mana")
-	float SpellManaCost = 20.f;//REPLACE WITH WEAPON MANA COST LATER
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hunger")
-	float HungerSprintCost = 0.1f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hunger")
-	float HungerJumpCost = 0.5f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hunger")
-	float HungerAttackCost = 0.1f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sanity")
-	float SanityOnDamageCost = 5.f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sanity")
-	float SanityOnDarknessCost = 1.f;
-
-	//==================//
-
-	
-	//=========//
-	//==Widget==//
-	//=========//
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UUserWidget> GameOverClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UPauseMenu> PauseMenuClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UOptionsWidget> OptionsClass;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
-	TObjectPtr<USoundBase> GameOverSound;
-
+private:
 	UPROPERTY(Transient)
 	TObjectPtr<UPauseMenu> PauseMenuWidget;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UInventory> InventoryWidgetClass;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UInventory> InventoryWidget;
@@ -143,13 +78,10 @@ protected:
 	UPROPERTY(Transient)
 	TObjectPtr<UOptionsWidget> OptionsWidget;
 
-	UPROPERTY(EditDefaultsOnly, Category = "UI|Logic")
-	TSoftObjectPtr<UWorld> WorldMenu;
-	
-	//==================//
-private:
 	TArray<FStackedMenu> MenuStack;
+
 	int32 PauseCounter = 0;
+
 	void UpdateGamePauseState();
 	
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
@@ -216,7 +148,7 @@ private:
 	UFUNCTION()
 	void GoBackToMenu();
 
-	//Function to add a Menu to the menu list, so we can leave it with escape
+	// Function to add a Menu to the menu list, so we can leave it with escape
 	template<typename T>
 	requires std::is_base_of_v<UUserWidget, T>
 	void PushNewMenu(TObjectPtr<T>& Widget, bool bPausesGame, TFunction<void()>&& OnCloseAction = []{}, bool bCanBeQuit = true)
@@ -228,16 +160,19 @@ private:
 				if (MappingContextMenu)
 				{
 					InputSystem->ClearAllMappings();
+
 					InputSystem->AddMappingContext(MappingContextMenu, 0);
 				}
 			}
 
 			SetInputMode(FInputModeGameAndUI());
+
 			SetShowMouseCursor(true);
 		}
 		else
 		{
 			FStackedMenu& TopMenu = MenuStack.Last();
+
 			if (TopMenu.Widget)
 			{
 				TopMenu.Widget->SetVisibility(ESlateVisibility::Collapsed);
@@ -248,6 +183,7 @@ private:
 		{
 			Widget->AddToViewport();
 		}
+
 		Widget->SetVisibility(ESlateVisibility::Visible);
 		
 		auto SafeCloseWidgetAction = [&, CloseAction = MoveTemp(OnCloseAction), IsFirstPass = true]() mutable
@@ -256,7 +192,9 @@ private:
 			{
 				return;
 			}
+
 			IsFirstPass = false; 
+
 			if (CloseAction)
 			{
 				CloseAction();
@@ -273,7 +211,7 @@ private:
 		UpdateGamePauseState();
 	}
 
-	//Call this function when you need to delete the last menu who has been push in the list
+	// Call this function when you need to delete the last menu who has been push in the list
 	UFUNCTION()
 	void PopLastMenu();
 	
