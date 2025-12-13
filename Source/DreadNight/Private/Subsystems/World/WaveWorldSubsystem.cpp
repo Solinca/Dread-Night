@@ -47,7 +47,7 @@ void UWaveWorldSubsystem::OnNightStart()
 				}
 			}
 		}
-	}, NewWaveSound->GetDuration() * WaveSpawnDelay, false);
+	}, NewWaveSound->GetDuration() * BaseWorldSettings->WaveSystemData->GlobalWaveSpawnDelay, false);
 }
 
 void UWaveWorldSubsystem::MonsterDeath(AActor* Monster)

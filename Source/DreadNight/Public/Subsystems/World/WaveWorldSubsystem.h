@@ -23,13 +23,10 @@ private:
 
 	TArray<TWeakObjectPtr<ASpawner>> SpawnerList;
 
-	//~ Begin Variables for feedbacks
-	FTimerHandle WaveSpawnDelayTimerHandle;
-	float WaveSpawnDelay = .85f;
-	
 	UPROPERTY(Transient)
 	TObjectPtr<USoundBase> NewWaveSound;
-	//~ End Variables for feedbacks
+
+	FTimerHandle WaveSpawnDelayTimerHandle;
 
 	int WaveIndex = 0;
 

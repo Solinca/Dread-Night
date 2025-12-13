@@ -20,6 +20,8 @@ class DREADNIGHT_API UDayCycleSubSystem : public UWorldSubsystem
 private:
 	FTimerHandle ProcessDayTimer;
 
+	FTimerHandle WidgetSpawnDelayTimerHandle;
+
 	FRotator SunRotation, MoonRotation;
 
 	ABaseLevelWorldSettings* BaseWorldSettings = nullptr;
@@ -36,13 +38,7 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UUserWidget> CurrentWidget;
-
-	// ~Begin Variables for feedbacks
-	FTimerHandle WidgetSpawnDelayTimerHandle;
-	float WidgetSpawnDelay = 1.f;
-	// ~End Variables for feedbacks 
 	
-
 	bool hasDawnEnded, hasDuskStarted = false;
 
 	float CurrentPhaseTimeInSeconds;
@@ -81,5 +77,5 @@ public:
 	static ThisClass* Get(UObject* WorldContext);
 
 	UFUNCTION(BlueprintCallable, Category = "DayCycle")
-	int GetDayCounter() const { return DayCounter;}
+	int GetDayCounter() const { return DayCounter; }
 };

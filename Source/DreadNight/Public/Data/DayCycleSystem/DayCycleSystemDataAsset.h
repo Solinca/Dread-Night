@@ -10,34 +10,34 @@ class DREADNIGHT_API UDayCycleSystemDataAsset : public UDataAsset
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Global Settings")
 	float DayTimeInSeconds = 900;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Global Settings")
 	float DawnTimeInSeconds = 10;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Global Settings")
 	float DuskTimeInSeconds = 10;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Global Settings")
 	float StartSunRotation = 90;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Global Settings")
 	float FullSunRotation = 360;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Global Settings")
 	float EndSunRotation = -270;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Global Settings")
 	float DawnRotationThreshold = 0;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Global Settings")
 	float DuskRotationhreshold = -180;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Global Settings")
 	float ProcessedTimeInterval = 0.05f;
 
-	UPROPERTY(EditAnywhere, Category = "Lights")
+	UPROPERTY(EditAnywhere, Category = "Global Settings")
 	float SunIntensity = 10.f;
 
 	UPROPERTY(EditAnywhere, Category = "Lights")
@@ -73,6 +73,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Sky")
 	float RayleighScatteringScale = 0.1f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(EditAnywhere, Category = "UI")
 	TMap<FString, TSubclassOf<UUserWidget>> WidgetToSpawn;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	float WidgetSpawnDelay = 1.f;
 };

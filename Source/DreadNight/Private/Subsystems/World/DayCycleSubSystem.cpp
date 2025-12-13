@@ -125,7 +125,7 @@ void UDayCycleSubSystem::StartMoonCycle()
 	TimerManager.SetTimer(WidgetSpawnDelayTimerHandle, [this]
 	{
 		SpawnPopUpWidget("WBP_NewWave");
-	}, WidgetSpawnDelay, false);
+	}, BaseWorldSettings->DayCycleSystemData->WidgetSpawnDelay, false);
 }
 
 void UDayCycleSubSystem::InitSunDirectionalLight(UWorld& InWorld)
