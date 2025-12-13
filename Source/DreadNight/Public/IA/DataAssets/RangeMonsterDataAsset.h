@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BlackboardMonsterDataAsset.h"
+#include "HostileMonsterDataAsset.h"
 #include "RangeMonsterDataAsset.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DREADNIGHT_API URangeMonsterDataAsset : public UBlackboardMonsterDataAsset
+class DREADNIGHT_API URangeMonsterDataAsset : public UHostileMonsterDataAsset
 {
 	GENERATED_BODY()
 

@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "MonsterDataAsset.h"
-#include "BlackboardMonsterDataAsset.generated.h"
+#include "HostileMonsterDataAsset.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DREADNIGHT_API UBlackboardMonsterDataAsset : public UMonsterDataAsset
+class DREADNIGHT_API UHostileMonsterDataAsset : public UMonsterDataAsset
 {
 	GENERATED_BODY()
 
