@@ -43,6 +43,13 @@ void UInventorySlot::SetStackText(int Stack)
 	StackText->SetText(FText::FromString(FString::FromInt(Stack)));
 }
 
+void UInventorySlot::SetupSlot(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index)
+{
+	BindInventoryComponent = OwningInventory;
+	BindTargetInventoryComponent = TargetInventory;
+	SlotIndex = Index;
+}
+
 void UInventorySlot::SlotAction()
 {
 	if (HasRightClicked)

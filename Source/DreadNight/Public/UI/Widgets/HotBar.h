@@ -1,14 +1,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/Widgets/Inventory.h"
 #include "HotBar.generated.h"
 
 class UHotBarSlot;
 class UHorizontalBox;
 
 UCLASS()
-class DREADNIGHT_API UHotBar : public UUserWidget
+class DREADNIGHT_API UHotBar : public UInventory
 {
 	GENERATED_BODY()
 

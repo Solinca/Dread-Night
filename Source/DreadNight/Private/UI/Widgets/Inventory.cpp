@@ -26,13 +26,22 @@ void UInventory::SetSize(int Size)
 	for (int i = 0; i < Size; i++)
 	{
 		UInventorySlot* TempSlot = CreateWidget<UInventorySlot>(this, InventorySlotClass);
-		TempSlot->SetSlotIndex(i);
-		TempSlot->BindToInventory(BindInventoryComponent);
-		if (BindInventoryComponent->GetItemAtSlot(i))
+		
+		TempSlot->SetupSlot(BindInventoryComponent,BindTargetInventoryComponent, i);
+		
+		//TempSlot->SetSlotIndex(i);
+		//TempSlot->BindToInventory(BindInventoryComponent);
+		// if (BindInventoryComponent->GetItemAtSlot(i))
+		// {
+		// 	TempSlot->SetItemImage(BindInventoryComponent->GetItemTypeAtSlot(i)->ItemIcon);
+		// 	TempSlot->SetStackText(BindInventoryComponent->GetItemAtSlot(i)->GetStackNumber());
+		// }
+		if (UItemInstance* Item = BindInventoryComponent->GetItemAtSlot(i))
 		{
-			TempSlot->SetItemImage(BindInventoryComponent->GetItemTypeAtSlot(i)->ItemIcon);
-			TempSlot->SetStackText(BindInventoryComponent->GetItemAtSlot(i)->GetStackNumber());
+			TempSlot->SetItemImage(Item->GetDataAsset()->ItemIcon);
+			TempSlot->SetStackText(Item->GetStackNumber());
 		}
+		
 		TempSlot->OnItemActionCreated.AddDynamic(this, &UInventory::OnItemActionCreated);
 		InventoryWrapBox->AddChildToWrapBox(TempSlot);
 	}
@@ -81,6 +90,18 @@ void UInventory::BindToInventory(UInventoryComponent* InventoryComponent)
 	SetSize(InventoryComponent->GetSize());
 }
 
+void UInventory::BindTargetInventory(UInventoryComponent* InventoryComponent)
+{
+	BindTargetInventoryComponent = InventoryComponent;
+	
+	BindInventoryComponent->OnItemAdded.AddDynamic(this, &UInventory::OnItemAdded);
+	BindInventoryComponent->OnItemRemoved.AddDynamic(this, &UInventory::OnItemRemoved);
+	BindInventoryComponent->OnItemModified.AddDynamic(this, &UInventory::OnItemModified);
+	BindInventoryComponent->OnItemCleared.AddDynamic(this, &UInventory::OnItemsCleared);
+	
+	SetSize(InventoryComponent->GetSize());
+}
+
 void UInventory::OnItemActionCreated(int SlotIndex)
 {
 	if (!BindInventoryComponent->GetItemAtSlot(SlotIndex))
@@ -89,9 +110,16 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	if (InventoryAction)
 		InventoryAction->RemoveFromParent();
 	
+	UInventorySlot* ClickedSlot = Cast<UInventorySlot>(InventoryWrapBox->GetChildAt(SlotIndex));
+	if (!ClickedSlot)
+		return;
+	
 	InventoryAction = CreateWidget<UInventoryAction>(this, InventoryActionClass);
-	InventoryAction->InventoryComponent = BindInventoryComponent;
-	InventoryAction->SetSlotIndex(SlotIndex);
+	
+	InventoryAction->SetupAction(ClickedSlot->GetOwningInventory(), ClickedSlot->GetTargetInventory(), SlotIndex);
+	
+	//InventoryAction->InventoryComponent = BindInventoryComponent;
+	//InventoryAction->SetSlotIndex(SlotIndex);
 	FVector2d MousePos;
 	GetOwningPlayer()->GetMousePosition(MousePos.X, MousePos.Y);
 	InventoryAction->SetRenderTranslation(MousePos);

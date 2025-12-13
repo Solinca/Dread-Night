@@ -23,7 +23,7 @@ void UInventoryComponent::AddItem(UItemInstance* Item)
 	{
 		for (int i = 0; i < Items.Num(); ++i)
 		{
-			if (Items[i]->CanBeStackedWith(Item, UItemInstance::EStackMethod::SameType))
+			if (Items[i] && Items[i]->CanBeStackedWith(Item, UItemInstance::EStackMethod::SameType))
 			{
 				if (Items[i]->GetStackNumber() != Items[i]->GetDataAsset()->StackLimit)
 				{
@@ -158,7 +158,7 @@ void UInventoryComponent::Clear()
 	OnItemCleared.Broadcast();
 }
 
-void UInventoryComponent::TransferItem(UInventoryComponent* InventoryComponent, UItemInstance* Item, int SlotIndex)
+void UInventoryComponent::TransferItem(UInventoryComponent* InventoryComponent, UItemInstance* Item, TOptional<int> SlotIndex)
 {
 	//transfer item from inventory to another, or the same inventory
 	//if item has the same type, we try to stack them

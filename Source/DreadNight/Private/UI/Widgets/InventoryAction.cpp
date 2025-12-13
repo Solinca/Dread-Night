@@ -20,6 +20,13 @@ void UInventoryAction::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
+void UInventoryAction::SetupAction(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index)
+{
+	InventoryComponent = OwningInventory;
+	TargetInventoryComponent = TargetInventory;
+	SlotIndex = Index;
+}
+
 void UInventoryAction::OnUsePressed()
 {
 	InventoryComponent->UseItemAt(SlotIndex);
@@ -28,6 +35,17 @@ void UInventoryAction::OnUsePressed()
 
 void UInventoryAction::OnTransferPressed()
 {
+	if (!TargetInventoryComponent)
+	{
+		RemoveFromParent();
+		return;
+	}
+	
+	if (UItemInstance* ItemTransfered = InventoryComponent->GetItemAtSlot(SlotIndex))
+	{
+		InventoryComponent->TransferItem(TargetInventoryComponent, ItemTransfered, TargetInventoryComponent->GetEmptySlot());
+	}
+	
 	RemoveFromParent();
 }
 

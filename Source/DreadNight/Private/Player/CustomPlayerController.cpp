@@ -32,7 +32,15 @@ void ACustomPlayerController::BeginPlay()
 	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = PlayerData->CrouchMoveSpeed;
 
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
-
+	
+	if (PlayerData->HotbarInventoryWidgetClass)
+	{
+		HotbarInventoryWidget = CreateWidget<UInventory>(this, PlayerData->HotbarInventoryWidgetClass);
+		HotbarInventoryWidget->BindToInventory(MyPlayer->GetHotbarInventoryComponent());
+		HotbarInventoryWidget->BindTargetInventory(MyPlayer->GetInventoryComponent());
+		HotbarInventoryWidget->AddToViewport();
+	}
+	
 	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
 
 	PlayerCameraManager->ViewPitchMax = PlayerData->ViewPitch.Y;
@@ -236,14 +244,11 @@ void ACustomPlayerController::Interact(const FInputActionValue& Value)
 void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 {
 	if (!PlayerData->InventoryWidgetClass)
-	{
 		return;
-	}
 	
 	InventoryWidget = CreateWidget<UInventory>(this, PlayerData->InventoryWidgetClass);
-
-	InventoryWidget->BindToInventory(MyPlayer->GetComponentByClass<UInventoryComponent>());
-
+	InventoryWidget->BindToInventory(MyPlayer->GetInventoryComponent());
+	InventoryWidget->BindTargetInventory(MyPlayer->GetHotbarInventoryComponent());
 	SetShowMouseCursor(true);
 	
 	PushNewMenu(InventoryWidget, false, [this]

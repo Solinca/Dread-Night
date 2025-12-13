@@ -86,6 +86,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Sanity")
 	float SanityOnDarknessCost = 1.f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Inventory")
+	int InventorySize = 20;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Inventory")
+	int HotbarInventorySize = 10;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> GameOverClass;
 
@@ -99,8 +105,11 @@ public:
 	TSubclassOf<UInventory> InventoryWidgetClass;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UInventory> HotbarInventoryWidgetClass;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UPlayerHud> PlayerHudClass;
-
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
 	TObjectPtr<USoundBase> GameOverSound;
 

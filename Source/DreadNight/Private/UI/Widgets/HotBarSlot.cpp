@@ -46,8 +46,8 @@ void UHotBarSlot::UpdateSlot(UItemInstance* InItemInstance, const int32 InQuanti
 	{
 		const UItemDataAsset* ItemDataAsset = CurrentItemInstance->GetDataAsset();
 
-		ItemIcon->SetBrushFromTexture(ItemDataAsset->ItemIcon);
-		ItemIcon->SetVisibility(ESlateVisibility::Visible);
+		ItemImage->SetBrushFromTexture(ItemDataAsset->ItemIcon);
+		ItemImage->SetVisibility(ESlateVisibility::Visible);
 
 		if (CurrentQuantity > 1)
 		{

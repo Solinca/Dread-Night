@@ -75,6 +75,9 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UInventory> InventoryWidget;
+	
+	UPROPERTY(Transient)
+	TObjectPtr<UInventory> HotbarInventoryWidget;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UOptionsWidget> OptionsWidget;
