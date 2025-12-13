@@ -7,14 +7,20 @@ APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
+
 	SpringArm->SetupAttachment(RootComponent);
+
+	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
+
 	Camera->SetupAttachment(SpringArm);
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health");
+
 	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>("Stamina");
+
 	ManaComponent = CreateDefaultSubobject<UManaComponent>("Mana");
+
 	ConditionStateComponent = CreateDefaultSubobject<UConditionStateComponent>("ConditionState");
 
 	SwordCombatComponent = CreateDefaultSubobject<USwordCombatComponent>("SwordCombatComponent");
@@ -26,7 +32,9 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	EquipWeapon(Cast<UItemInstance_Weapon>(FItemInstanceFactory::CreateItem(this, StartingWeaponDataAsset, 1)));
+	CurrentCapsuleHalfHeight = PlayerData->CapsuleMaxHalfHeight;
+
+	EquipWeapon(Cast<UItemInstance_Weapon>(FItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1)));
 }
 
 bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
@@ -74,11 +82,11 @@ void APlayerCharacter::UpdateCrouching(float deltatime)
 	{
 		if (bIsCrouching)
 		{
-			SetCurentCapsuleHalfHeight(FMath::FInterpTo(CurrentCapsuleHalfHeight, CapsuleCrouchedHalfHeight, deltatime, LerpCrouchSpeed));
+			SetCurentCapsuleHalfHeight(FMath::FInterpTo(CurrentCapsuleHalfHeight, PlayerData->CapsuleCrouchedHalfHeight, deltatime, PlayerData->LerpCrouchSpeed));
 		}
 		else
 		{
-			SetCurentCapsuleHalfHeight(FMath::FInterpTo(CurrentCapsuleHalfHeight, CapsuleMaxHalfHeight, deltatime, LerpCrouchSpeed));
+			SetCurentCapsuleHalfHeight(FMath::FInterpTo(CurrentCapsuleHalfHeight, PlayerData->CapsuleMaxHalfHeight, deltatime, PlayerData->LerpCrouchSpeed));
 		}
 	}
 }
@@ -112,7 +120,7 @@ void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 {
 	CurrentWeaponMesh->SetStaticMesh(Weapon->GetDataAsset()->WeaponMesh);
 
-	CurrentWeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, HandSocketName);
+	CurrentWeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
 
-	SwordCombatComponent->SetWeapon(CurrentWeaponMesh, Weapon->GetDataAsset()->Damage, WeaponAttackCooldown);
+	SwordCombatComponent->SetWeapon(CurrentWeaponMesh, Weapon->GetDataAsset()->Damage, PlayerData->WeaponAttackCooldown);
 }

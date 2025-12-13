@@ -1,13 +1,11 @@
 #include "Player/CustomPlayerController.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Blueprint/UserWidget.h"
-#include "UI/Widgets/PauseMenu.h"
-#include <EnhancedInputSubsystems.h>
-
 #include "Global/BaseLevelWorldSettings.h"
-#include "UserWidgets/OptionsWidget.h"
 #include "Global/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "UI/Widgets/Inventory.h"
+#include "UI/Widgets/PauseMenu.h"
+#include "UserWidgets/OptionsWidget.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -20,9 +18,6 @@ void ACustomPlayerController::BeginPlay()
 		return;
 	}
 
-	MyPlayer = Cast<APlayerCharacter>(GetPawn());
-	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchMoveSpeed;
-
 	if (GetLocalPlayer())
 	{
 		if (TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
@@ -31,12 +26,17 @@ void ACustomPlayerController::BeginPlay()
 		}
 	}
 
-	PlayerCameraManager->ViewPitchMin = ViewPitch.X;
-	PlayerCameraManager->ViewPitchMax = ViewPitch.Y;
+	MyPlayer = Cast<APlayerCharacter>(GetPawn());
 
-	SetInputMode(FInputModeGameOnly());
+	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = PlayerData->CrouchMoveSpeed;
 
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
+
+	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
+
+	PlayerCameraManager->ViewPitchMax = PlayerData->ViewPitch.Y;
+
+	SetInputMode(FInputModeGameOnly());
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
@@ -66,13 +66,16 @@ void ACustomPlayerController::SetupInputComponent()
 void ACustomPlayerController::UpdateGamePauseState()
 {
 	const bool bShouldPause = (PauseCounter > 0);	
+
 	UGameplayStatics::SetGamePaused(GetWorld(), bShouldPause);
 }
 
 void ACustomPlayerController::Move(const FInputActionValue& Value)
 {
 	FVector MovementVector = Value.Get<FVector>();
+
 	FRotator CameraRotation = FRotator(0.f, GetControlRotation().Yaw, 0.f);
+
 	FVector RotatedVector = CameraRotation.RotateVector(MovementVector);
 
 	GetPawn()->AddMovementInput(RotatedVector);
@@ -81,8 +84,10 @@ void ACustomPlayerController::Move(const FInputActionValue& Value)
 void ACustomPlayerController::Look(const FInputActionValue& Value)
 {
 	FVector2D mouseInput = Value.Get<FVector2D>();
-	AddYawInput(mouseInput.X * GetWorld()->GetDeltaSeconds() * CameraSensitivity);
-	AddPitchInput(mouseInput.Y * GetWorld()->GetDeltaSeconds() * CameraSensitivity);
+
+	AddYawInput(mouseInput.X * GetWorld()->GetDeltaSeconds() * PlayerData->CameraSensitivity);
+
+	AddPitchInput(mouseInput.Y * GetWorld()->GetDeltaSeconds() * PlayerData->CameraSensitivity);
 }
 
 void ACustomPlayerController::Jump(const FInputActionValue& Value)
@@ -90,11 +95,14 @@ void ACustomPlayerController::Jump(const FInputActionValue& Value)
 	if (MyPlayer)
 	{
 		MyPlayer->Jump();
+
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
-		StaminaComponent->RemoveStamina(JumpStaminaCost);
+
+		StaminaComponent->RemoveStamina(PlayerData->JumpStaminaCost);
+
 		StaminaComponent->SetCanRegen(false);
 
-		//START REGEN STAMINA
+		// START REGEN STAMINA
 		GetWorldTimerManager().SetTimer(
 			StaminaComponent->CoolDownTimer,
 			[=] {StaminaComponent->SetCanRegen(true); },
@@ -102,7 +110,7 @@ void ACustomPlayerController::Jump(const FInputActionValue& Value)
 			false
 		);
 
-		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(HungerJumpCost);
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerJumpCost);
 	}
 }
 
@@ -111,12 +119,16 @@ void ACustomPlayerController::Sprint(const FInputActionValue& Value)
 	if (MyPlayer)
 	{
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
-		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = SprintMoveSpeed;
+
+		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = PlayerData->SprintMoveSpeed;
+
 		MyPlayer->SetIsSprinting(true);
+
 		StaminaComponent->SetCanRegen(false);
 
-		StaminaComponent->RemoveStamina(SprintStaminaCost * GetWorld()->GetDeltaSeconds());
-		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(HungerSprintCost * GetWorld()->GetDeltaSeconds());
+		StaminaComponent->RemoveStamina(PlayerData->SprintStaminaCost * GetWorld()->GetDeltaSeconds());
+
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerSprintCost * GetWorld()->GetDeltaSeconds());
 	}
 }
 
@@ -124,12 +136,13 @@ void ACustomPlayerController::SprintEnd(const FInputActionValue& Value)
 {
 	if (MyPlayer)
 	{
-		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = BaseMoveSpeed;
+		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = PlayerData->BaseMoveSpeed;
+
 		MyPlayer->SetIsSprinting(false);
 
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
-		//START REGEN STAMINA
+		// START REGEN STAMINA
 		GetWorldTimerManager().SetTimer(
 			StaminaComponent->CoolDownTimer,
 			[=] {StaminaComponent->SetCanRegen(true); },
@@ -160,13 +173,13 @@ void ACustomPlayerController::UpdateCrouching(float deltatime)
 
 		if (MyPlayer->GetIsCrouching())
 		{
-			MyPlayer->GetCharacterMovement()->MaxWalkSpeed = CrouchMoveSpeed;
+			MyPlayer->GetCharacterMovement()->MaxWalkSpeed = PlayerData->CrouchMoveSpeed;
 		}
 		else
 		{
 			if (!MyPlayer->GetIsSprinting())
 			{
-				MyPlayer->GetCharacterMovement()->MaxWalkSpeed = BaseMoveSpeed;
+				MyPlayer->GetCharacterMovement()->MaxWalkSpeed = PlayerData->BaseMoveSpeed;
 			}
 		}
 	}
@@ -183,7 +196,7 @@ void ACustomPlayerController::Attack(const FInputActionValue& Value)
 
 	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
-	StaminaComponent->RemoveStamina(AttackStaminaCost);
+	StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 
 	StaminaComponent->SetCanRegen(false);
 
@@ -195,7 +208,7 @@ void ACustomPlayerController::Attack(const FInputActionValue& Value)
 		false
 	);
 
-	MyPlayer->GetConditionStateComponent()->RemoveHungerValue(HungerAttackCost);
+	MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
 }
 
 
@@ -206,21 +219,26 @@ void ACustomPlayerController::Interact(const FInputActionValue& Value)
 
 void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 {
-	if (!InventoryWidgetClass)
+	if (!PlayerData->InventoryWidgetClass)
+	{
 		return;
+	}
 	
-	InventoryWidget = CreateWidget<UInventory>(this, InventoryWidgetClass);
+	InventoryWidget = CreateWidget<UInventory>(this, PlayerData->InventoryWidgetClass);
+
 	InventoryWidget->BindToInventory(MyPlayer->GetComponentByClass<UInventoryComponent>());
+
 	SetShowMouseCursor(true);
 	
-	PushNewMenu(InventoryWidget, false,[this]
+	PushNewMenu(InventoryWidget, false, [this]
+	{
+		UGameplayStatics::SetGamePaused(GetWorld(), false);
+
+		if (UInventory* TempInventory = Cast<UInventory>(InventoryWidget))
 		{
-			UGameplayStatics::SetGamePaused(GetWorld(), false);
-			if (UInventory* TempInventory = Cast<UInventory>(InventoryWidget))
-			{
-				TempInventory->RemoveItemAction();
-			}
-		});
+			TempInventory->RemoveItemAction();
+		}
+	});
 }
 
 void ACustomPlayerController::DisplayGlossary(const FInputActionValue& Value)
@@ -232,11 +250,16 @@ void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
 {	
 	if (!PauseMenuWidget)
 	{
-		PauseMenuWidget = CreateWidget<UPauseMenu>(this, PauseMenuClass);
+		PauseMenuWidget = CreateWidget<UPauseMenu>(this, PlayerData->PauseMenuClass);
+
 		PauseMenuWidget->OnResume.AddDynamic(this, &ThisClass::ResumeGame);
+		
 		PauseMenuWidget->OnOptions.AddDynamic(this, &ThisClass::AccessOptions);
+		
 		PauseMenuWidget->OnQuitToMenu.AddDynamic(this, &ThisClass::GoBackToMenu);
+		
 		PauseMenuWidget->OnQuitToDesktop.AddDynamic(this, &ThisClass::LeaveGame);
+
 
 		PushNewMenu(PauseMenuWidget, true, [this]
 		{
@@ -276,7 +299,8 @@ void ACustomPlayerController::LoadGame()
 void ACustomPlayerController::GoBackToMenu()
 {
 	SaveGame();
-	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), WorldMenu);	
+
+	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), PlayerData->MainMenuLevel);
 }
 
 void ACustomPlayerController::PopLastMenu()
@@ -291,7 +315,9 @@ void ACustomPlayerController::PopLastMenu()
 	if (LastMenu.Widget)
 	{
 		LastMenu.Widget->RemoveFromParent();
+
 		LastMenu.OnCloseAction();
+
 		if (LastMenu.bTriggerPause)
 		{
 			PauseCounter--;
@@ -301,6 +327,7 @@ void ACustomPlayerController::PopLastMenu()
 	if (MenuStack.IsEmpty())
 	{
 		PauseCounter = 0;
+
 		if (GetLocalPlayer())
 		{
 			if (const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
@@ -308,11 +335,14 @@ void ACustomPlayerController::PopLastMenu()
 				if (MappingContextBase)
 				{
 					InputSystem->ClearAllMappings();
+
 					InputSystem->AddMappingContext(MappingContextBase, 0); 
 				}
 			}
 		}
+
 		SetInputMode(FInputModeGameOnly());
+
 		SetShowMouseCursor(false);
 		
 		UGameplayStatics::SetGamePaused(GetWorld(), false);
@@ -320,6 +350,7 @@ void ACustomPlayerController::PopLastMenu()
 	else
 	{
 		FStackedMenu& NewTopMenu = MenuStack.Last();
+
 		if (NewTopMenu.Widget)
 		{
 			NewTopMenu.Widget->SetVisibility(ESlateVisibility::Visible);
@@ -343,7 +374,8 @@ void ACustomPlayerController::AccessOptions()
 {
 	if (!OptionsWidget)
 	{
-		OptionsWidget = CreateWidget<UOptionsWidget>(this, OptionsClass);
+		OptionsWidget = CreateWidget<UOptionsWidget>(this, PlayerData->OptionsClass);
+
 		OptionsWidget->OnReturn.AddDynamic(this, &ThisClass::QuitOptions);
 
 		PushNewMenu(OptionsWidget, true, [this] 
@@ -361,12 +393,15 @@ void ACustomPlayerController::QuitOptions()
 void ACustomPlayerController::LeaveGame()
 {
 	SaveGame();
+
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
 }
 
 void ACustomPlayerController::ShowGameOver()
 {
-	TObjectPtr<UUserWidget> WidgetGameOver = CreateWidget<UUserWidget>(this, GameOverClass);
+	TObjectPtr<UUserWidget> WidgetGameOver = CreateWidget<UUserWidget>(this, PlayerData->GameOverClass);
+
 	PushNewMenu(WidgetGameOver, true, [](){}, false);
-	UGameplayStatics::PlaySound2D(this, GameOverSound);
+
+	UGameplayStatics::PlaySound2D(this, PlayerData->GameOverSound);
 }
