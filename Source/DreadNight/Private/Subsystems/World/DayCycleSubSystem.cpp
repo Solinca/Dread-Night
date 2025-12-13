@@ -8,6 +8,7 @@
 #include "Components/ExponentialHeightFogComponent.h"
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/VolumetricCloudComponent.h"
+#include "Components/LightComponent.h"
 #include "Data/DayCycleSystem/DayCycleSystemDataAsset.h"
 #include "Blueprint/UserWidget.h"
 
@@ -81,6 +82,8 @@ void UDayCycleSubSystem::ProcessDayPerSecond()
 	MoonRotation -= FrameRotation;
 
 	Moon->SetWorldRotation(MoonRotation);
+
+	ProcessEveryLightSource();
 
 	if (hasDuskStarted)
 	{
@@ -213,4 +216,29 @@ UDayCycleSubSystem::ThisClass* UDayCycleSubSystem::Get(UObject* WorldContext)
 	}
 
 	return nullptr;
+}
+
+
+void UDayCycleSubSystem::RegisterLightSource(ULightComponent* Light)
+{
+	LightList.Add(Light, Light->Intensity);
+}
+
+void UDayCycleSubSystem::ProcessEveryLightSource()
+{
+	if (hasDuskStarted)
+	{
+		for (TPair<ULightComponent*, float> Pair : LightList)
+		{
+			Pair.Key->SetIntensity(Pair.Key->Intensity + (Pair.Value / CurrentPhaseTimeInSeconds) * BaseWorldSettings->DayCycleSystemData->ProcessedTimeInterval);
+		}
+	}
+
+	if (!hasDawnEnded)
+	{
+		for (TPair<ULightComponent*, float> Pair : LightList)
+		{
+			Pair.Key->SetIntensity(Pair.Key->Intensity - (Pair.Value / CurrentPhaseTimeInSeconds) * BaseWorldSettings->DayCycleSystemData->ProcessedTimeInterval);
+		}
+	}
 }
