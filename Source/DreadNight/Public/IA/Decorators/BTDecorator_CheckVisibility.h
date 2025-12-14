@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/BTDecorator.h"
+#include "BTDecorator_Base.h"
 #include "BehaviorTree/ValueOrBBKey.h"
 #include "BTDecorator_CheckVisibility.generated.h"
 
@@ -15,11 +15,8 @@ struct FBTCheckVisibilityDecoratorMemory
 	bool bInitialized{false};
 };
 
-/**
- * 
- */
 UCLASS()
-class DREADNIGHT_API UBTDecorator_CheckVisibility : public UBTDecorator
+class DREADNIGHT_API UBTDecorator_CheckVisibility : public UBTDecorator_Base
 {
 	GENERATED_BODY()
 
@@ -52,7 +49,5 @@ private:
 	EBlackboardNotificationResult OnTickIntervalKeyValueChange(const UBlackboardComponent& Blackboard, FBlackboard::FKey ChangedKeyID);
 	EBlackboardNotificationResult OnTargetActorKeyValueChange(const UBlackboardComponent& Blackboard, FBlackboard::FKey ChangedKeyID);
 	
-	FBTCheckVisibilityDecoratorMemory* CastNodeMemory(uint8* NodeMemory) const;
-
 	bool DoLineTrace(const FVector& Start, const FVector& End, const AActor* TaskOwnerActor, const AActor* RetrievedTargetActor) const;
 };

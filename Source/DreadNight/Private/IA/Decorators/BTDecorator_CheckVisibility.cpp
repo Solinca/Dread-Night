@@ -1,7 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "IA/Decorators/BTDecorator_CheckVisibility.h"
+﻿#include "IA/Decorators/BTDecorator_CheckVisibility.h"
 
 #include "AIController.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Float.h"
@@ -19,7 +16,7 @@ UBTDecorator_CheckVisibility::UBTDecorator_CheckVisibility()
 
 void UBTDecorator_CheckVisibility::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	FBTCheckVisibilityDecoratorMemory* CheckVisibilityDecoratorMemory{CastNodeMemory(NodeMemory)};
+	auto* CheckVisibilityDecoratorMemory{CastNodeMemory<FBTCheckVisibilityDecoratorMemory>(NodeMemory)};
 	
 	if (CheckVisibilityDecoratorMemory->bInitialized)
 	{
@@ -34,11 +31,7 @@ void UBTDecorator_CheckVisibility::OnBecomeRelevant(UBehaviorTreeComponent& Owne
 
 	BlackboardComponent->RegisterObserver(TargetActor.GetSelectedKeyID(), this, FOnBlackboardChangeNotification::CreateUObject(this, &UBTDecorator_CheckVisibility::OnTargetActorKeyValueChange));
 
-	const FBlackboard::FKey TickIntervalKey{TickInterval.GetKeyId(OwnerComp)};
-	if (TickIntervalKey != FBlackboard::InvalidKey)
-	{
-		BlackboardComponent->RegisterObserver(TickIntervalKey, this, FOnBlackboardChangeNotification::CreateUObject(this, &UBTDecorator_CheckVisibility::OnTickIntervalKeyValueChange));
-	}
+	RegisterToKeyIdChecked(TickInterval, OwnerComp, BlackboardComponent, this, &UBTDecorator_CheckVisibility::OnTickIntervalKeyValueChange);
 
 	SetNextTickTime(NodeMemory, CheckVisibilityDecoratorMemory->TickInterval);
 }
@@ -48,7 +41,7 @@ void UBTDecorator_CheckVisibility::OnCeaseRelevant(UBehaviorTreeComponent& Owner
 	UBlackboardComponent* BlackboardComponent{OwnerComp.GetBlackboardComponent()};
 	BlackboardComponent->UnregisterObserversFrom(this);
 
-	FBTCheckVisibilityDecoratorMemory* CheckVisibilityDecoratorMemory{CastNodeMemory(NodeMemory)};
+	auto* CheckVisibilityDecoratorMemory{CastNodeMemory<FBTCheckVisibilityDecoratorMemory>(NodeMemory)};
 	CheckVisibilityDecoratorMemory->LineTraceDidNotTouchedTheTarget = false;
 	CheckVisibilityDecoratorMemory->bInitialized = false;
 }
@@ -56,7 +49,7 @@ void UBTDecorator_CheckVisibility::OnCeaseRelevant(UBehaviorTreeComponent& Owner
 bool UBTDecorator_CheckVisibility::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp,
 	uint8* NodeMemory) const
 {
-	const FBTCheckVisibilityDecoratorMemory* CheckVisibilityDecoratorMemory{CastNodeMemory(NodeMemory)};
+	const auto* CheckVisibilityDecoratorMemory{CastNodeMemory<FBTCheckVisibilityDecoratorMemory>(NodeMemory)};
 	if (CheckVisibilityDecoratorMemory->LineTraceDidNotTouchedTheTarget)
 	{
 		return false;
@@ -80,7 +73,7 @@ bool UBTDecorator_CheckVisibility::CalculateRawConditionValue(UBehaviorTreeCompo
 
 void UBTDecorator_CheckVisibility::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	FBTCheckVisibilityDecoratorMemory* CheckVisibilityDecoratorMemory{CastNodeMemory(NodeMemory)};
+	auto* CheckVisibilityDecoratorMemory{CastNodeMemory<FBTCheckVisibilityDecoratorMemory>(NodeMemory)};
 	if (!CheckVisibilityDecoratorMemory->bInitialized)
 	{
 		return;
@@ -130,9 +123,7 @@ uint16 UBTDecorator_CheckVisibility::GetInstanceMemorySize() const
 EBlackboardNotificationResult UBTDecorator_CheckVisibility::OnTickIntervalKeyValueChange(
 	const UBlackboardComponent& Blackboard, FBlackboard::FKey ChangedKeyID)
 {
-	UBehaviorTreeComponent* BehaviorTreeComponent{Cast<UBehaviorTreeComponent>(Blackboard.GetBrainComponent())};
-	uint8* NodeMemory{BehaviorTreeComponent->GetNodeMemory(this, BehaviorTreeComponent->FindInstanceContainingNode(this))};
-	FBTCheckVisibilityDecoratorMemory* CheckVisibilityDecoratorMemory{CastNodeMemory(NodeMemory)};
+	auto* CheckVisibilityDecoratorMemory{CastNodeMemory<FBTCheckVisibilityDecoratorMemory>(&Blackboard)};
 	CheckVisibilityDecoratorMemory->TickInterval = Blackboard.GetValue<UBlackboardKeyType_Float>(ChangedKeyID);
 
 	return EBlackboardNotificationResult::ContinueObserving;
@@ -143,17 +134,13 @@ EBlackboardNotificationResult UBTDecorator_CheckVisibility::OnTargetActorKeyValu
 {
 	UBehaviorTreeComponent* BehaviorTreeComponent{Cast<UBehaviorTreeComponent>(Blackboard.GetBrainComponent())};
 	uint8* NodeMemory{BehaviorTreeComponent->GetNodeMemory(this, BehaviorTreeComponent->FindInstanceContainingNode(this))};
-	FBTCheckVisibilityDecoratorMemory* CheckVisibilityDecoratorMemory{CastNodeMemory(NodeMemory)};
+	auto* CheckVisibilityDecoratorMemory{CastNodeMemory<FBTCheckVisibilityDecoratorMemory>(NodeMemory)};
+	
 	CheckVisibilityDecoratorMemory->TargetActor = Cast<AActor>(Blackboard.GetValue<UBlackboardKeyType_Object>(ChangedKeyID));
 	
 	BehaviorTreeComponent->RequestExecution(this);
 	
 	return EBlackboardNotificationResult::ContinueObserving;
-}
-
-FBTCheckVisibilityDecoratorMemory* UBTDecorator_CheckVisibility::CastNodeMemory(uint8* NodeMemory) const
-{
-	return reinterpret_cast<FBTCheckVisibilityDecoratorMemory*>(NodeMemory);
 }
 
 bool UBTDecorator_CheckVisibility::DoLineTrace(const FVector& Start, const FVector& End, const AActor* TaskOwnerActor, const AActor* RetrievedTargetActor) const

@@ -1,9 +1,9 @@
 ﻿#include "IA/Characters/WarriorAICharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "IA/DataAssets/BlackboardMonsterDataAsset.h"
+#include "IA/DataAssets/HostileMonsterDataAsset.h"
 
 void AWarriorAICharacter::OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent,
-                                                    UMonsterDataAsset* MonsterDataAsset)
+													UMonsterDataAsset* MonsterDataAsset)
 {
 	Super::OnDataAssetInitialization(BlackboardComponent, MonsterDataAsset);
 
@@ -16,9 +16,11 @@ void AWarriorAICharacter::OnDataAssetInitialization(UBlackboardComponent* Blackb
 
 	GetWorldTimerManager().SetTimerForNextTick(RetrievePlayer);
 
-	if (UBlackboardMonsterDataAsset* BBMonsterDataAsset{Cast<UBlackboardMonsterDataAsset>(MonsterDataAsset)})
+	if (UHostileMonsterDataAsset* HostileMonsterDataAsset{Cast<UHostileMonsterDataAsset>(MonsterDataAsset)})
 	{
-		BlackboardComponent->SetValueAsFloat("AttackRange", BBMonsterDataAsset->GetAttackRange());
-		BlackboardComponent->SetValueAsFloat("AcceptableRadius", BBMonsterDataAsset->GetAcceptableRadius());	
+		BlackboardComponent->SetValueAsFloat("AttackRange", HostileMonsterDataAsset->GetAttackRange());
+		BlackboardComponent->SetValueAsFloat("AcceptableRadius", HostileMonsterDataAsset->GetAcceptableRadius());
+		BlackboardComponent->SetValueAsFloat("AttackCooldown", HostileMonsterDataAsset->GetAttackCooldown());
+		BlackboardComponent->SetValueAsFloat("AttackDamage", HostileMonsterDataAsset->GetAttackDamage());
 	}
 }
