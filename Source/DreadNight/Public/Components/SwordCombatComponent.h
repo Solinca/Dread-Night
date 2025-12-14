@@ -10,15 +10,9 @@ class DREADNIGHT_API USwordCombatComponent : public UActorComponent
 	GENERATED_BODY()
 
 private:
-	FTimerHandle AttackCooldownTimerHandle;
-
 	float CurrentDamage;
 
-	float AttackCooldown;
-
 	bool IsAttacking = false;
-
-	void ResetAttack();
 
 protected:	
 	USwordCombatComponent();
@@ -27,10 +21,13 @@ protected:
 	void OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION(BlueprintCallable)
-	bool GetIsAttacking();
+	void ResetAttack();
+
+	UFUNCTION(BlueprintCallable)
+	bool GetIsAttacking() { return IsAttacking; }
 
 public:
 	void Attack();
 
-	void SetWeapon(UStaticMeshComponent* Mesh, float Damage, float Cooldown);
+	void SetWeapon(UStaticMeshComponent* Mesh, float Damage);
 };

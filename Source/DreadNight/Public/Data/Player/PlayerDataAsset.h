@@ -43,10 +43,7 @@ public:
 	TObjectPtr<UItemDataAsset> StartingWeaponDataAsset = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
-	FName HandSocketName = TEXT("WeaponHandR");
-
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	float WeaponAttackCooldown = 1.f;
+	FName HandSocketName = TEXT("WeaponSocket");
 
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 	float JumpStaminaCost = 20.f;

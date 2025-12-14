@@ -122,5 +122,5 @@ void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 
 	CurrentWeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
 
-	SwordCombatComponent->SetWeapon(CurrentWeaponMesh, Weapon->GetDataAsset()->Damage, PlayerData->WeaponAttackCooldown);
+	SwordCombatComponent->SetWeapon(CurrentWeaponMesh, Weapon->GetDataAsset()->Damage);
 }
