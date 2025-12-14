@@ -20,3 +20,8 @@ If it's a consumable item (so any of the above), allow to add to Quick access (h
 
 TO DO IF TIME: Allow to drag \& drop a consumable item into the hotbar or into a PlayerItemSlot
 
+## References
+
+Sword Idle Animation: https://www.mixamo.com/#/?page=1&query=sword+idle => Great Sword Idle
+
+Sword Attack Animation: https://www.mixamo.com/#/?page=1&query=sword+attack => Sword and Shield Slash
