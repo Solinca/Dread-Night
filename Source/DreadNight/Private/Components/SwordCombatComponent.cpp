@@ -7,28 +7,6 @@ USwordCombatComponent::USwordCombatComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void USwordCombatComponent::Attack()
-{
-	if (IsAttacking)
-	{
-		return;
-	}
-
-	IsAttacking = true;
-
-	GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &USwordCombatComponent::ResetAttack, AttackCooldown, false);
-}
-
-bool USwordCombatComponent::GetIsAttacking()
-{
-	return IsAttacking;
-}
-
-void USwordCombatComponent::ResetAttack()
-{
-	IsAttacking = false;
-}
-
 void USwordCombatComponent::OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (IsAttacking && OtherActor != GetOwner() && OtherActor->Implements<UDamageable>())
@@ -40,11 +18,19 @@ void USwordCombatComponent::OnSwordOverlap(UPrimitiveComponent* OverlappedComp, 
 	}
 }
 
-void USwordCombatComponent::SetWeapon(UStaticMeshComponent* Mesh, float Damage, float Cooldown)
+void USwordCombatComponent::ResetAttack()
+{
+	IsAttacking = false;
+}
+
+void USwordCombatComponent::Attack()
+{
+	IsAttacking = true;
+}
+
+void USwordCombatComponent::SetWeapon(UStaticMeshComponent* Mesh, float Damage)
 {
 	Mesh->OnComponentBeginOverlap.AddDynamic(this, &USwordCombatComponent::OnSwordOverlap);
 
 	CurrentDamage = Damage;
-
-	AttackCooldown = Cooldown;
 }
