@@ -91,6 +91,8 @@ private:
 	
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
 
+	FCollisionQueryParams ObjectPlacementQueryParams;
+
 #if WITH_EDITOR
 	UFUNCTION(BlueprintInternalUseOnly)
 	void Prototype_InputAction(const FInputActionValue& Value) {};
@@ -167,6 +169,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float BuildingRotationSpeed;
+
+	UPROPERTY(EditAnywhere)
+	float ObjectPlacementRange = 200.f;
 
 	// Function to add a Menu to the menu list, so we can leave it with escape
 	template<typename T>

@@ -49,6 +49,9 @@ void ACustomPlayerController::BeginPlay()
 		HUDWidget->AddToViewport();
 		BindUIEvents();
 	}
+
+	ObjectPlacementQueryParams.bTraceComplex = true;
+	ObjectPlacementQueryParams.AddIgnoredActor(GetPawn());
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
@@ -65,17 +68,13 @@ void ACustomPlayerController::Tick(float DeltaTime)
 		FRotator CameraRotation;
 		GetPlayerViewPoint(CameraLocation, CameraRotation);
 
-		FCollisionQueryParams Params;
-		Params.bTraceComplex = true;
-		Params.AddIgnoredActor(CreatedBuilding);
-		Params.AddIgnoredActor(GetPawn());
-		Params.AddIgnoredActors(CreatedBuildings);
-
-		if (GetWorld()->LineTraceSingleByChannel(Hit,
+		if (GetWorld()->LineTraceSingleByChannel(
+			Hit,
 			CameraLocation,
-			PlayerCameraManager->GetCameraRotation().Vector() * 10000.f,
+			PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange,
 			ECC_Pawn,
-			Params) && !Hit.GetActor()->IsA(ACharacter::StaticClass()))
+			ObjectPlacementQueryParams) &&
+			!Hit.GetActor()->IsA(ACharacter::StaticClass()))
 		{
 			CreatedBuilding->SetActorLocation(Hit.ImpactPoint);
 			CreatedBuilding->CheckValidPlacement();
@@ -364,6 +363,9 @@ void ACustomPlayerController::PlaceObject(const FInputActionValue& Value)
 		FRotator::ZeroRotator,
 		SpawnParams
 	);
+
+	ObjectPlacementQueryParams.AddIgnoredActor(CreatedBuilding);
+	ObjectPlacementQueryParams.AddIgnoredActors(CreatedBuildings);
 }
 
 void ACustomPlayerController::RotateObject(const FInputActionValue& Value)
