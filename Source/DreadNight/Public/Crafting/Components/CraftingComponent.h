@@ -5,9 +5,10 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Crafting/Data/Recipe.h"
+#include "InventorySystem/InventoryComponent.h"
 #include "CraftingComponent.generated.h"
 
-class UInventoryComponent;
+
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class DREADNIGHT_API UCraftingComponent : public UActorComponent

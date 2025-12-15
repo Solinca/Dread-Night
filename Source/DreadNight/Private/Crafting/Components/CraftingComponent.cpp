@@ -2,6 +2,7 @@
 
 
 #include "Crafting/Components/CraftingComponent.h"
+#include "Items/Helper/ItemInstanceFactory.h"
 
 
 
@@ -11,20 +12,18 @@ void UCraftingComponent::Craft(FRecipe* Recipe, TObjectPtr<UInventoryComponent> 
 	for (FIngredient Ingredient : Recipe->Ingredients)
 	{
 
-		/*
 		if(!Inventory->Contains(Ingredient.ItemType, Ingredient.Quantity)) break;
-		*/
 
 	}
 
 	for (FIngredient Ingredient : Recipe->Ingredients)
 	{
 
-		//Inventory->RemoveItem(Ingredient.ItemType, Ingredient.Quantity);
+		Inventory->RemoveItemsByType(Ingredient.ItemType, Ingredient.Quantity);
 
 	}
 
-	//Inventory->AddItem(Recipe->TargetItem, 1);
+	Inventory->AddItem(FItemInstanceFactory::CreateItem(this, Recipe->TargetItem, 1));
 
 }
 
@@ -33,7 +32,7 @@ void UCraftingComponent::Craft(FRecipe* Recipe, TObjectPtr<UInventoryComponent> 
 void UCraftingComponent::OpenGUI()
 {
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "debug msg");
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Open GUI");
 
 	//CraftingWidget = CreateWidget<UCraftingWidget>(this, CraftingWidgetClass);
 

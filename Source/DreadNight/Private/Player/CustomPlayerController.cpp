@@ -7,6 +7,7 @@
 #include "UI/Widgets/PauseMenu.h"
 #include "UserWidgets/OptionsWidget.h"
 #include "UI/Widgets/PlayerHud.h"
+#include "InteractableSystem/Subsystems/InteractableSubsystem.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -32,14 +33,7 @@ void ACustomPlayerController::BeginPlay()
 	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = PlayerData->CrouchMoveSpeed;
 
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
-	
-	if (PlayerData->HotbarInventoryWidgetClass)
-	{
-		HotbarInventoryWidget = CreateWidget<UInventory>(this, PlayerData->HotbarInventoryWidgetClass);
-		HotbarInventoryWidget->BindToInventory(MyPlayer->GetHotbarInventoryComponent());
-		HotbarInventoryWidget->BindTargetInventory(MyPlayer->GetInventoryComponent());
-		HotbarInventoryWidget->AddToViewport();
-	}
+
 	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
 
 	PlayerCameraManager->ViewPitchMax = PlayerData->ViewPitch.Y;
@@ -109,24 +103,23 @@ void ACustomPlayerController::Jump(const FInputActionValue& Value)
 {
 	if (MyPlayer)
 	{
+		MyPlayer->Jump();
+
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
-		if (StaminaComponent->GetCurrentStamina() > 0.f && MyPlayer->CanJump())
-		{
-			MyPlayer->Jump();
+		StaminaComponent->RemoveStamina(PlayerData->JumpStaminaCost);
 
-			StaminaComponent->RemoveStamina(PlayerData->JumpStaminaCost);
+		StaminaComponent->SetCanRegen(false);
 
-			StaminaComponent->SetCanRegen(false);
+		// START REGEN STAMINA
+		GetWorldTimerManager().SetTimer(
+			StaminaComponent->CoolDownTimer,
+			[=] {StaminaComponent->SetCanRegen(true); },
+			StaminaComponent->GetRegenCoolDown(),
+			false
+		);
 
-			// START REGEN STAMINA
-			GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
-				[=] {StaminaComponent->SetCanRegen(true); },
-				StaminaComponent->GetRegenCoolDown(), false
-			);
-
-			MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerJumpCost);
-		}
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerJumpCost);
 	}
 }
 
@@ -136,22 +129,15 @@ void ACustomPlayerController::Sprint(const FInputActionValue& Value)
 	{
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
-		if (StaminaComponent->GetCurrentStamina() > 0.f)
-		{
-			MyPlayer->GetCharacterMovement()->MaxWalkSpeed = PlayerData->SprintMoveSpeed;
+		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = PlayerData->SprintMoveSpeed;
 
-			MyPlayer->SetIsSprinting(true);
+		MyPlayer->SetIsSprinting(true);
 
-			StaminaComponent->SetCanRegen(false);
+		StaminaComponent->SetCanRegen(false);
 
-			StaminaComponent->RemoveStamina(PlayerData->SprintStaminaCost * GetWorld()->GetDeltaSeconds());
+		StaminaComponent->RemoveStamina(PlayerData->SprintStaminaCost * GetWorld()->GetDeltaSeconds());
 
-			MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerSprintCost * GetWorld()->GetDeltaSeconds());
-		}
-		else
-		{
-			SprintEnd(Value);
-		}
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerSprintCost * GetWorld()->GetDeltaSeconds());
 	}
 }
 
@@ -166,9 +152,11 @@ void ACustomPlayerController::SprintEnd(const FInputActionValue& Value)
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
 		// START REGEN STAMINA
-		GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
+		GetWorldTimerManager().SetTimer(
+			StaminaComponent->CoolDownTimer,
 			[=] {StaminaComponent->SetCanRegen(true); },
-			StaminaComponent->GetRegenCoolDown(), false
+			StaminaComponent->GetRegenCoolDown(),
+			false
 		);
 	}
 }
@@ -213,44 +201,44 @@ void ACustomPlayerController::Aim(const FInputActionValue& Value)
 
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
 {
-	USwordCombatComponent* SwordCombatComponent = MyPlayer->GetSwordCombatComponent();
+	MyPlayer->GetSwordCombatComponent()->Attack();
+
 	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
-	if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
-	{
-		SwordCombatComponent->Attack();
+	StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 
-		StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
+	StaminaComponent->SetCanRegen(false);
 
-		StaminaComponent->SetCanRegen(false);
+	// START REGEN STAMINA
+	GetWorldTimerManager().SetTimer(
+		StaminaComponent->CoolDownTimer,
+		[=] {StaminaComponent->SetCanRegen(true); },
+		StaminaComponent->GetRegenCoolDown(),
+		false
+	);
 
-		// START REGEN STAMINA
-		GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
-			[=] {StaminaComponent->SetCanRegen(true); },
-			StaminaComponent->GetRegenCoolDown(), false
-		);
-
-		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
-	}
+	MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
 }
 
 
 void ACustomPlayerController::Interact(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Interact");
+	TObjectPtr<UInteractableSubsystem> Subsystem = GetWorld()->GetSubsystem<UInteractableSubsystem>();
+	if (Subsystem->TryInteract())
+		Subsystem->RequestInteraction(Subsystem->GetLastFocusedActor(), MyPlayer);
 }
 
 void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 {
 	if (!PlayerData->InventoryWidgetClass)
+	{
 		return;
+	}
 	
 	InventoryWidget = CreateWidget<UInventory>(this, PlayerData->InventoryWidgetClass);
-	InventoryWidget->BindToInventory(MyPlayer->GetInventoryComponent());
-	InventoryWidget->BindTargetInventory(MyPlayer->GetHotbarInventoryComponent());
-	FVector2D WindowSize = GEngine->GameViewport->Viewport->GetSizeXY();
-	InventoryWidget->SetDesiredSizeInViewport(FVector2D(600,600));
-	InventoryWidget->SetPositionInViewport(FVector2D(WindowSize.X/2 - 300, WindowSize.Y/2 - 300));
+
+	InventoryWidget->BindToInventory(MyPlayer->GetComponentByClass<UInventoryComponent>());
+
 	SetShowMouseCursor(true);
 	
 	PushNewMenu(InventoryWidget, false, [this]
@@ -260,10 +248,6 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 		if (UInventory* TempInventory = Cast<UInventory>(InventoryWidget))
 		{
 			TempInventory->RemoveItemAction();
-		}
-		if (UInventory* TempHotBar  = Cast<UInventory>(HotbarInventoryWidget))
-		{
-			TempHotBar->RemoveItemAction();
 		}
 	});
 }
@@ -304,10 +288,7 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 {
 	int index = (int)Value.Get<float>();
 
-	if (index == -1)
-		index = 0;
-	
-	MyPlayer->GetInventoryComponent()->UseItemAt(index);
+	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Hotbar : " + FString::FromInt(index));
 }
 
 void ACustomPlayerController::SaveGame()
