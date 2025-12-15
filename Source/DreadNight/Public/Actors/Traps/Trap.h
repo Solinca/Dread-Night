@@ -23,11 +23,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variable")
 	float TrapLifeSpan{0.f};
 	
-private:
 	FTimerHandle TickTimerHandle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variable")
+	bool bIsActive = false;
 	
-public:
-	ATrap();
+	public:
+		ATrap();
 
 protected:
 	virtual void BeginPlay() override;

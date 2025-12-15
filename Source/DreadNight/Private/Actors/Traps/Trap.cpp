@@ -33,5 +33,6 @@ void ATrap::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	{
 		SetLifeSpan(TrapLifeSpan);
 		GetWorldTimerManager().SetTimer(TickTimerHandle, this, &ATrap::OnTrapTick, PrimaryActorTick.TickInterval, true);
+		bIsActive = true;
 	}
 }
