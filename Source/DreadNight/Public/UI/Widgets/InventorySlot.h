@@ -47,11 +47,7 @@ public:
 	int GetSlotIndex() const { return SlotIndex; }
 	UFUNCTION(BlueprintCallable)
 	void SetSlotIndex(int Index) { SlotIndex = Index; }
-	UFUNCTION(BlueprintPure, Category = "Inventory")
-	UInventoryComponent* GetOwningInventory() const { return BindInventoryComponent; }
-	UFUNCTION(BlueprintPure)
-	UInventoryComponent* GetTargetInventory() const { return BindTargetInventoryComponent; }
-	
+
 	UFUNCTION(BlueprintCallable)
 	void SetupSlot(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index);
 	UFUNCTION(BlueprintCallable)

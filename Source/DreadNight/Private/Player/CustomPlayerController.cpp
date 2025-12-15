@@ -7,7 +7,6 @@
 #include "UI/Widgets/PauseMenu.h"
 #include "UserWidgets/OptionsWidget.h"
 #include "UI/Widgets/PlayerHud.h"
-#include "Items/Helper/ItemInstanceFactory.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -108,9 +107,6 @@ void ACustomPlayerController::Look(const FInputActionValue& Value)
 
 void ACustomPlayerController::Jump(const FInputActionValue& Value)
 {
-	UItemInstance* ItemTest = FItemInstanceFactory::CreateItem(MyPlayer, ItemDataAssetTest,10);
-	MyPlayer->GetHotbarInventoryComponent()->AddItem(ItemTest);
-	
 	if (MyPlayer)
 	{
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
