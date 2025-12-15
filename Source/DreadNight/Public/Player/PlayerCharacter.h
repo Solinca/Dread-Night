@@ -15,6 +15,7 @@
 #include "Items/Data/WeaponDataAsset.h"
 #include "Items/Data/ArmorDataAsset.h"
 #include "Data/Player/PlayerDataAsset.h"
+#include "Components/BowCombatComponent.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -75,6 +76,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UPlayerDataAsset> PlayerData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UBowCombatComponent> BowCombatComponent;
 
 public:
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
@@ -141,4 +145,7 @@ public:
 
 	UFUNCTION()
 	void SetupSwordComponent();
+
+	UFUNCTION()
+	UBowCombatComponent* GetBowCombatComponent();
 };

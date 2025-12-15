@@ -41,7 +41,12 @@ void UBowCombatComponent::Shoot()
 	if (!CurrentArrow.IsValid())
 		return;
 	CurrentArrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	CurrentArrow->GetProjectileMovementComponent()->Activate();
+	UProjectileMovementComponent* ProjectileComp = CurrentArrow->GetProjectileMovementComponent();
+	if (ProjectileComp)
+	{
+		ProjectileComp->Velocity = CurrentArrow->GetActorForwardVector() * ProjectileComp->InitialSpeed;
+		ProjectileComp->Activate();
+	}
 	CurrentArrow = nullptr;
 	bCanShoot = false;
 
@@ -66,9 +71,9 @@ void UBowCombatComponent::SpawnArrow()
 	USkeletalMeshComponent* MeshComp = Owner->FindComponentByClass<USkeletalMeshComponent>();
 	if (!MeshComp)
 		return;
-	FName HandSocketName = TEXT("hand_rSocket"); //test avec un socket que j'ai ajouté au mannequin unreal, c'était temporaire, faudra ajuster ça avec notre perso
+	FName HandSocketName = TEXT("WeaponSocket"); //test avec un socket que j'ai ajouté au mannequin unreal, c'était temporaire, faudra ajuster ça avec notre perso
 	SpawnLocation = MeshComp->GetSocketLocation(HandSocketName);
-	SpawnRotation = MeshComp->GetSocketRotation(HandSocketName);
+	SpawnRotation = Owner->GetActorRotation();
 	FActorSpawnParameters Params;
 	CurrentArrow = GetWorld()->SpawnActor<AProjectileActor>(
 		ArrowProjectileClass,
@@ -81,7 +86,7 @@ void UBowCombatComponent::SpawnArrow()
 	CurrentArrow->GetProjectileMovementComponent()->Deactivate();
 	CurrentArrow->AttachToComponent(
 		MeshComp,
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		FAttachmentTransformRules::KeepWorldTransform,
 		HandSocketName
 	);
 }

@@ -37,6 +37,8 @@ APlayerCharacter::APlayerCharacter()
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>("InventoryComponent");
 	
 	HotbarInventoryComponent = CreateDefaultSubobject<UInventoryComponent>("HotbarInventoryComponent");
+
+	BowCombatComponent = CreateDefaultSubobject<UBowCombatComponent>("BowCombatComponent");
 }
 
 void APlayerCharacter::BeginPlay()
@@ -184,4 +186,9 @@ void APlayerCharacter::SetupSwordComponent()
 	CurrentWeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
 
 	SwordCombatComponent->SetComponentMesh(CurrentWeaponMesh);
+}
+
+UBowCombatComponent* APlayerCharacter::GetBowCombatComponent()
+{
+	return BowCombatComponent;
 }
