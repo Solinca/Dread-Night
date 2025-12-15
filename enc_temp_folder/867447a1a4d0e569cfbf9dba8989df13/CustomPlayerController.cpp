@@ -102,24 +102,21 @@ void ACustomPlayerController::Jump(const FInputActionValue& Value)
 {
 	if (MyPlayer)
 	{
+		MyPlayer->Jump();
+
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
-		if (StaminaComponent->GetCurrentStamina() > 0.f && MyPlayer->CanJump())
-		{
-			MyPlayer->Jump();
+		StaminaComponent->RemoveStamina(PlayerData->JumpStaminaCost);
 
-			StaminaComponent->RemoveStamina(PlayerData->JumpStaminaCost);
+		StaminaComponent->SetCanRegen(false);
 
-			StaminaComponent->SetCanRegen(false);
+		// START REGEN STAMINA
+		GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
+			[=] {StaminaComponent->SetCanRegen(true); },
+			StaminaComponent->GetRegenCoolDown(), false
+		);
 
-			// START REGEN STAMINA
-			GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
-				[=] {StaminaComponent->SetCanRegen(true); },
-				StaminaComponent->GetRegenCoolDown(), false
-			);
-
-			MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerJumpCost);
-		}
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerJumpCost);
 	}
 }
 
@@ -129,22 +126,15 @@ void ACustomPlayerController::Sprint(const FInputActionValue& Value)
 	{
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
-		if (StaminaComponent->GetCurrentStamina() > 0.f)
-		{
-			MyPlayer->GetCharacterMovement()->MaxWalkSpeed = PlayerData->SprintMoveSpeed;
+		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = PlayerData->SprintMoveSpeed;
 
-			MyPlayer->SetIsSprinting(true);
+		MyPlayer->SetIsSprinting(true);
 
-			StaminaComponent->SetCanRegen(false);
+		StaminaComponent->SetCanRegen(false);
 
-			StaminaComponent->RemoveStamina(PlayerData->SprintStaminaCost * GetWorld()->GetDeltaSeconds());
+		StaminaComponent->RemoveStamina(PlayerData->SprintStaminaCost * GetWorld()->GetDeltaSeconds());
 
-			MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerSprintCost * GetWorld()->GetDeltaSeconds());
-		}
-		else
-		{
-			SprintEnd(Value);
-		}
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerSprintCost * GetWorld()->GetDeltaSeconds());
 	}
 }
 
@@ -230,7 +220,7 @@ void ACustomPlayerController::Attack(const FInputActionValue& Value)
 
 void ACustomPlayerController::Interact(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Interact");
+	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Stop Attacking");
 }
 
 void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)

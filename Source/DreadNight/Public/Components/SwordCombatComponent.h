@@ -23,11 +23,11 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ResetAttack();
 
-	UFUNCTION(BlueprintCallable)
-	bool GetIsAttacking() { return IsAttacking; }
-
 public:
 	void Attack();
 
 	void SetWeapon(UStaticMeshComponent* Mesh, float Damage);
+
+	UFUNCTION(BlueprintCallable)
+	bool GetIsAttacking() { return IsAttacking; }
 };
