@@ -222,7 +222,7 @@ void ACustomPlayerController::Attack(const FInputActionValue& Value)
 
 void ACustomPlayerController::Interact(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Stop Attacking");
+	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Interact");
 }
 
 void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)

@@ -9,9 +9,11 @@
 #include "Components/StaminaComponent.h"
 #include "Components/ManaComponent.h"
 #include "Components/ConditionStateComponent.h"
+#include "Components/ArmorComponent.h"
 #include "DamageSystem/Interface/Damageable.h"
 #include "Components/SwordCombatComponent.h"
 #include "Items/Data/WeaponDataAsset.h"
+#include "Items/Data/ArmorDataAsset.h"
 #include "Data/Player/PlayerDataAsset.h"
 #include "PlayerCharacter.generated.h"
 
@@ -53,8 +55,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<USwordCombatComponent> SwordCombatComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UArmorComponent> ArmorComponent;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> CurrentWeaponMesh = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UStaticMeshComponent> CurrentArmorMesh = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UStaticMeshComponent> CurrentHelmetMesh = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UPlayerDataAsset> PlayerData;
@@ -99,5 +110,17 @@ public:
 	USwordCombatComponent* GetSwordCombatComponent();
 
 	UFUNCTION()
+	UArmorComponent* GetArmorComponent();
+
+	UFUNCTION()
 	void EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon);
+
+	UFUNCTION()
+	void EquipArmor(UItemInstance_Armor* itemInstanceArmor);
+
+	UFUNCTION()
+	void UnequipArmor();
+
+	UFUNCTION()
+	void UnequipHelmet();
 };

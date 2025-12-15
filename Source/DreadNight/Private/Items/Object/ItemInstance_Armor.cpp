@@ -12,6 +12,11 @@ void UItemInstance_Armor::Use(AActor* Player)
 	
 }
 
+UArmorDataAsset* UItemInstance_Armor::GetDataAsset()
+{
+	return ArmorDataAsset;
+}
+
 void UItemInstance_Armor::OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack)
 {
 	if (ArmorDataAsset = Cast<UArmorDataAsset>(DataAsset); !ArmorDataAsset)
