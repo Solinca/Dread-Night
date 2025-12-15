@@ -28,6 +28,8 @@ void UCompass::NativeConstruct()
 		CompassMaterial->SetScalarParameterValue("Offset", GetOffset());
 	}
 	PlayerCameraManager = GetOwningPlayerCameraManager();
+	OutRangeA = -CompassImage->GetDesiredSize().X / 2.f; // HalfSize, needs to be in negative
+	OutRangeB = CompassImage->GetDesiredSize().X / 2.f; // HalfSize
 }
 
 void UCompass::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -37,9 +39,6 @@ void UCompass::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	CompassMaterial->SetScalarParameterValue("Offset", GetOffset());
 
 	UpdateMarkersPosition();
-
-	OutRangeA = -CompassImage->GetDesiredSize().X / 2.f; // HalfSize, needs to be in negative
-	OutRangeB = CompassImage->GetDesiredSize().X / 2.f; // HalfSize
 }
 
 void UCompass::UpdateMarkersPosition()
