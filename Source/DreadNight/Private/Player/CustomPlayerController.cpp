@@ -241,18 +241,20 @@ void ACustomPlayerController::Aim(const FInputActionValue& Value)
 void ACustomPlayerController::StopAim(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Stop Aiming");
-	MyPlayer->GetBowCombatComponent()->SetAiming(false);
+	if (PlayerData->StartingWeaponDataAsset->Type.GetTagName() == "Item.Weapon.Bow")
+		MyPlayer->GetBowCombatComponent()->SetAiming(false);
 }
 
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
 {
 	USwordCombatComponent* SwordCombatComponent = MyPlayer->GetSwordCombatComponent();
+
 	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
 	if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
 	{
 
-		if (PlayerData->StartingWeaponDataAsset)
+		if (PlayerData->StartingWeaponDataAsset->Type.GetTagName() == "Item.Weapon.Sword")
 			SwordCombatComponent->Attack();
 		else
 			MyPlayer->GetBowCombatComponent()->Shoot();

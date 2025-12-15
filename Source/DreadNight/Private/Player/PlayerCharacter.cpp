@@ -151,7 +151,6 @@ UInventoryComponent* APlayerCharacter::GetHotbarInventoryComponent()
 
 void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 {
-
     SwordCombatComponent->SetWeapon(Weapon->GetDataAsset());
 }
 

@@ -21,7 +21,7 @@ void UBowCombatComponent::SetAiming(bool bAiming)
 
 	// (optionnel) activer un zoom caméra, FOV changes, etc.
 
-	if (bIsAiming)
+	if (bIsAiming && PlayerData->StartingWeaponDataAsset->Type.GetTagName() == "Item.Weapon.Bow")
 	{
 		SpawnArrow();
 		return;
@@ -71,8 +71,7 @@ void UBowCombatComponent::SpawnArrow()
 	USkeletalMeshComponent* MeshComp = Owner->FindComponentByClass<USkeletalMeshComponent>();
 	if (!MeshComp)
 		return;
-	FName HandSocketName = TEXT("WeaponSocket"); //test avec un socket que j'ai ajouté au mannequin unreal, c'était temporaire, faudra ajuster ça avec notre perso
-	SpawnLocation = MeshComp->GetSocketLocation(HandSocketName);
+	SpawnLocation = MeshComp->GetSocketLocation(PlayerData->ArrowSocketName);
 	SpawnRotation = Owner->GetActorRotation();
 	FActorSpawnParameters Params;
 	CurrentArrow = GetWorld()->SpawnActor<AProjectileActor>(
@@ -87,7 +86,7 @@ void UBowCombatComponent::SpawnArrow()
 	CurrentArrow->AttachToComponent(
 		MeshComp,
 		FAttachmentTransformRules::KeepWorldTransform,
-		HandSocketName
+		PlayerData->ArrowSocketName
 	);
 }
 

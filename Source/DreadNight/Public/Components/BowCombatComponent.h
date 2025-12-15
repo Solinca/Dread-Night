@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Actors/ProjectileActor.h"
+#include "Data/Player/PlayerDataAsset.h"
+#include "Items/Data/WeaponDataAsset.h"
 #include "BowCombatComponent.generated.h"
 
 
@@ -26,6 +28,9 @@ protected:
 	TSubclassOf<AProjectileActor> ArrowProjectileClass;
 	UPROPERTY()
 	TWeakObjectPtr<AProjectileActor> CurrentArrow;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
+	TObjectPtr<UPlayerDataAsset> PlayerData;
 
 	void SpawnArrow();
 	void ResetShot();
