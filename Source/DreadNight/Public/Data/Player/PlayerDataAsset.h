@@ -99,8 +99,11 @@ public:
 	TSubclassOf<UInventory> InventoryWidgetClass;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UInventory> HotbarInventoryWidgetClass;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UPlayerHud> PlayerHudClass;
-
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
 	TObjectPtr<USoundBase> GameOverSound;
 

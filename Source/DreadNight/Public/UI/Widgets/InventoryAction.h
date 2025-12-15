@@ -37,6 +37,9 @@ public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 	UFUNCTION(BlueprintCallable)
+	void SetupAction(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index);
+	
+	UFUNCTION(BlueprintCallable)
 	void OnUsePressed();
 	UFUNCTION(BlueprintCallable)
 	void OnTransferPressed();
@@ -47,10 +50,15 @@ public:
 	
 	int GetSlotIndex() const { return SlotIndex; }
 	void SetSlotIndex(int Index) { SlotIndex = Index; }
+	TObjectPtr<UButton> GetUseButton() const { return UseButton; }
+	TObjectPtr<UButton> GetTransferButton() const { return TransferButton; }
+	TObjectPtr<UButton> GetDropButton() const { return DropButton; }
+	TObjectKey<UButton> GetRemoveButton() const { return RemoveButton; }
 	TObjectPtr<UTextBlock> GetUseText() const { return UseText; }
 	TObjectPtr<UTextBlock> GetTransferText() const { return TransferText; }
 	TObjectPtr<UTextBlock> GetDropText() const { return DropText; }
 	TObjectPtr<UTextBlock> GetRemoveText() const { return RemoveText; }
 	
 	TObjectPtr<UInventoryComponent> InventoryComponent;
+	TObjectPtr<UInventoryComponent> TargetInventoryComponent;
 };

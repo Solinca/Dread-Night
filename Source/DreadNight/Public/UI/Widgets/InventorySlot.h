@@ -23,6 +23,7 @@ protected:
 	TObjectPtr<UButton> ItemButton;
 	
 	TObjectPtr<UInventoryComponent> BindInventoryComponent;
+	TObjectPtr<UInventoryComponent> BindTargetInventoryComponent;
 	
 	int SlotIndex;
 	
@@ -46,7 +47,9 @@ public:
 	int GetSlotIndex() const { return SlotIndex; }
 	UFUNCTION(BlueprintCallable)
 	void SetSlotIndex(int Index) { SlotIndex = Index; }
-	
+
+	UFUNCTION(BlueprintCallable)
+	void SetupSlot(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index);
 	UFUNCTION(BlueprintCallable)
 	void SlotAction();
 	UFUNCTION(BlueprintCallable)

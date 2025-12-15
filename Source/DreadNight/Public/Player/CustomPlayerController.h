@@ -75,6 +75,9 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UInventory> InventoryWidget;
+	
+	UPROPERTY(Transient)
+	TObjectPtr<UInventory> HotbarInventoryWidget;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UOptionsWidget> OptionsWidget;
@@ -89,7 +92,7 @@ private:
 	void UpdateGamePauseState();
 	
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
-
+	
 #if WITH_EDITOR
 	UFUNCTION(BlueprintInternalUseOnly)
 	void Prototype_InputAction(const FInputActionValue& Value) {};

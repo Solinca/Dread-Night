@@ -32,7 +32,14 @@ void ACustomPlayerController::BeginPlay()
 	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = PlayerData->CrouchMoveSpeed;
 
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
-
+	
+	if (PlayerData->HotbarInventoryWidgetClass)
+	{
+		HotbarInventoryWidget = CreateWidget<UInventory>(this, PlayerData->HotbarInventoryWidgetClass);
+		HotbarInventoryWidget->BindToInventory(MyPlayer->GetHotbarInventoryComponent());
+		HotbarInventoryWidget->BindTargetInventory(MyPlayer->GetInventoryComponent());
+		HotbarInventoryWidget->AddToViewport();
+	}
 	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
 
 	PlayerCameraManager->ViewPitchMax = PlayerData->ViewPitch.Y;
@@ -236,14 +243,14 @@ void ACustomPlayerController::Interact(const FInputActionValue& Value)
 void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 {
 	if (!PlayerData->InventoryWidgetClass)
-	{
 		return;
-	}
 	
 	InventoryWidget = CreateWidget<UInventory>(this, PlayerData->InventoryWidgetClass);
-
-	InventoryWidget->BindToInventory(MyPlayer->GetComponentByClass<UInventoryComponent>());
-
+	InventoryWidget->BindToInventory(MyPlayer->GetInventoryComponent());
+	InventoryWidget->BindTargetInventory(MyPlayer->GetHotbarInventoryComponent());
+	FVector2D WindowSize = GEngine->GameViewport->Viewport->GetSizeXY();
+	InventoryWidget->SetDesiredSizeInViewport(FVector2D(600,600));
+	InventoryWidget->SetPositionInViewport(FVector2D(WindowSize.X/2 - 300, WindowSize.Y/2 - 300));
 	SetShowMouseCursor(true);
 	
 	PushNewMenu(InventoryWidget, false, [this]
@@ -253,6 +260,10 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 		if (UInventory* TempInventory = Cast<UInventory>(InventoryWidget))
 		{
 			TempInventory->RemoveItemAction();
+		}
+		if (UInventory* TempHotBar  = Cast<UInventory>(HotbarInventoryWidget))
+		{
+			TempHotBar->RemoveItemAction();
 		}
 	});
 }
@@ -293,7 +304,10 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 {
 	int index = (int)Value.Get<float>();
 
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Hotbar : " + FString::FromInt(index));
+	if (index == -1)
+		index = 0;
+	
+	MyPlayer->GetInventoryComponent()->UseItemAt(index);
 }
 
 void ACustomPlayerController::SaveGame()
