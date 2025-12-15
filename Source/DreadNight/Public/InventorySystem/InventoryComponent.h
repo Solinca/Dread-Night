@@ -27,7 +27,7 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Size = 20;
-
+	
 public:	
 	
 	void AddItem(UItemInstance* Item);

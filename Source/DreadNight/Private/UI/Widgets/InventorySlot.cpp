@@ -40,7 +40,16 @@ void UInventorySlot::SetItemImage(UTexture2D* Texture)
 
 void UInventorySlot::SetStackText(int Stack)
 {
-	StackText->SetText(FText::FromString(FString::FromInt(Stack)));
+	if (Stack > 0) 
+	{
+		StackText->SetText(FText::FromString(FString::FromInt(Stack)));
+		StackText->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		StackText->SetVisibility(ESlateVisibility::Hidden);
+	}
+	
 }
 
 void UInventorySlot::SetupSlot(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index)

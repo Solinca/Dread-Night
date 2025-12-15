@@ -13,11 +13,10 @@ void UHotBar::NativeConstruct()
 			return;
 		}
 		
-		UHotBarSlot* SlotWidget = CreateWidget<UHotBarSlot>(this, InventorySlotClass);
-		
-		InventoryWrapBox->AddChildToWrapBox(SlotWidget);
-	
-		static constexpr int HotBarMaxSlots = 10;
-		SlotWidget->SetShortcutText(FText::AsNumber((i + 1) % HotBarMaxSlots));
+		if (UHotBarSlot* SlotWidget = Cast<UHotBarSlot>(InventoryWrapBox->GetChildAt(i)))
+		{
+			static constexpr int HotBarMaxSlots = 10;
+			SlotWidget->SetShortcutText(FText::AsNumber((i + 1) % HotBarMaxSlots));
+		}
 	}
 }

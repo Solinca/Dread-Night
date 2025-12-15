@@ -44,6 +44,7 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentCapsuleHalfHeight = PlayerData->CapsuleMaxHalfHeight;
+	HotbarInventoryComponent->SetSize(GetHotbarInventoryComponent()->GetSize());
 
 	EquipWeapon(Cast<UItemInstance_Weapon>(FItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1)));
 	EquipArmor(Cast<UItemInstance_Armor>(FItemInstanceFactory::CreateItem(this, PlayerData->StartingArmorDataAsset, 1)));

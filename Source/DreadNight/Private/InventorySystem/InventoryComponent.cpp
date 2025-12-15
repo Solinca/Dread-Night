@@ -189,7 +189,11 @@ void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UIt
 		}
 	}
 	
+	
 	int EmptySlot = TargetInventory->GetEmptySlot().GetValue();
+	if (!EmptySlot)
+		return;
+	
 	TargetInventory->Items[EmptySlot] = Item;
 	Items[EmptySlot] = nullptr;
 	
@@ -216,6 +220,9 @@ TOptional<int> UInventoryComponent::GetEmptySlot() const
 
 UItemInstance* UInventoryComponent::GetItemAtSlot(int SlotIndex) const
 {
+	if (SlotIndex >= Items.Num())
+		return nullptr;
+	
 	return Items[SlotIndex];
 }
 

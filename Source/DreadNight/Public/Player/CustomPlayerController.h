@@ -69,6 +69,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UPlayerDataAsset> PlayerData;
 
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UItemDataAsset> ItemDataAssetTest;
+
 private:
 	UPROPERTY(Transient)
 	TObjectPtr<UPauseMenu> PauseMenuWidget;
@@ -92,7 +95,7 @@ private:
 	void UpdateGamePauseState();
 	
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
-
+	
 #if WITH_EDITOR
 	UFUNCTION(BlueprintInternalUseOnly)
 	void Prototype_InputAction(const FInputActionValue& Value) {};
