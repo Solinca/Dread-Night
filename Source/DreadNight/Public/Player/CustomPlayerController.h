@@ -70,6 +70,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UPlayerDataAsset> PlayerData;
 
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UItemDataAsset> ItemDataAssetTest;
 private:
 	UPROPERTY(Transient)
 	TObjectPtr<UPauseMenu> PauseMenuWidget;

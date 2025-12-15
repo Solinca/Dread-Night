@@ -9,6 +9,8 @@
 #include "InventorySlot.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemActionCreatedEventSignature, int, SlotIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemInfoCreatedEventSignature, int, SlotIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemInfoRemovedEventSignature);
 
 UCLASS()
 class DREADNIGHT_API UInventorySlot : public UUserWidget
@@ -28,6 +30,7 @@ protected:
 	int SlotIndex;
 	
 	bool HasRightClicked = false;
+	bool IsMouseOver = false;
 public:
 	UFUNCTION(BlueprintCallable)
 	virtual void NativePreConstruct() override;
@@ -37,6 +40,8 @@ public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	
 	UFUNCTION(BlueprintCallable)
 	void SetItemImage(UTexture2D* Texture);
@@ -53,6 +58,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SlotAction();
 	UFUNCTION(BlueprintCallable)
+	void InfoAction();
+	UFUNCTION(BlueprintCallable)
 	void BindToInventory(UInventoryComponent* InventoryComponent);
 	
 	UFUNCTION(BlueprintCallable)
@@ -61,4 +68,6 @@ public:
 	const FSlateBrush& GetImageBrush() const;
 	
 	FOnItemActionCreatedEventSignature OnItemActionCreated;
+	FOnItemInfoCreatedEventSignature OnItemInfoCreated;
+	FOnItemInfoRemovedEventSignature OnItemInfoRemoved;
 };

@@ -60,4 +60,3 @@ void UInventoryAction::OnRemovePressed()
 	InventoryComponent->RemoveItemsAt(SlotIndex, 1);
 	RemoveFromParent();
 }
-

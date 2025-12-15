@@ -35,6 +35,8 @@ void UInventory::SetSize(int Size)
 			TempSlot->SetStackText(Item->GetStackNumber());
 		}
 		
+		TempSlot->OnItemInfoCreated.AddDynamic(this, &UInventory::OnItemInfoCreated);
+		TempSlot->OnItemInfoRemoved.AddDynamic(this, &UInventory::OnItemInfoRemoved);
 		TempSlot->OnItemActionCreated.AddDynamic(this, &UInventory::OnItemActionCreated);
 		InventoryWrapBox->AddChildToWrapBox(TempSlot);
 	}
@@ -96,6 +98,9 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	if (InventoryAction)
 		InventoryAction->RemoveFromParent();
 	
+	if (InventoryInfoWidget)
+		OnItemInfoRemoved();
+	
 	UInventorySlot* ClickedSlot = Cast<UInventorySlot>(InventoryWrapBox->GetChildAt(SlotIndex));
 	if (!ClickedSlot)
 		return;
@@ -118,6 +123,37 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	{
 		InventoryAction->GetUseButton()->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void UInventory::OnItemInfoCreated(int SlotIndex)
+{
+	if (!ItemInfoWidgetClass)
+		return;
+	
+	if (InventoryInfoWidget)
+		InventoryInfoWidget->RemoveFromParent();
+	
+	FVector2d MousePos;
+	InventoryInfoWidget = CreateWidget<UInventoryInfo>(this, ItemInfoWidgetClass);
+	GetOwningPlayer()->GetMousePosition(MousePos.X, MousePos.Y);
+	InventoryInfoWidget->SetRenderTranslation(MousePos);
+	InventoryInfoWidget->AddToViewport();
+	
+	if (UItemInstance* ItemData = BindInventoryComponent->GetItemAtSlot(SlotIndex))
+	{
+		InventoryInfoWidget->GetItemInfoButton()->SetVisibility(ESlateVisibility::Visible);
+		InventoryInfoWidget->GetItemInfoText()->SetText(FText::FromName(ItemData->GetDataAsset()->ItemName));
+	}
+	else
+	{
+		InventoryInfoWidget->GetItemInfoButton()->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UInventory::OnItemInfoRemoved()
+{
+	if (InventoryInfoWidget)
+		InventoryInfoWidget->RemoveFromParent();
 }
 
 void UInventory::RemoveItemAction()
