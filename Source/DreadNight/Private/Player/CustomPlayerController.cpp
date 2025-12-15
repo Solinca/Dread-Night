@@ -117,9 +117,6 @@ void ACustomPlayerController::Look(const FInputActionValue& Value)
 
 void ACustomPlayerController::Jump(const FInputActionValue& Value)
 {
-	UItemInstance* ItemTest = FItemInstanceFactory::CreateItem(MyPlayer, ItemDataAssetTest,10);
-	MyPlayer->GetHotbarInventoryComponent()->AddItem(ItemTest);
-	
 	if (MyPlayer)
 	{
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
