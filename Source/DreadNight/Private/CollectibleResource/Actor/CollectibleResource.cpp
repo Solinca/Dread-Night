@@ -3,6 +3,7 @@
 
 #include "CollectibleResource/Actor/CollectibleResource.h"
 
+#include "InventorySystem/InventoryComponent.h"
 #include "Items/Data/ItemDataAsset.h"
 #include "Items/Helper/ItemInstanceFactory.h"
 #include "Items/Object/ItemInstance.h"
@@ -13,19 +14,15 @@ bool ACollectibleResource::TryApplyDamage(float Damage, AActor* DamageInstigator
 	const int ResourceCollected = FMath::Min(Damage, CurrentItemQuantity);
 	
 	//TODO Add cast to player and add inventory logic
-	if (DamageInstigator)
+	if (UInventoryComponent* InventoryComponent = DamageInstigator->GetComponentByClass<UInventoryComponent>())
 	{
 		
 		UItemInstance* ItemInstance = FItemInstanceFactory::CreateItem(this ,ItemDataAsset, ResourceCollected);
 
 		UE_LOG(LogTemp, Log, TEXT("Resource type = %s, collected %d"), *ItemDataAsset->Type.GetTagLeafName().ToString(), ResourceCollected);
-		FString Msg = FString::Printf(
-			TEXT("Resource type = %s, collected %d"),
-			*ItemDataAsset->Type.GetTagLeafName().ToString(),
-			ResourceCollected
-		);
-		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, Msg);
 
+		InventoryComponent->AddItem(ItemInstance);
+		
 		CurrentItemQuantity -= ResourceCollected;
 		if (CurrentItemQuantity <= 0)
 		{
