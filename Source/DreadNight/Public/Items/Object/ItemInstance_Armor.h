@@ -14,6 +14,7 @@ class DREADNIGHT_API UItemInstance_Armor : public UItemInstance, public IUsableI
 public:
 	virtual FName GetActionName() override;
 	virtual void Use(AActor* Player) override;
+	UArmorDataAsset* GetDataAsset();
 
 private:
 	GENERATED_BODY()
@@ -21,7 +22,6 @@ private:
 protected:
 	UPROPERTY(Transient)
 	UArmorDataAsset* ArmorDataAsset;
-
 
 	virtual void OnSetupItemInstance(UItemDataAsset* DataAsset, const int InitialStack) override;
 };

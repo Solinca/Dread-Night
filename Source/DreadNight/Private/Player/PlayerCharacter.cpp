@@ -2,6 +2,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Items/Helper/ItemInstanceFactory.h"
 #include "Items/Object/ItemInstance_Weapon.h"
+#include "Items/Object/ItemInstance_Armor.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -26,6 +27,10 @@ APlayerCharacter::APlayerCharacter()
 	SwordCombatComponent = CreateDefaultSubobject<USwordCombatComponent>("SwordCombatComponent");
 
 	CurrentWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>("WeaponMesh");
+
+	CurrentArmorMesh = CreateDefaultSubobject<UStaticMeshComponent>("ArmorMesh");
+
+	CurrentHelmetMesh = CreateDefaultSubobject<UStaticMeshComponent>("HelmetMesh");
 }
 
 void APlayerCharacter::BeginPlay()
@@ -35,11 +40,14 @@ void APlayerCharacter::BeginPlay()
 	CurrentCapsuleHalfHeight = PlayerData->CapsuleMaxHalfHeight;
 
 	EquipWeapon(Cast<UItemInstance_Weapon>(FItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1)));
+	EquipArmor(Cast<UItemInstance_Armor>(FItemInstanceFactory::CreateItem(this, PlayerData->StartingArmorDataAsset, 1)));
+	EquipArmor(Cast<UItemInstance_Armor>(FItemInstanceFactory::CreateItem(this, PlayerData->StartingHelmetDataAsset, 1)));
 }
 
 bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 {
-	HealthComponent->RemoveHealth(Damage);
+	HealthComponent->RemoveHealth(Damage / (PlayerData->BaseDmgReductionMultiplier + 
+		(CurrentArmorDmgReductionMultiplier + CurrentHelmetDmgReductionMultiplier)));
 
 	return true;
 }
@@ -123,4 +131,38 @@ void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 	CurrentWeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
 
 	SwordCombatComponent->SetWeapon(CurrentWeaponMesh, Weapon->GetDataAsset()->Damage);
+}
+
+void APlayerCharacter::EquipArmor(UItemInstance_Armor* Armor)
+{
+	if (Armor->GetDataAsset()->bIsHelmet)
+	{
+		CurrentHelmetMesh->SetStaticMesh(Armor->GetDataAsset()->ArmorMesh);
+
+		CurrentHelmetMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
+
+		CurrentHelmetDmgReductionMultiplier = Armor->GetDataAsset()->DamageReductionMultiplier;
+	}
+	else
+	{
+		CurrentArmorMesh->SetStaticMesh(Armor->GetDataAsset()->ArmorMesh);
+
+		CurrentArmorMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
+
+		CurrentArmorDmgReductionMultiplier = Armor->GetDataAsset()->DamageReductionMultiplier;
+	}
+}
+
+void APlayerCharacter::UnequipArmor()
+{
+	CurrentArmorMesh->SetStaticMesh(nullptr);
+
+	CurrentArmorDmgReductionMultiplier = 0.f;
+}
+
+void APlayerCharacter::UnequipHelmet()
+{
+	CurrentHelmetMesh->SetStaticMesh(nullptr);
+
+	CurrentHelmetDmgReductionMultiplier = 0.f;
 }

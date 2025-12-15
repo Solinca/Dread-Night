@@ -42,8 +42,23 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<UItemDataAsset> StartingWeaponDataAsset = nullptr;
 
+	UPROPERTY(EditAnywhere, Category = "Armor")
+	TObjectPtr<UItemDataAsset> StartingArmorDataAsset = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Armor")
+	TObjectPtr<UItemDataAsset> StartingHelmetDataAsset = nullptr;
+
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	FName HandSocketName = TEXT("WeaponSocket");
+
+	UPROPERTY(EditAnywhere, Category = "Armor")
+	FName ArmorSocketName = TEXT("ArmorSocket");
+
+	UPROPERTY(EditAnywhere, Category = "Armor")
+	FName HelmetSocketName = TEXT("HelmetSocket");
+
+	UPROPERTY(EditAnywhere, Category = "Armor")
+	float BaseDmgReductionMultiplier = 1.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 	float JumpStaminaCost = 20.f;

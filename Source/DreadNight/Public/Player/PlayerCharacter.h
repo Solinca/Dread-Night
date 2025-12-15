@@ -12,6 +12,7 @@
 #include "DamageSystem/Interface/Damageable.h"
 #include "Components/SwordCombatComponent.h"
 #include "Items/Data/WeaponDataAsset.h"
+#include "Items/Data/ArmorDataAsset.h"
 #include "Data/Player/PlayerDataAsset.h"
 #include "PlayerCharacter.generated.h"
 
@@ -26,6 +27,10 @@ private:
 	bool bIsSprinting = false;
 
 	float CurrentCapsuleHalfHeight;
+
+	float CurrentArmorDmgReductionMultiplier = 0.f;
+
+	float CurrentHelmetDmgReductionMultiplier = 0.f;
 
 protected:
 	APlayerCharacter();
@@ -55,6 +60,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> CurrentWeaponMesh = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UStaticMeshComponent> CurrentArmorMesh = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UStaticMeshComponent> CurrentHelmetMesh = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UPlayerDataAsset> PlayerData;
@@ -100,4 +111,13 @@ public:
 
 	UFUNCTION()
 	void EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon);
+
+	UFUNCTION()
+	void EquipArmor(UItemInstance_Armor* itemInstanceArmor);
+
+	UFUNCTION()
+	void UnequipArmor();
+
+	UFUNCTION()
+	void UnequipHelmet();
 };
