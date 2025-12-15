@@ -249,6 +249,10 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 	InventoryWidget = CreateWidget<UInventory>(this, PlayerData->InventoryWidgetClass);
 	InventoryWidget->BindToInventory(MyPlayer->GetInventoryComponent());
 	InventoryWidget->BindTargetInventory(MyPlayer->GetHotbarInventoryComponent());
+	FVector2D WindowSize = GEngine->GameViewport->Viewport->GetSizeXY();
+	InventoryWidget->SetDesiredSizeInViewport(FVector2D(600,600));
+	//FVector2D WidgetSize = InventoryWidget->GetDesiredSize();
+	InventoryWidget->SetPositionInViewport(FVector2D(WindowSize.X/2 - 300, WindowSize.Y/2 - 300));
 	SetShowMouseCursor(true);
 	
 	PushNewMenu(InventoryWidget, false, [this]
