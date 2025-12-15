@@ -26,9 +26,15 @@ protected:
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UCompassMarker>> MarkersArray;
+	
+	UPROPERTY(Transient)
+	TObjectPtr<APlayerCameraManager> PlayerCameraManager;
 
 public:
-	void AddCompassMarker(AActor* InObjectiveActor);
+	UFUNCTION(BlueprintCallable)
+	void AddCompassMarker(UCompassMarker* InCompassMarker);
+	UFUNCTION(BlueprintCallable)
+	void RemoveCompassMaker(UCompassMarker* OutCompassMarker);
 
 protected:
 	virtual void NativeConstruct() override;
