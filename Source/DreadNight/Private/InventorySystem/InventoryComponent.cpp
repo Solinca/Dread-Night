@@ -179,27 +179,26 @@ void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UIt
 		if (TargetItem->TryStackWith(Item))
 		{
 			TargetInventory->OnItemModified.Broadcast(TargetItem, i);
-		}
-		
-		if (Item->IsEmpty())
-		{
-			Items[StartSlot] = nullptr;
-			TargetInventory->OnItemRemoved.Broadcast(StartSlot);
-			return;
+			
+			if (Item->IsEmpty())
+			{
+				Items[StartSlot] = nullptr;
+				OnItemRemoved.Broadcast(StartSlot);
+				return;
+			}
 		}
 	}
 	
-	
-	int EmptySlot = TargetInventory->GetEmptySlot().GetValue();
+	TOptional<int> EmptySlot = TargetInventory->GetEmptySlot();
 	if (!EmptySlot)
 		return;
 	
-	TargetInventory->Items[EmptySlot] = Item;
-	Items[EmptySlot] = nullptr;
+	int EmptySlotIndex = EmptySlot.GetValue();
+	TargetInventory->Items[EmptySlotIndex] = Item;
+	Items[EmptySlotIndex] = nullptr;
 	
-	OnItemRemoved.Broadcast(EmptySlot);
-	OnItemAdded.Broadcast(Item, EmptySlot);
-	OnItemModified.Broadcast(Item, StartSlot);
+	OnItemRemoved.Broadcast(StartSlot);
+	TargetInventory->OnItemAdded.Broadcast(Item, EmptySlotIndex);
 }
 
 void UInventoryComponent::SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex)

@@ -7,6 +7,7 @@
 #include "UI/Widgets/PauseMenu.h"
 #include "UserWidgets/OptionsWidget.h"
 #include "UI/Widgets/PlayerHud.h"
+#include "Items/Helper/ItemInstanceFactory.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -40,7 +41,6 @@ void ACustomPlayerController::BeginPlay()
 		HotbarInventoryWidget->BindTargetInventory(MyPlayer->GetInventoryComponent());
 		HotbarInventoryWidget->AddToViewport();
 	}
-	
 	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
 
 	PlayerCameraManager->ViewPitchMax = PlayerData->ViewPitch.Y;
@@ -108,6 +108,9 @@ void ACustomPlayerController::Look(const FInputActionValue& Value)
 
 void ACustomPlayerController::Jump(const FInputActionValue& Value)
 {
+	UItemInstance* ItemTest = FItemInstanceFactory::CreateItem(MyPlayer, ItemDataAssetTest,10);
+	MyPlayer->GetHotbarInventoryComponent()->AddItem(ItemTest);
+	
 	if (MyPlayer)
 	{
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
@@ -251,7 +254,6 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 	InventoryWidget->BindTargetInventory(MyPlayer->GetHotbarInventoryComponent());
 	FVector2D WindowSize = GEngine->GameViewport->Viewport->GetSizeXY();
 	InventoryWidget->SetDesiredSizeInViewport(FVector2D(600,600));
-	//FVector2D WidgetSize = InventoryWidget->GetDesiredSize();
 	InventoryWidget->SetPositionInViewport(FVector2D(WindowSize.X/2 - 300, WindowSize.Y/2 - 300));
 	SetShowMouseCursor(true);
 	
@@ -262,6 +264,10 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 		if (UInventory* TempInventory = Cast<UInventory>(InventoryWidget))
 		{
 			TempInventory->RemoveItemAction();
+		}
+		if (UInventory* TempHotBar  = Cast<UInventory>(HotbarInventoryWidget))
+		{
+			TempHotBar->RemoveItemAction();
 		}
 	});
 }

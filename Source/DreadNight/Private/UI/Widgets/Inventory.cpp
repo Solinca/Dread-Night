@@ -102,7 +102,7 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	
 	InventoryAction = CreateWidget<UInventoryAction>(this, InventoryActionClass);
 	
-	InventoryAction->SetupAction(ClickedSlot->GetOwningInventory(), ClickedSlot->GetTargetInventory(), SlotIndex);
+	InventoryAction->SetupAction(BindInventoryComponent, BindTargetInventoryComponent, SlotIndex);
 	
 	//InventoryAction->InventoryComponent = BindInventoryComponent;
 	//InventoryAction->SetSlotIndex(SlotIndex);
