@@ -43,7 +43,7 @@ void UInventoryAction::OnTransferPressed()
 	
 	if (UItemInstance* ItemTransfered = InventoryComponent->GetItemAtSlot(SlotIndex))
 	{
-		InventoryComponent->TransferItem(TargetInventoryComponent, ItemTransfered, TargetInventoryComponent->GetEmptySlot());
+		InventoryComponent->TransferItem(TargetInventoryComponent, ItemTransfered, TargetInventoryComponent->GetEmptySlot().GetValue());
 	}
 	
 	RemoveFromParent();

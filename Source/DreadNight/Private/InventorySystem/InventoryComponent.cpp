@@ -158,7 +158,7 @@ void UInventoryComponent::Clear()
 	OnItemCleared.Broadcast();
 }
 
-void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item, TOptional<int> SlotIndex)
+void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item, int SlotIndex)
 {
 	//if item has the same type, we try to stack them
 	//if there is rest, we add it to an empty slot

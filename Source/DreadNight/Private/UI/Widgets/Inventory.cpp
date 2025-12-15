@@ -101,25 +101,22 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 		return;
 	
 	InventoryAction = CreateWidget<UInventoryAction>(this, InventoryActionClass);
-	
 	InventoryAction->SetupAction(BindInventoryComponent, BindTargetInventoryComponent, SlotIndex);
 	
-	//InventoryAction->InventoryComponent = BindInventoryComponent;
-	//InventoryAction->SetSlotIndex(SlotIndex);
 	FVector2d MousePos;
 	GetOwningPlayer()->GetMousePosition(MousePos.X, MousePos.Y);
 	InventoryAction->SetRenderTranslation(MousePos);
 	InventoryAction->AddToViewport();
 	
-	
-	UItemDataAsset* ItemData = BindInventoryComponent->GetItemTypeAtSlot(SlotIndex);
-	if (ItemData->Type.MatchesTag(GT_Item_Weapon) || ItemData->Type.MatchesTag(GT_Item_Armor))
+	UItemInstance* ItemData = BindInventoryComponent->GetItemAtSlot(SlotIndex);
+	if (IUsableItem* UsableItem = Cast<IUsableItem>(ItemData))
 	{
-		InventoryAction->GetUseText()->SetText(FText::FromString("Equip"));
+		InventoryAction->GetUseButton()->SetVisibility(ESlateVisibility::Visible);
+		InventoryAction->GetUseText()->SetText(FText::FromName(UsableItem->GetActionName()));
 	}
-	if (ItemData->Type.MatchesTag(GT_Item_Food) || ItemData->Type.MatchesTag(GT_Item_Drink))
+	else
 	{
-		InventoryAction->GetUseText()->SetText(FText::FromString("Consume"));
+		InventoryAction->GetUseButton()->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 

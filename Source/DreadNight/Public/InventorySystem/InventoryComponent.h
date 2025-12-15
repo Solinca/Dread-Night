@@ -38,7 +38,7 @@ public:
 	void DropItems(int SlotIndex, int Amount);
 	void Clear();
 	
-	void TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item, TOptional<int> SlotIndex);
+	void TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item, int SlotIndex);
 	void SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex);
 	
 	int GetSize() const { return Size; }

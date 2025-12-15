@@ -6,6 +6,7 @@
 #include "InventorySystem/InventoryComponent.h"
 #include "UI/Widgets/InventorySlot.h"
 #include "UI/Widgets/InventoryAction.h"
+#include "Items/Interface/UsableItem.h"
 #include "Inventory.generated.h"
 
 UCLASS()
