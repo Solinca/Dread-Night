@@ -304,7 +304,10 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 {
 	int index = (int)Value.Get<float>();
 
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Hotbar : " + FString::FromInt(index));
+	if (index == -1)
+		index = 0;
+	
+	MyPlayer->GetInventoryComponent()->UseItemAt(index);
 }
 
 void ACustomPlayerController::SaveGame()
