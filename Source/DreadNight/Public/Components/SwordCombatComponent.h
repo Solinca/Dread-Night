@@ -4,16 +4,22 @@
 #include "Components/ActorComponent.h"
 #include "SwordCombatComponent.generated.h"
 
+class UWeaponDataAsset;
+class UItemInstance_Weapon;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DREADNIGHT_API USwordCombatComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 private:
-	float CurrentDamage;
-
 	bool IsAttacking = false;
 
+	UPROPERTY(Transient)
+	UStaticMeshComponent* CurrentStaticMesh;
+
+	UPROPERTY(Transient)
+	UWeaponDataAsset* CurrentWeapon;
 protected:	
 	USwordCombatComponent();
 
@@ -23,11 +29,13 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ResetAttack();
 
+	UFUNCTION(BlueprintCallable)
+	bool GetIsAttacking() { return IsAttacking; }
+	
 public:
 	void Attack();
 
-	void SetWeapon(UStaticMeshComponent* Mesh, float Damage);
-
-	UFUNCTION(BlueprintCallable)
-	bool GetIsAttacking() { return IsAttacking; }
+	void SetComponentMesh(UStaticMeshComponent* Mesh);
+	
+	void SetWeapon(UWeaponDataAsset* Weapon);
 };

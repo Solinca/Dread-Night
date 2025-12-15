@@ -1,6 +1,8 @@
 #include "Components/SwordCombatComponent.h"
 #include "Components/BoxComponent.h"
 #include "DamageSystem/Interface/Damageable.h"
+#include "Items/Data/WeaponDataAsset.h"
+#include "Items/Data/WeaponDataAsset.h"
 
 USwordCombatComponent::USwordCombatComponent()
 {
@@ -11,9 +13,9 @@ void USwordCombatComponent::OnSwordOverlap(UPrimitiveComponent* OverlappedComp, 
 {
 	if (IsAttacking && OtherActor != GetOwner() && OtherActor->Implements<UDamageable>())
 	{
-		if (IDamageable* dmg = Cast<IDamageable>(OtherActor))
+		if (IDamageable* Damageable = Cast<IDamageable>(OtherActor))
 		{
-			dmg->TryApplyDamage(CurrentDamage, GetOwner());
+			Damageable->TryApplyDamage(CurrentWeapon->Damage, GetOwner());
 		}
 	}
 }
@@ -28,9 +30,24 @@ void USwordCombatComponent::Attack()
 	IsAttacking = true;
 }
 
-void USwordCombatComponent::SetWeapon(UStaticMeshComponent* Mesh, float Damage)
+void USwordCombatComponent::SetComponentMesh(UStaticMeshComponent* Mesh)
 {
-	Mesh->OnComponentBeginOverlap.AddDynamic(this, &USwordCombatComponent::OnSwordOverlap);
+	if (CurrentStaticMesh)
+	{
+		CurrentStaticMesh->OnComponentBeginOverlap.RemoveDynamic(this, &USwordCombatComponent::OnSwordOverlap);
+	}	
+	CurrentStaticMesh = Mesh;
+	CurrentStaticMesh->OnComponentBeginOverlap.AddDynamic(this, &USwordCombatComponent::OnSwordOverlap);
 
-	CurrentDamage = Damage;
 }
+
+void USwordCombatComponent::SetWeapon(UWeaponDataAsset* Weapon)
+{
+	CurrentWeapon = Weapon;
+	if (CurrentStaticMesh)
+	{
+		CurrentStaticMesh->SetStaticMesh(Weapon->WeaponMesh);
+	}
+	
+}
+ 

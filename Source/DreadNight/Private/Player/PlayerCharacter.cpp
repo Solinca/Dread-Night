@@ -147,11 +147,10 @@ UInventoryComponent* APlayerCharacter::GetHotbarInventoryComponent()
 
 void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 {
-	CurrentWeaponMesh->SetStaticMesh(Weapon->GetDataAsset()->WeaponMesh);
-
 	CurrentWeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
 
-	SwordCombatComponent->SetWeapon(CurrentWeaponMesh, Weapon->GetDataAsset()->Damage);
+    SwordCombatComponent->SetComponentMesh(CurrentWeaponMesh);
+    SwordCombatComponent->SetWeapon(Weapon->GetDataAsset());
 }
 
 void APlayerCharacter::EquipArmor(UItemInstance_Armor* Armor)
