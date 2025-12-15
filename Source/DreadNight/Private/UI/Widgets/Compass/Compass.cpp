@@ -37,51 +37,66 @@ void UCompass::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	CompassMaterial->SetScalarParameterValue("Offset", GetOffset());
 
 	UpdateMarkersPosition();
+
+	OutRangeA = -CompassImage->GetDesiredSize().X / 2.f; // HalfSize, needs to be in negative
+	OutRangeB = CompassImage->GetDesiredSize().X / 2.f; // HalfSize
 }
 
 void UCompass::UpdateMarkersPosition()
 {
 	for (UCompassMarker* Marker : MarkersArray)
 	{
+		if (!Marker || !Marker->GetObjectiveActor())
+		{
+			continue;
+		}
+		
 		FVector CameraForward = PlayerCameraManager->GetCameraRotation().Vector();
 		FVector CameraLocation = PlayerCameraManager->GetCameraLocation();
 		FVector ObjectiveLocation = Marker->GetObjectiveActor()->GetActorLocation();
 
 		FVector Direction = ObjectiveLocation - CameraLocation;
-		const float Distance = FVector::Dist(ObjectiveLocation, CameraLocation);
+		const float Distance = Direction.Size();
 
 		const float ZDifference = ObjectiveLocation.Z - CameraLocation.Z;
 
-		if (ZDifference > 250.f)
-		{
-			Marker->ShowUpInformationImage();
-		}
-		else if (ZDifference < 250.f)
-		{
-			Marker->ShowDownInformationImage();
-		}
-		else
+		if (FMath::Abs(ZDifference) <= VerticalThreshold)
 		{
 			Marker->HideAllInformationImage();
 		}
+		else
+		{
+			(ZDifference > 0.f) ? Marker->ShowUpInformationImage() : Marker->ShowDownInformationImage();
+		}
 			
-
+		CameraForward.Z = 0.f;
+		Direction.Z = 0.f;
+		
 		CameraForward.Normalize();
 		Direction.Normalize();
 
 		const float DotProduct = FVector::DotProduct(CameraForward, Direction);
 		const FVector CrossProduct = FVector::CrossProduct(CameraForward, Direction);
-
-		const float Value = CrossProduct.Z > 0.f ? FMath::Acos(DotProduct) : FMath::Acos(DotProduct) * -1.f;
+		float AngleRadians = FMath::Acos(DotProduct);
+		float AngleDegrees = FMath::RadiansToDegrees(AngleRadians);
+		if (CrossProduct.Z < 0.f)
+		{
+			AngleDegrees *= -1.f;
+		}
 		
-		const float TranslationX = UKismetMathLibrary::MapRangeClamped(Value, -180.f, 180.f, -238.f, 238.f);
+		const float TranslationX = UKismetMathLibrary::MapRangeClamped(AngleDegrees, InRangeA, InRangeB, OutRangeA, OutRangeB);
 
 		Marker->SetRenderTranslation(FVector2D(TranslationX, 0.f));
-		FText DistanceText = FText::Format(FText::FromString(TEXT("{0}m")), Distance);
+
+		if (Distance != 0.f)
+		{
+			FText DistanceText = FText::FromString(FString::Printf(TEXT("%.1f m"), Distance / 100.f)); // meters conversion
+			Marker->SetDistanceText(DistanceText);
+		}
 	}
 }
 
 float UCompass::GetOffset() const
 {
-	return GetOwningPlayer()->GetControlRotation().Yaw / 360.f;
+	return GetOwningPlayer()->GetControlRotation().Yaw / 360.f; // just a full turn angle
 }

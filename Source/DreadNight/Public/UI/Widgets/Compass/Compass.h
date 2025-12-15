@@ -30,6 +30,15 @@ protected:
 	UPROPERTY(Transient)
 	TObjectPtr<APlayerCameraManager> PlayerCameraManager;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Compass")
+	float VerticalThreshold{ 250.f };
+
+private:
+	float InRangeA{ -180.f };
+	float InRangeB{ 180.f };
+	float OutRangeA{ 0.f };
+	float OutRangeB{ 0.f };
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void AddCompassMarker(UCompassMarker* InCompassMarker);
