@@ -1,14 +1,13 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "Actors/Traps/Trap.h"
+﻿#include "Actors/Traps/Trap.h"
 
 ATrap::ATrap()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
 	TrapCollisionComponent = CreateDefaultSubobject<UBoxComponent>("Trap Collision Component");
+
 	TrapCollisionComponent->SetCollisionProfileName("Trap");
+
 	TrapCollisionComponent->SetupAttachment(RootComponent);
 }
 
@@ -23,15 +22,21 @@ void ATrap::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	GetWorldTimerManager().ClearTimer(TickTimerHandle);
+	GetWorldTimerManager().ClearAllTimersForObject(this);
 }
 
 void ATrap::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 							UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (ABaseAICharacter* BaseAICharacter{Cast<ABaseAICharacter>(OtherActor)})
+	ABaseAICharacter* BaseAICharacter{ Cast<ABaseAICharacter>(OtherActor) };
+
+	if (!TimerHandle_LifeSpanExpired.IsValid() && BaseAICharacter)
 	{
-		SetLifeSpan(TrapLifeSpan);
+		SetLifeSpan(TrapData->TrapLifeSpan);
+
+		FTimerHandle TickTimerHandle;
 		GetWorldTimerManager().SetTimer(TickTimerHandle, this, &ATrap::OnTrapTick, PrimaryActorTick.TickInterval, true);
+
+		bIsActive = true;
 	}
 }

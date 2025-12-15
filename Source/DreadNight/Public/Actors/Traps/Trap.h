@@ -4,6 +4,7 @@
 #include "Actors/Building.h"
 #include "Components/BoxComponent.h"
 #include "IA/Characters/BaseAICharacter.h"
+#include "Data/Traps/TrapDataAsset.h"
 #include "Trap.generated.h"
 
 UCLASS()
@@ -15,19 +16,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UBoxComponent> TrapCollisionComponent;
 
-	/** Potential damage dealt to the monsters. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variable")
-	float TrapDamage{0.f};
-
-	/** Life span set after the trap has been activated. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variable")
-	float TrapLifeSpan{0.f};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
+	TObjectPtr<UTrapDataAsset> TrapData;
 	
-private:
-	FTimerHandle TickTimerHandle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variable")
+	bool bIsActive = false;
 	
-public:
-	ATrap();
+	public:
+		ATrap();
 
 protected:
 	virtual void BeginPlay() override;
