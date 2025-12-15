@@ -156,21 +156,24 @@ void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 
 void APlayerCharacter::EquipArmor(UItemInstance_Armor* Armor)
 {
-	if (Armor->GetDataAsset()->bIsHelmet)
+	if (Armor != nullptr)
 	{
-		CurrentHelmetMesh->SetStaticMesh(Armor->GetDataAsset()->ArmorMesh);
+		if (Armor->GetDataAsset()->bIsHelmet)
+		{
+			CurrentHelmetMesh->SetStaticMesh(Armor->GetDataAsset()->ArmorMesh);
 
-		CurrentHelmetMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
+			CurrentHelmetMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
 
-		ArmorComponent->SetHelmetDmgReductionMultiplier(Armor->GetDataAsset()->DamageReductionMultiplier);
-	}
-	else
-	{
-		CurrentArmorMesh->SetStaticMesh(Armor->GetDataAsset()->ArmorMesh);
+			ArmorComponent->SetHelmetDmgReductionMultiplier(Armor->GetDataAsset()->DamageReductionMultiplier);
+		}
+		else
+		{
+			CurrentArmorMesh->SetStaticMesh(Armor->GetDataAsset()->ArmorMesh);
 
-		CurrentArmorMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
+			CurrentArmorMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
 
-		ArmorComponent->SetArmorDmgReductionMultiplier(Armor->GetDataAsset()->DamageReductionMultiplier);
+			ArmorComponent->SetArmorDmgReductionMultiplier(Armor->GetDataAsset()->DamageReductionMultiplier);
+		}
 	}
 }
 
