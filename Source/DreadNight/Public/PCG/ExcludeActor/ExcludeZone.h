@@ -16,7 +16,7 @@ class DREADNIGHT_API AExcludeZone : public AExcludeBase
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UBoxComponent> BlockingZone;
 
