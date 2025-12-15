@@ -9,18 +9,17 @@ public class DreadNight : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", 
-			"CoreUObject", 
+			"CoreUObject",
 			"Engine",
 			"InputCore",
-			"EnhancedInput", 
-			"AIModule", 
-			"GameplayTags", 
-			"GameplayTasks", 
-			"UMG", 
-			"PCG"
-		});
-
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+			"EnhancedInput",
+			"AIModule",
+			"GameplayTags",
+			"GameplayTasks",
+			"UMG",
+			"PCG",
+            "Niagara"
+        });
 
 		// Uncomment if you are using Slate UI
 		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
