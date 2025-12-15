@@ -57,9 +57,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Armor")
 	FName HelmetSocketName = TEXT("HelmetSocket");
 
-	UPROPERTY(EditAnywhere, Category = "Armor")
-	float BaseDmgReductionMultiplier = 1.f;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 	float JumpStaminaCost = 20.f;
 

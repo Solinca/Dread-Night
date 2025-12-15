@@ -25,6 +25,8 @@ APlayerCharacter::APlayerCharacter()
 	ConditionStateComponent = CreateDefaultSubobject<UConditionStateComponent>("ConditionState");
 
 	SwordCombatComponent = CreateDefaultSubobject<USwordCombatComponent>("SwordCombatComponent");
+	
+	ArmorComponent = CreateDefaultSubobject<UArmorComponent>("ArmorComponent");
 
 	CurrentWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>("WeaponMesh");
 
@@ -46,8 +48,7 @@ void APlayerCharacter::BeginPlay()
 
 bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 {
-	HealthComponent->RemoveHealth(Damage / (PlayerData->BaseDmgReductionMultiplier + 
-		(CurrentArmorDmgReductionMultiplier + CurrentHelmetDmgReductionMultiplier)));
+	HealthComponent->RemoveHealth(Damage / ArmorComponent->GetTotalDmgReductionMultiplier());
 
 	return true;
 }
@@ -124,6 +125,11 @@ USwordCombatComponent* APlayerCharacter::GetSwordCombatComponent()
 	return SwordCombatComponent;
 }
 
+UArmorComponent* APlayerCharacter::GetArmorComponent()
+{
+	return ArmorComponent;
+}
+
 void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 {
 	CurrentWeaponMesh->SetStaticMesh(Weapon->GetDataAsset()->WeaponMesh);
@@ -141,7 +147,7 @@ void APlayerCharacter::EquipArmor(UItemInstance_Armor* Armor)
 
 		CurrentHelmetMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
 
-		CurrentHelmetDmgReductionMultiplier = Armor->GetDataAsset()->DamageReductionMultiplier;
+		ArmorComponent->SetHelmetDmgReductionMultiplier(Armor->GetDataAsset()->DamageReductionMultiplier);
 	}
 	else
 	{
@@ -149,7 +155,7 @@ void APlayerCharacter::EquipArmor(UItemInstance_Armor* Armor)
 
 		CurrentArmorMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
 
-		CurrentArmorDmgReductionMultiplier = Armor->GetDataAsset()->DamageReductionMultiplier;
+		ArmorComponent->SetArmorDmgReductionMultiplier(Armor->GetDataAsset()->DamageReductionMultiplier);
 	}
 }
 
@@ -157,12 +163,12 @@ void APlayerCharacter::UnequipArmor()
 {
 	CurrentArmorMesh->SetStaticMesh(nullptr);
 
-	CurrentArmorDmgReductionMultiplier = 0.f;
+	ArmorComponent->SetArmorDmgReductionMultiplier(0.f);
 }
 
 void APlayerCharacter::UnequipHelmet()
 {
 	CurrentHelmetMesh->SetStaticMesh(nullptr);
 
-	CurrentHelmetDmgReductionMultiplier = 0.f;
+	ArmorComponent->SetHelmetDmgReductionMultiplier(0.f);
 }
