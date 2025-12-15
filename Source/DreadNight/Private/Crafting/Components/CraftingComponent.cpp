@@ -30,8 +30,10 @@ void UCraftingComponent::Craft(FRecipe* Recipe, TObjectPtr<UInventoryComponent> 
 
 
 
-void UCraftingComponent::OpenUI()
+void UCraftingComponent::OpenGUI()
 {
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "debug msg");
 
 	//CraftingWidget = CreateWidget<UCraftingWidget>(this, CraftingWidgetClass);
 

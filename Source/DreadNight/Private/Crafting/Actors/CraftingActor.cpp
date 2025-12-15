@@ -8,8 +8,7 @@
 void ACraftingActor::OnInteract_Implementation(AActor* Caller)
 {
 
-	// Each Actor have to define it, here I just destroy it as a placeholder
-	Destroy();
+	CraftingComponent->OpenGUI();
 
 }
 
@@ -45,7 +44,12 @@ FText ACraftingActor::GetInteractionPromptText_Implementation()
 ACraftingActor::ACraftingActor()
 {
 
-	PrimaryActorTick.bCanEverTick = true;
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Component"));
+	RootComponent = MeshComponent;
+
+	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("Interactable Component"));
+
+	CraftingComponent = CreateDefaultSubobject<UCraftingComponent>(TEXT("Crafting Component"));
 
 }
 

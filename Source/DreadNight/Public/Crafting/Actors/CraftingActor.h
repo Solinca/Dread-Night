@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Crafting/Components/CraftingComponent.h"
 #include "InteractableSystem/Components/InteractableComponent.h"
 #include "InteractableSystem/Interfaces/Interactable.h"
 #include "CraftingActor.generated.h"
@@ -21,6 +22,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UInteractableComponent> InteractableComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UCraftingComponent> CraftingComponent;
 
 public:
 

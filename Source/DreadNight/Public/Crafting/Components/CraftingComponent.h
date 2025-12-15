@@ -19,13 +19,16 @@ public:
 
 	void Craft(FRecipe* Recipe, TObjectPtr<UInventoryComponent> Inventory);
 
-	void OpenUI();
+	void OpenGUI();
 
 protected:
 
 	UCraftingComponent();
 
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parameters")
+	ECraftMethod CraftMethod;
 
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Links")
 	//TSubclassOf<UCraftingWidget> CraftingWidgetClass = nullptr;
