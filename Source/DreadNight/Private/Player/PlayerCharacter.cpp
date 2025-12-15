@@ -33,6 +33,10 @@ APlayerCharacter::APlayerCharacter()
 	CurrentArmorMesh = CreateDefaultSubobject<UStaticMeshComponent>("ArmorMesh");
 
 	CurrentHelmetMesh = CreateDefaultSubobject<UStaticMeshComponent>("HelmetMesh");
+	
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>("InventoryComponent");
+	
+	HotbarInventoryComponent = CreateDefaultSubobject<UInventoryComponent>("HotbarInventoryComponent");
 }
 
 void APlayerCharacter::BeginPlay()
@@ -128,6 +132,16 @@ USwordCombatComponent* APlayerCharacter::GetSwordCombatComponent()
 UArmorComponent* APlayerCharacter::GetArmorComponent()
 {
 	return ArmorComponent;
+}
+
+UInventoryComponent* APlayerCharacter::GetInventoryComponent()
+{
+	return InventoryComponent;
+}
+
+UInventoryComponent* APlayerCharacter::GetHotbarInventoryComponent()
+{
+	return HotbarInventoryComponent;
 }
 
 void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)

@@ -86,13 +86,6 @@ void UInventory::BindToInventory(UInventoryComponent* InventoryComponent)
 void UInventory::BindTargetInventory(UInventoryComponent* InventoryComponent)
 {
 	BindTargetInventoryComponent = InventoryComponent;
-	
-	BindTargetInventoryComponent->OnItemAdded.AddDynamic(this, &UInventory::OnItemAdded);
-	BindTargetInventoryComponent->OnItemRemoved.AddDynamic(this, &UInventory::OnItemRemoved);
-	BindTargetInventoryComponent->OnItemModified.AddDynamic(this, &UInventory::OnItemModified);
-	BindTargetInventoryComponent->OnItemCleared.AddDynamic(this, &UInventory::OnItemsCleared);
-	
-	SetSize(InventoryComponent->GetSize());
 }
 
 void UInventory::OnItemActionCreated(int SlotIndex)
