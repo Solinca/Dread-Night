@@ -12,18 +12,6 @@ class DREADNIGHT_API UHotBar : public UInventory
 {
 	GENERATED_BODY()
 
-protected:
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UHorizontalBox> SlotsContainer;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "4", ClampMax = "10"))
-	int32 HotBarSlotCount = 4;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UHotBarSlot> HotBarSlotClass;
-	
-	TArray<TObjectPtr<UHotBarSlot>> SlotsArray;
-	
 public:
 	virtual void NativeConstruct() override;
 };

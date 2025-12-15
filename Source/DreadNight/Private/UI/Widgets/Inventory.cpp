@@ -29,13 +29,6 @@ void UInventory::SetSize(int Size)
 		
 		TempSlot->SetupSlot(BindInventoryComponent,BindTargetInventoryComponent, i);
 		
-		//TempSlot->SetSlotIndex(i);
-		//TempSlot->BindToInventory(BindInventoryComponent);
-		// if (BindInventoryComponent->GetItemAtSlot(i))
-		// {
-		// 	TempSlot->SetItemImage(BindInventoryComponent->GetItemTypeAtSlot(i)->ItemIcon);
-		// 	TempSlot->SetStackText(BindInventoryComponent->GetItemAtSlot(i)->GetStackNumber());
-		// }
 		if (UItemInstance* Item = BindInventoryComponent->GetItemAtSlot(i))
 		{
 			TempSlot->SetItemImage(Item->GetDataAsset()->ItemIcon);
@@ -94,10 +87,10 @@ void UInventory::BindTargetInventory(UInventoryComponent* InventoryComponent)
 {
 	BindTargetInventoryComponent = InventoryComponent;
 	
-	BindInventoryComponent->OnItemAdded.AddDynamic(this, &UInventory::OnItemAdded);
-	BindInventoryComponent->OnItemRemoved.AddDynamic(this, &UInventory::OnItemRemoved);
-	BindInventoryComponent->OnItemModified.AddDynamic(this, &UInventory::OnItemModified);
-	BindInventoryComponent->OnItemCleared.AddDynamic(this, &UInventory::OnItemsCleared);
+	BindTargetInventoryComponent->OnItemAdded.AddDynamic(this, &UInventory::OnItemAdded);
+	BindTargetInventoryComponent->OnItemRemoved.AddDynamic(this, &UInventory::OnItemRemoved);
+	BindTargetInventoryComponent->OnItemModified.AddDynamic(this, &UInventory::OnItemModified);
+	BindTargetInventoryComponent->OnItemCleared.AddDynamic(this, &UInventory::OnItemsCleared);
 	
 	SetSize(InventoryComponent->GetSize());
 }
