@@ -7,6 +7,7 @@
 #include "UI/Widgets/PauseMenu.h"
 #include "UserWidgets/OptionsWidget.h"
 #include "UI/Widgets/PlayerHud.h"
+#include "InteractableSystem/Subsystems/InteractableSubsystem.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -32,7 +33,7 @@ void ACustomPlayerController::BeginPlay()
 	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = PlayerData->CrouchMoveSpeed;
 
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
-	
+
 	if (PlayerData->HotbarInventoryWidgetClass)
 	{
 		HotbarInventoryWidget = CreateWidget<UInventory>(this, PlayerData->HotbarInventoryWidgetClass);
@@ -80,7 +81,7 @@ void ACustomPlayerController::SetupInputComponent()
 
 void ACustomPlayerController::UpdateGamePauseState()
 {
-	const bool bShouldPause = (PauseCounter > 0);	
+	const bool bShouldPause = (PauseCounter > 0);
 
 	UGameplayStatics::SetGamePaused(GetWorld(), bShouldPause);
 }
@@ -237,35 +238,37 @@ void ACustomPlayerController::Attack(const FInputActionValue& Value)
 
 void ACustomPlayerController::Interact(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Interact");
+	TObjectPtr<UInteractableSubsystem> Subsystem = GetWorld()->GetSubsystem<UInteractableSubsystem>();
+	if (Subsystem->TryInteract())
+		Subsystem->RequestInteraction(Subsystem->GetLastFocusedActor(), MyPlayer);
 }
 
 void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 {
 	if (!PlayerData->InventoryWidgetClass)
 		return;
-	
+
 	InventoryWidget = CreateWidget<UInventory>(this, PlayerData->InventoryWidgetClass);
 	InventoryWidget->BindToInventory(MyPlayer->GetInventoryComponent());
 	InventoryWidget->BindTargetInventory(MyPlayer->GetHotbarInventoryComponent());
 	FVector2D WindowSize = GEngine->GameViewport->Viewport->GetSizeXY();
-	InventoryWidget->SetDesiredSizeInViewport(FVector2D(600,600));
-	InventoryWidget->SetPositionInViewport(FVector2D(WindowSize.X/2 - 300, WindowSize.Y/2 - 300));
+	InventoryWidget->SetDesiredSizeInViewport(FVector2D(600, 600));
+	InventoryWidget->SetPositionInViewport(FVector2D(WindowSize.X / 2 - 300, WindowSize.Y / 2 - 300));
 	SetShowMouseCursor(true);
-	
-	PushNewMenu(InventoryWidget, false, [this]
-	{
-		UGameplayStatics::SetGamePaused(GetWorld(), false);
 
-		if (UInventory* TempInventory = Cast<UInventory>(InventoryWidget))
+	PushNewMenu(InventoryWidget, false, [this]
 		{
-			TempInventory->RemoveItemAction();
-		}
-		if (UInventory* TempHotBar  = Cast<UInventory>(HotbarInventoryWidget))
-		{
-			TempHotBar->RemoveItemAction();
-		}
-	});
+			UGameplayStatics::SetGamePaused(GetWorld(), false);
+
+			if (UInventory* TempInventory = Cast<UInventory>(InventoryWidget))
+			{
+				TempInventory->RemoveItemAction();
+			}
+			if (UInventory* TempHotBar = Cast<UInventory>(HotbarInventoryWidget))
+			{
+				TempHotBar->RemoveItemAction();
+			}
+		});
 }
 
 void ACustomPlayerController::DisplayGlossary(const FInputActionValue& Value)
@@ -274,30 +277,30 @@ void ACustomPlayerController::DisplayGlossary(const FInputActionValue& Value)
 }
 
 void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
-{	
+{
 	if (!PauseMenuWidget)
 	{
 		PauseMenuWidget = CreateWidget<UPauseMenu>(this, PlayerData->PauseMenuClass);
 
 		PauseMenuWidget->OnResume.AddDynamic(this, &ThisClass::ResumeGame);
-		
+
 		PauseMenuWidget->OnOptions.AddDynamic(this, &ThisClass::AccessOptions);
-		
+
 		PauseMenuWidget->OnQuitToMenu.AddDynamic(this, &ThisClass::GoBackToMenu);
-		
+
 		PauseMenuWidget->OnQuitToDesktop.AddDynamic(this, &ThisClass::LeaveGame);
 
 
 		PushNewMenu(PauseMenuWidget, true, [this]
-		{
-			PauseMenuWidget = nullptr;
-		});
+			{
+				PauseMenuWidget = nullptr;
+			});
 	}
 }
 
 void ACustomPlayerController::GoBackToPrecedentMenu(const FInputActionValue& Value)
 {
-	PopLastMenu();	
+	PopLastMenu();
 }
 
 void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
@@ -306,7 +309,7 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 
 	if (index == -1)
 		index = 0;
-	
+
 	MyPlayer->GetInventoryComponent()->UseItemAt(index);
 }
 
@@ -315,7 +318,7 @@ void ACustomPlayerController::SaveGame()
 	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
 	{
 		GameInstance->Save(GetWorld());
-	}	
+	}
 }
 
 void ACustomPlayerController::LoadGame()
@@ -366,7 +369,7 @@ void ACustomPlayerController::PopLastMenu()
 				{
 					InputSystem->ClearAllMappings();
 
-					InputSystem->AddMappingContext(MappingContextBase, 0); 
+					InputSystem->AddMappingContext(MappingContextBase, 0);
 				}
 			}
 		}
@@ -374,7 +377,7 @@ void ACustomPlayerController::PopLastMenu()
 		SetInputMode(FInputModeGameOnly());
 
 		SetShowMouseCursor(false);
-		
+
 		UGameplayStatics::SetGamePaused(GetWorld(), false);
 	}
 	else
@@ -408,10 +411,10 @@ void ACustomPlayerController::AccessOptions()
 
 		OptionsWidget->OnReturn.AddDynamic(this, &ThisClass::QuitOptions);
 
-		PushNewMenu(OptionsWidget, true, [this] 
-		{
-			OptionsWidget = nullptr;
-		});
+		PushNewMenu(OptionsWidget, true, [this]
+			{
+				OptionsWidget = nullptr;
+			});
 	}
 }
 
@@ -431,7 +434,7 @@ void ACustomPlayerController::ShowGameOver()
 {
 	TObjectPtr<UUserWidget> WidgetGameOver = CreateWidget<UUserWidget>(this, PlayerData->GameOverClass);
 
-	PushNewMenu(WidgetGameOver, true, [](){}, false);
+	PushNewMenu(WidgetGameOver, true, []() {}, false);
 
 	UGameplayStatics::PlaySound2D(this, PlayerData->GameOverSound);
 }
