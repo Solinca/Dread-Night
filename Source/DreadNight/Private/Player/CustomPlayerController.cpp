@@ -7,6 +7,10 @@
 #include "UI/Widgets/PauseMenu.h"
 #include "UserWidgets/OptionsWidget.h"
 #include "UI/Widgets/PlayerHud.h"
+#include "Actors/Building.h"
+#include "Engine/World.h"
+#include "EngineUtils.h"
+#include "GameFramework/Actor.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -52,6 +56,31 @@ void ACustomPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateCrouching(DeltaTime);
+
+	if (CreatedBuilding)
+	{
+		FHitResult Hit;
+
+		FVector CameraLocation;
+		FRotator CameraRotation;
+		GetPlayerViewPoint(CameraLocation, CameraRotation);
+
+		FCollisionQueryParams Params;
+		Params.bTraceComplex = true;
+		Params.AddIgnoredActor(CreatedBuilding);
+		Params.AddIgnoredActor(GetPawn());
+		Params.AddIgnoredActors(CreatedBuildings);
+
+		if (GetWorld()->LineTraceSingleByChannel(Hit,
+			CameraLocation,
+			PlayerCameraManager->GetCameraRotation().Vector() * 10000.f,
+			ECC_Pawn,
+			Params) && !Hit.GetActor()->IsA(ACharacter::StaticClass()))
+		{
+			CreatedBuilding->SetActorLocation(Hit.ImpactPoint);
+			CreatedBuilding->CheckValidPlacement();
+		}
+	}
 }
 
 void ACustomPlayerController::SetupInputComponent()
@@ -309,6 +338,48 @@ void ACustomPlayerController::GoBackToMenu()
 	SaveGame();
 
 	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), PlayerData->MainMenuLevel);
+}
+
+void ACustomPlayerController::PlaceObject(const FInputActionValue& Value)
+{
+	if (CreatedBuilding)
+	{
+		if (CreatedBuilding->CheckValidPlacement())
+		{
+			CreatedBuilding->PlaceBuilding();
+			CreatedBuildings.Add(CreatedBuilding);
+		}
+		else
+		{
+			return;
+		}
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	CreatedBuilding = GetWorld()->SpawnActor<ABuilding>(
+		DebugBuilding,
+		FVector::ZeroVector,
+		FRotator::ZeroRotator,
+		SpawnParams
+	);
+}
+
+void ACustomPlayerController::RotateObject(const FInputActionValue& Value)
+{
+	if (!CreatedBuilding) return;
+
+	float Axis = Value.Get<float>();
+
+	if (Axis != 0.f)
+	{
+		CreatedBuilding->AddActorLocalRotation(
+			FRotator(0.f,
+				Axis * BuildingRotationSpeed * GetWorld()->GetDeltaSeconds(),
+				0.f)
+		);
+	}
 }
 
 void ACustomPlayerController::PopLastMenu()

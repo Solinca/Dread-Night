@@ -5,6 +5,7 @@
 #include "Building.generated.h"
 
 class UStaticMeshComponent;
+class UMaterialInstance;
 
 UCLASS()
 class DREADNIGHT_API ABuilding : public AActor
@@ -15,11 +16,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UStaticMeshComponent* MeshComp;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UMaterialInstance* MatPlacementRed;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UMaterialInstance* MatPlacementGreen;
+
 	bool bIsPlaced = false;
 
 public:
 	ABuilding();
 	bool CheckValidPlacement();
+	virtual void BeginPlay();
 	virtual void PlaceBuilding();
 	virtual void DestroyBuilding();
 };
