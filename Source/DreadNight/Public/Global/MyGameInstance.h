@@ -7,6 +7,9 @@
 #include "MyGameInstance.generated.h"
 
 class UDN_SaveGame;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPCGEndGenerationSignature);
+
 /**
  * 
  */
@@ -30,4 +33,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Load(UWorld* World);
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FPCGEndGenerationSignature OnPCGEndGeneration;
 };
