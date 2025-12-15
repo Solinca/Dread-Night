@@ -27,9 +27,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AttackDamage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UAnimMontage> AttackAnimationMontage;
 public:
 	[[nodiscard]] float GetAttackCooldown() const;
 	[[nodiscard]] float GetAttackDamage() const;
 	[[nodiscard]] float GetAttackRange() const;
 	[[nodiscard]] float GetAcceptableRadius() const;
+	[[nodiscard]] UAnimMontage* GetAttackAnimationMontage();
 };

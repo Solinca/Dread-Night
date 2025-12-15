@@ -7,6 +7,7 @@
 struct FBTAttackTaskMemory
 {
 	TWeakObjectPtr<AActor> AttackedTarget;
+	TWeakObjectPtr<UAnimMontage> AttackAnimationMontage;
 	
 	float AttackCooldown{0.f};
 	float AttackDamage{0.f};
@@ -28,6 +29,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard")
 	FBlackboardKeySelector AttackedTarget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard")
+	FValueOrBBKey_Object AttackAnimationMontage;
 	
 public:
 	UBTTask_Attack();

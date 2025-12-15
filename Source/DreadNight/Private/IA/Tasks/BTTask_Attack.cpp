@@ -4,6 +4,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Float.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "DamageSystem/Interface/Damageable.h"
+#include "GameFramework/Character.h"
 
 UBTTask_Attack::UBTTask_Attack()
 {
@@ -15,6 +16,8 @@ UBTTask_Attack::UBTTask_Attack()
 
 	AttackedTarget.AllowNoneAsValue(false);
 	AttackedTarget.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UBTTask_Attack, AttackedTarget), AActor::StaticClass());
+
+	AttackAnimationMontage.SetBaseClass(UAnimMontage::StaticClass());
 }
 
 EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -30,9 +33,10 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	AttackTaskMemory->AttackCooldown = AttackCooldown.GetValue(OwnerComp);
 	AttackTaskMemory->AttackDamage = AttackDamage.GetValue(OwnerComp);
 	AttackTaskMemory->AttackedTarget = Cast<AActor>(BlackboardComponent->GetValue<UBlackboardKeyType_Object>(AttackedTarget.GetSelectedKeyID()));
+	AttackTaskMemory->AttackAnimationMontage = AttackAnimationMontage.GetValue<UAnimMontage>(OwnerComp);
 
 	if (!AttackTaskMemory->AttackedTarget.IsValid() ||
-		!AttackTaskMemory->AttackedTarget->Implements<UDamageable>())
+		!AttackTaskMemory->AttackedTarget->Implements<UDamageable>() || !AttackTaskMemory->AttackAnimationMontage.IsValid())
 	{
 		return EBTNodeResult::Failed;
 	}
@@ -60,7 +64,7 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 		return;
 	}
 
-	AActor* DamageInstigator{OwnerComp.GetAIOwner()->GetPawn()};
+	ACharacter* DamageInstigator{OwnerComp.GetAIOwner()->GetPawn()};
 	IDamageable* Damageable{Cast<IDamageable>(AttackTaskMemory->AttackedTarget.Get())};
 	
 	if (!Damageable || !DamageInstigator)
@@ -68,7 +72,8 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		return;
 	}
-	
+
+	DamageInstigator->PlayAnimMontage(AttackTaskMemory->AttackAnimationMontage.Get());
 	Damageable->TryApplyDamage(AttackTaskMemory->AttackDamage, DamageInstigator);
 	
 	SetNextTickTime(NodeMemory, AttackTaskMemory->AttackCooldown);
