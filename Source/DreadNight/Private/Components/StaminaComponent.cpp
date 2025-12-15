@@ -67,3 +67,8 @@ float UStaminaComponent::GetRegenCoolDown()
 	return RegenCooldown;
 }
 
+float UStaminaComponent::GetCurrentStamina()
+{
+	return CurrentStamina;
+}
+

@@ -102,23 +102,24 @@ void ACustomPlayerController::Jump(const FInputActionValue& Value)
 {
 	if (MyPlayer)
 	{
-		MyPlayer->Jump();
-
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
-		StaminaComponent->RemoveStamina(PlayerData->JumpStaminaCost);
+		if (StaminaComponent->GetCurrentStamina() > 0.f && MyPlayer->CanJump())
+		{
+			MyPlayer->Jump();
 
-		StaminaComponent->SetCanRegen(false);
+			StaminaComponent->RemoveStamina(PlayerData->JumpStaminaCost);
 
-		// START REGEN STAMINA
-		GetWorldTimerManager().SetTimer(
-			StaminaComponent->CoolDownTimer,
-			[=] {StaminaComponent->SetCanRegen(true); },
-			StaminaComponent->GetRegenCoolDown(),
-			false
-		);
+			StaminaComponent->SetCanRegen(false);
 
-		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerJumpCost);
+			// START REGEN STAMINA
+			GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
+				[=] {StaminaComponent->SetCanRegen(true); },
+				StaminaComponent->GetRegenCoolDown(), false
+			);
+
+			MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerJumpCost);
+		}
 	}
 }
 
@@ -128,15 +129,22 @@ void ACustomPlayerController::Sprint(const FInputActionValue& Value)
 	{
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
-		MyPlayer->GetCharacterMovement()->MaxWalkSpeed = PlayerData->SprintMoveSpeed;
+		if (StaminaComponent->GetCurrentStamina() > 0.f)
+		{
+			MyPlayer->GetCharacterMovement()->MaxWalkSpeed = PlayerData->SprintMoveSpeed;
 
-		MyPlayer->SetIsSprinting(true);
+			MyPlayer->SetIsSprinting(true);
 
-		StaminaComponent->SetCanRegen(false);
+			StaminaComponent->SetCanRegen(false);
 
-		StaminaComponent->RemoveStamina(PlayerData->SprintStaminaCost * GetWorld()->GetDeltaSeconds());
+			StaminaComponent->RemoveStamina(PlayerData->SprintStaminaCost * GetWorld()->GetDeltaSeconds());
 
-		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerSprintCost * GetWorld()->GetDeltaSeconds());
+			MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerSprintCost * GetWorld()->GetDeltaSeconds());
+		}
+		else
+		{
+			SprintEnd(Value);
+		}
 	}
 }
 
@@ -151,11 +159,9 @@ void ACustomPlayerController::SprintEnd(const FInputActionValue& Value)
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
 		// START REGEN STAMINA
-		GetWorldTimerManager().SetTimer(
-			StaminaComponent->CoolDownTimer,
+		GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
 			[=] {StaminaComponent->SetCanRegen(true); },
-			StaminaComponent->GetRegenCoolDown(),
-			false
+			StaminaComponent->GetRegenCoolDown(), false
 		);
 	}
 }
@@ -200,23 +206,25 @@ void ACustomPlayerController::Aim(const FInputActionValue& Value)
 
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
 {
-	MyPlayer->GetSwordCombatComponent()->Attack();
-
+	USwordCombatComponent* SwordCombatComponent = MyPlayer->GetSwordCombatComponent();
 	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
-	StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
+	if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
+	{
+		SwordCombatComponent->Attack();
 
-	StaminaComponent->SetCanRegen(false);
+		StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 
-	// START REGEN STAMINA
-	GetWorldTimerManager().SetTimer(
-		StaminaComponent->CoolDownTimer,
-		[=] {StaminaComponent->SetCanRegen(true); },
-		StaminaComponent->GetRegenCoolDown(),
-		false
-	);
+		StaminaComponent->SetCanRegen(false);
 
-	MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
+		// START REGEN STAMINA
+		GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
+			[=] {StaminaComponent->SetCanRegen(true); },
+			StaminaComponent->GetRegenCoolDown(), false
+		);
+
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
+	}
 }
 
 

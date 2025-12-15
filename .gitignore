@@ -77,3 +77,6 @@ DerivedDataCache/*
 
 # https://stackoverflow.com/questions/22234617/do-i-need-to-maintain-resharpers-dotsettings-user-file-in-source-control
 *.DotSettings.user
+
+# temp file during debugging
+.enc_temp_folder/*
