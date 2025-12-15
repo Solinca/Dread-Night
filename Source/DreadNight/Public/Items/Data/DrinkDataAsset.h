@@ -9,4 +9,7 @@ UCLASS()
 class DREADNIGHT_API UDrinkDataAsset : public UItemDataAsset
 {
 	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, meta = (ClampMin = 1.f))
+	float ThirstRegenerationValue;
 };

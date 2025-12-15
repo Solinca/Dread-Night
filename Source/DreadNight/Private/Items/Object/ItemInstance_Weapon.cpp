@@ -9,6 +9,8 @@ FName UItemInstance_Weapon::GetActionName()
 
 void UItemInstance_Weapon::Use(AActor* Player)
 {
+
+
 }
 
 UWeaponDataAsset* UItemInstance_Weapon::GetDataAsset()
