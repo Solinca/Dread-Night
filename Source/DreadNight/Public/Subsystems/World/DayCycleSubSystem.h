@@ -12,6 +12,7 @@ class UExponentialHeightFogComponent;
 class USkyAtmosphereComponent;
 class UVolumetricCloudComponent;
 class ULightComponent;
+class UNiagaraComponent;
 
 UCLASS()
 class DREADNIGHT_API UDayCycleSubSystem : public UWorldSubsystem
@@ -50,6 +51,8 @@ private:
 
 	TMap<ULightComponent*, float> LightList;
 
+	TArray<UNiagaraComponent*> VFXList;
+
 	UFUNCTION()
 	void StartDayCycle();
 
@@ -84,5 +87,5 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "DayCycle")
 	int GetDayCounter() const { return DayCounter; }
 
-	void RegisterLightSource(ULightComponent* Light);
+	void RegisterLightSource(ULightComponent* Light, UNiagaraComponent* VFX);
 };
