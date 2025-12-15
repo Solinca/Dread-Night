@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Crafting/Data/Recipe.h"
 #include "InventorySystem/InventoryComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "CraftingComponent.generated.h"
 
 
@@ -18,9 +19,9 @@ class DREADNIGHT_API UCraftingComponent : public UActorComponent
 
 public:
 
-	void Craft(FRecipe* Recipe, TObjectPtr<UInventoryComponent> Inventory);
+	void OnCraft(FRecipe* Recipe);
 
-	void OpenGUI();
+	void OpenGUI(AActor* Caller);
 
 protected:
 
@@ -35,6 +36,10 @@ protected:
 	//TSubclassOf<UCraftingWidget> CraftingWidgetClass = nullptr;
 
 private:
+
+	void Craft(FRecipe* Recipe, TObjectPtr<UInventoryComponent> Inventory);
+
+	AActor* User;
 
 	//TObjectPtr<UCraftingWidget> CraftingWidget;
 

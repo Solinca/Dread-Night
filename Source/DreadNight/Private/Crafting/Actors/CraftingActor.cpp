@@ -8,7 +8,7 @@
 void ACraftingActor::OnInteract_Implementation(AActor* Caller)
 {
 
-	CraftingComponent->OpenGUI();
+	CraftingComponent->OpenGUI(Caller);
 
 }
 
