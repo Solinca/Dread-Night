@@ -124,6 +124,9 @@ private:
 	UFUNCTION()
 	void UpdateCrouching(float deltatime);
 
+	UFUNCTION()
+	void UpdateObjectPlacement();
+
 	UFUNCTION(BlueprintCallable)
 	void Aim(const FInputActionValue& Value);
 

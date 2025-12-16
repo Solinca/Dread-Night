@@ -67,27 +67,7 @@ void ACustomPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateCrouching(DeltaTime);
-
-	if (CreatedBuilding)
-	{
-		FHitResult Hit;
-
-		FVector CameraLocation;
-		FRotator CameraRotation;
-		GetPlayerViewPoint(CameraLocation, CameraRotation);
-
-		if (GetWorld()->LineTraceSingleByChannel(
-			Hit,
-			CameraLocation,
-			PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange,
-			ECC_Pawn,
-			ObjectPlacementQueryParams) &&
-			!Hit.GetActor()->IsA(ACharacter::StaticClass()))
-		{
-			CreatedBuilding->SetActorLocation(Hit.ImpactPoint);
-			CreatedBuilding->CheckValidPlacement();
-		}
-	}
+	UpdateObjectPlacement();
 }
 
 void ACustomPlayerController::SetupInputComponent()
@@ -232,6 +212,31 @@ void ACustomPlayerController::UpdateCrouching(float deltatime)
 				MyPlayer->GetCharacterMovement()->MaxWalkSpeed = PlayerData->BaseMoveSpeed;
 			}
 		}
+	}
+}
+
+void ACustomPlayerController::UpdateObjectPlacement()
+{
+	if (CreatedBuilding)
+	{
+		FHitResult Hit;
+
+		if (GetWorld()->LineTraceSingleByChannel(
+			Hit,
+			PlayerCameraManager->GetCameraLocation(),
+			PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange),
+			ECC_WorldStatic,
+			ObjectPlacementQueryParams) &&
+			!Hit.GetActor()->IsA(ACharacter::StaticClass()))
+		{
+			CreatedBuilding->SetActorLocation(Hit.ImpactPoint);
+		}
+		else
+		{
+			CreatedBuilding->SetActorLocation(PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange));
+		}
+
+		CreatedBuilding->CheckValidPlacement();
 	}
 }
 
@@ -384,13 +389,13 @@ void ACustomPlayerController::PlaceObject(const FInputActionValue& Value)
 
 	CreatedBuilding = GetWorld()->SpawnActor<ABuilding>(
 		DebugBuilding,
-		FVector::ZeroVector,
+		PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange),
 		FRotator::ZeroRotator,
 		SpawnParams
 	);
 
 	ObjectPlacementQueryParams.AddIgnoredActor(CreatedBuilding);
-	ObjectPlacementQueryParams.AddIgnoredActors(CreatedBuildings);
+	//ObjectPlacementQueryParams.AddIgnoredActors(CreatedBuildings);
 }
 
 void ACustomPlayerController::RotateObject(const FInputActionValue& Value)

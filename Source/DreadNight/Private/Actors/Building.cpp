@@ -25,9 +25,23 @@ bool ABuilding::CheckValidPlacement()
 	TArray<AActor*> OverlapingActors;
 	MeshComp->GetOverlappingActors(OverlapingActors);
 
-	MeshComp->SetOverlayMaterial(OverlapingActors.Num() == 0 ? MatPlacementGreen : MatPlacementRed);
+	bool bIsValid = (OverlapingActors.Num() == 0 && CheckIsOnGround());
 
-	return OverlapingActors.Num() == 0;
+	MeshComp->SetOverlayMaterial(bIsValid ? MatPlacementGreen : MatPlacementRed);
+
+	return bIsValid;
+}
+
+bool ABuilding::CheckIsOnGround()
+{
+	FHitResult Hit;
+
+	return GetWorld()->LineTraceSingleByChannel(
+		Hit,
+		GetActorLocation(),
+		GetActorLocation() - FVector(0, 0, 100.f),
+		ECC_Visibility
+	);
 }
 
 void ABuilding::PlaceBuilding()

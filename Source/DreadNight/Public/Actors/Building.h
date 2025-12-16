@@ -27,6 +27,7 @@ protected:
 public:
 	ABuilding();
 	bool CheckValidPlacement();
+	bool CheckIsOnGround();
 	virtual void BeginPlay();
 	virtual void PlaceBuilding();
 	virtual void DestroyBuilding();
