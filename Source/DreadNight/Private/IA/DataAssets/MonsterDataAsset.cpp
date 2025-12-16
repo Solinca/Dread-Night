@@ -19,3 +19,13 @@ float UMonsterDataAsset::GetMaxHealth() const
 {
 	return MaxHealth;
 }
+
+const TObjectPtr<UDataTable>& UMonsterDataAsset::GetLootDataTable() const
+{
+	return LootDataTable;
+}
+
+int UMonsterDataAsset::GetMaxDroppedLootStack() const
+{
+	return MaxDroppedLootStack;
+}

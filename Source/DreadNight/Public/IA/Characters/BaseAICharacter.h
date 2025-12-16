@@ -48,6 +48,8 @@ public:
 	void SetMonsterData(UMonsterDataAsset* Data);
 
 	UMonsterDataAsset* GetMonsterData() const;
+	
+	void DropLoot() const;
 protected:
 	UFUNCTION(BlueprintNativeEvent, DisplayName = "OnDataAssetInitialization")
 	void BP_OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset);
