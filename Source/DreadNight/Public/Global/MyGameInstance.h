@@ -26,7 +26,13 @@ protected:
 
 	UPROPERTY(Transient)
 	UDN_SaveGame* SaveGame;
+
+	int Seed;
+	bool bIsNewGame = false;
 public:
+
+	UFUNCTION(BlueprintCallable)
+	void NewGame();
 
 	UFUNCTION(BlueprintCallable)
 	void Save(UWorld* World);
@@ -34,6 +40,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Load(UWorld* World);
 
+	UFUNCTION(BlueprintCallable)
+	bool IsNewGame();
+	
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FPCGEndGenerationSignature OnPCGEndGeneration;
+
+	UFUNCTION(BlueprintCallable)
+	int GetSeed();
 };

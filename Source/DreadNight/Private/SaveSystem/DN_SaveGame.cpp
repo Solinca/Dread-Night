@@ -33,6 +33,7 @@ void UDN_SaveGame::CollectSaveData(UWorld* WorldContext)
     	
     	FMemoryWriter MemoryWriter(ActorSaveInfo.Data, true);
     	FObjectAndNameAsStringProxyArchive Ar(MemoryWriter, false);
+    	Ar.ArIsSaveGame = true;
     	It->Serialize(Ar);
 
     	GameSaveData.GameData.Add(ActorSaveInfo);
@@ -78,8 +79,8 @@ TMap<FName, ISavableActor*> UDN_SaveGame::BuildWorldSavableCache(UWorld* WorldCo
 
 void UDN_SaveGame::GatherAllSaveData(UWorld* WorldContext)
 {
-	CollectSaveData(WorldContext);
-	
+	GameSaveData.GameData.Empty();
+	CollectSaveData(WorldContext);	
 }
 
 void UDN_SaveGame::UseAllSaveData(UWorld* WorldContext)
@@ -118,6 +119,7 @@ void UDN_SaveGame::UseAllSaveData(UWorld* WorldContext)
 		{ 
 			FMemoryReader MemoryReader(SaveActorData.Data, true);
 			FObjectAndNameAsStringProxyArchive Ar(MemoryReader, false);
+    		Ar.ArIsSaveGame = true;
 			TargetActor->Serialize(Ar); 
 		}
 	}

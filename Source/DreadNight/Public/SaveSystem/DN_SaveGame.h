@@ -34,8 +34,10 @@ USTRUCT()
 struct FGameSaveData
 {
 	GENERATED_BODY()
+
 	UPROPERTY(SaveGame)
 	TArray<FSaveDataStruct> GameData;
+
 };
 
 UCLASS()
@@ -45,6 +47,7 @@ class DREADNIGHT_API UDN_SaveGame : public USaveGame
 
 	UPROPERTY()
 	FGameSaveData GameSaveData;
+ 
 	
 	void CollectSaveData(UWorld* WorldContext);
 
@@ -56,4 +59,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void UseAllSaveData(UWorld* WorldContext);
+
+
+	UPROPERTY(BlueprintReadWrite)
+	int Seed;
 };

@@ -20,10 +20,17 @@ void AWorldGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (auto Element : PCG_Array)
+	UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)); 
+	
+	for (auto Element : AlwaysLoadPCG)
 	{
 		RegisterVolume(Element);
 	}
+	for (auto Element : OnFirstLoadPCG)
+	{
+		RegisterVolume(Element);
+	}
+	SetSeed(GameInstance->GetSeed());
 	GenerateWorld();
 }
 
@@ -53,30 +60,18 @@ void AWorldGenerator::Tick(float DeltaTime)
 
 void AWorldGenerator::GenerateWorld()
 {
-	int Seed = FMath::RandRange(0, 999999);
-	for (APCGVolume* Volume : PCG_Array)
+	for (APCGVolume* Volume : OnFirstLoadPCG)
 	{
 		Volume->PCGComponent->Cleanup();
-		Volume->PCGComponent->Seed = Seed;
+		Volume->PCGComponent->Generate();
+	}
+	for (APCGVolume* Volume : AlwaysLoadPCG)
+	{
+		Volume->PCGComponent->Cleanup();
 		Volume->PCGComponent->Generate();
 	}
 }
 
 #if WITH_EDITOR
-void AWorldGenerator::CleanUp()
-{
-	for (auto Element : PCG_Array)
-	{
-		Element->PCGComponent->Cleanup();
-	}
-}
-
-void AWorldGenerator::Generate()
-{
-	for (auto Element : PCG_Array)
-	{
-		Element->PCGComponent->Generate();
-	}
-}
 
 #endif

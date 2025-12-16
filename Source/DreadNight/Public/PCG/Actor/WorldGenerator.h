@@ -18,7 +18,10 @@ public:
 	AWorldGenerator();
 
 	UPROPERTY(EditAnywhere)
-	TArray<APCGVolume*> PCG_Array;
+	TArray<APCGVolume*> OnFirstLoadPCG;
+	
+	UPROPERTY(EditAnywhere)
+	TArray<APCGVolume*> AlwaysLoadPCG;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -28,12 +31,16 @@ protected:
 
 
 	void RegisterVolume(APCGVolume* Volume);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void GenerateWorld();
 
+	void SetSeed(int Seed);
+
+	
 #if WITH_EDITOR
 
 	UFUNCTION(CallInEditor)

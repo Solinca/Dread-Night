@@ -1,4 +1,6 @@
 #include "UserWidgets/MainMenuWidget.h"
+
+#include "Global/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "UserWidgets/OptionsWidget.h"
@@ -20,6 +22,10 @@ void UMainMenuWidget::OnContinueClicked()
 
 void UMainMenuWidget::OnNewGameClicked()
 {
+	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
+	{
+		GameInstance->NewGame();
+	}
 	UGameplayStatics::OpenLevel(this, TEXT("BaseLevel"));
 }
 
