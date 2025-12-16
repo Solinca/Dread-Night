@@ -248,7 +248,6 @@ void ACustomPlayerController::StopAim(const FInputActionValue& Value)
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
 {
 	USwordCombatComponent* SwordCombatComponent = MyPlayer->GetSwordCombatComponent();
-
 	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
 	if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
