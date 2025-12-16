@@ -11,9 +11,15 @@ class DREADNIGHT_API AExcludeBase : public AActor
 {
 	GENERATED_BODY()
 
+	void SetOrRemoveTag(bool bShouldSet, FString Tag);
+	
 protected: 
 	UPROPERTY(EditAnywhere)
-	bool bAffectGrassToo = false;
+	bool bExcludeGrass = false;
+	
+	UPROPERTY(EditAnywhere)
+	bool bExcludeForestCollectible = false; 
+
 
 	AExcludeBase();
 

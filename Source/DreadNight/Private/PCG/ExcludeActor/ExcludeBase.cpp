@@ -3,7 +3,15 @@
 
 #include "PCG/ExcludeActor/ExcludeBase.h"
 
- 
+
+void AExcludeBase::SetOrRemoveTag(bool bShouldSet, FString Tag)
+{
+	if (bShouldSet)
+		Tags.AddUnique(*Tag);
+	else
+		Tags.Remove(*Tag);
+}
+
 AExcludeBase::AExcludeBase()
 { 
 	PrimaryActorTick.bCanEverTick = false;
@@ -11,20 +19,14 @@ AExcludeBase::AExcludeBase()
 
 void AExcludeBase::BeginPlay()
 {
-	Super::BeginPlay();
-
-	if (bAffectGrassToo)
-		Tags.Add("ExcludeGrass");
+	Super::BeginPlay(); 
 }
 
 void AExcludeBase::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	if (bAffectGrassToo)
-		Tags.AddUnique("ExcludeGrass");
-	else
-		Tags.Remove("ExcludeGrass");
-
+	SetOrRemoveTag(bExcludeGrass, "ExcludeGrass");
+	SetOrRemoveTag(bExcludeForestCollectible, "ExcludeCollectible");
 }
  
