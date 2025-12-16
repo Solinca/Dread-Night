@@ -15,8 +15,14 @@ void UMapWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	const FVector ConvertedPlayerLocation = OwnerPawn->GetActorLocation() * MapImageSize / WorldSize;
-	PlayerIcon->SetRenderTranslation(FVector2D(ConvertedPlayerLocation));
+	const float Ratio = MapImageSize / WorldSize;
+	const FVector PlayerLocation = OwnerPawn->GetActorLocation();
+
+	const float ConvertedX = PlayerLocation.Y * Ratio; 
+
+	const float ConvertedY = -PlayerLocation.X * Ratio; 
+
+	PlayerIcon->SetRenderTranslation(FVector2D(ConvertedX, ConvertedY));
 
 	const float ConvertedAngle = OwnerPawn->GetActorRotation().Yaw + RotationOffset;
 	PlayerIcon->SetRenderTransformAngle(ConvertedAngle);

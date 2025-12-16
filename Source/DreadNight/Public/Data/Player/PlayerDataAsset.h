@@ -7,6 +7,7 @@
 #include "UserWidgets/OptionsWidget.h"
 #include "PlayerDataAsset.generated.h"
 
+class UMapWidget;
 class UPlayerHud;
 
 UCLASS()
@@ -103,6 +104,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UPlayerHud> PlayerHudClass;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UMapWidget> MapClass;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
 	TObjectPtr<USoundBase> GameOverSound;
