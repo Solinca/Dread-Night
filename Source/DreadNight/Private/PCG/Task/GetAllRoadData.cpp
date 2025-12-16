@@ -130,6 +130,7 @@ bool FPCGExcludeSplineElement::ExecuteInternal(FPCGContext* Context) const
 			Point.BoundsMax = FVector(HalfWidth, HalfWidth, HalfWidth);
 			
 			Point.Density = 1.0f;
+			Point.Steepness = 1.0f;
 		}
 
 		// Store actor name as metadata

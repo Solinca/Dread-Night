@@ -106,16 +106,16 @@ bool FPCGGetAllExcludeZoneElement::ExecuteInternal(FPCGContext* Context) const
 		// Get box component transform and bounds
 		FTransform BoxTransform = BoxComponent->GetComponentTransform();
 		FVector BoxExtent = BoxComponent->GetScaledBoxExtent();
-		FVector BoxCenter = BoxTransform.GetLocation();
         
 		// Create a point representing this exclude zone
 		FPCGPoint& Point = OutPoints.Emplace_GetRef();
 		Point.Transform.SetLocation(BoxTransform.GetLocation());
+		Point.Transform.SetRotation(BoxTransform.GetRotation());
 		Point.SetLocalBounds(FBox(-BoxExtent, BoxExtent));
         
 		// Store metadata about the exclude zone
 		Point.Density = 1.0f;
-		Point.Color = FVector4(1.0f, 0.0f, 0.0f, 1.0f); // Red color to indicate exclusion zone
+		Point.Steepness = 1.f;
         
 		// Optional: Store actor name as metadata
 		Point.Seed = GetTypeHash(Actor->GetName());
