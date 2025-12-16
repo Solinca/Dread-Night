@@ -95,8 +95,14 @@ void UBTTask_RangeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 	if (ProjectileActor)
 	{
+		UProjectileMovementComponent* ProjectileMovementComponent{ProjectileActor->GetProjectileMovementComponent()};
+		
 		ProjectileActor->SetDamage(RangeAttackTaskMemory->AttackDamage);
-		ProjectileActor->FinishSpawning(ProjectileTransform);	
+		ProjectileActor->FinishSpawning(ProjectileTransform);
+
+		const AActor* RetrievedActor{RangeAttackTaskMemory->AttackedTarget.Get()};
+		const FVector ProjectileVelocity{(RetrievedActor->GetActorLocation() - SpawnInstigator->GetActorLocation()).GetSafeNormal() * ProjectileMovementComponent->InitialSpeed};
+		ProjectileMovementComponent->Velocity = ProjectileVelocity;
 	}
 
 	SetNextTickTime(NodeMemory, RangeAttackTaskMemory->AttackCooldown);
