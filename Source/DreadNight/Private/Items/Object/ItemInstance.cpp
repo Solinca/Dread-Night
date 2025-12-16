@@ -15,7 +15,7 @@ bool UItemInstance::TryStealInstance(UItemInstance* Other)
 	}
 	if (CanBeStackedWith(Other, EStackMethod::Partially))
 	{
-		const int InstanceToAdd = StackNumber - ItemData->StackLimit;		
+		int InstanceToAdd = ItemData->StackLimit - StackNumber;		
 		TryAdd(InstanceToAdd);
 		Other->TryRemove(InstanceToAdd);	
 		return true;		

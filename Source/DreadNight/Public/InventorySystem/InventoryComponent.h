@@ -5,11 +5,10 @@
 #include "Items/Object/ItemInstance.h"
 #include "InventoryComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemAddedEventSignature, class UItemInstance*, InventoryComponent, int, ItemSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemAddedEventSignature, class UItemInstance*, ItemInstance, int, ItemSlot);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemovedEventSignature, int, ItemSlot);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemClearedEventSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemModifiedEventSignature, class UItemInstance*, InventoryComponent, int, ItemSlot);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemModifiedEventSignature, class UItemInstance*, ItemInstance, int, ItemSlot);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DREADNIGHT_API UInventoryComponent : public UActorComponent

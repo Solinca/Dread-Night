@@ -25,9 +25,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UUserWidget> ItemInfoWidgetClass;
 	
+	UPROPERTY()
 	TObjectPtr<UInventoryComponent> BindInventoryComponent = nullptr;
+	
+	UPROPERTY()
 	TObjectPtr<UInventoryComponent> BindTargetInventoryComponent = nullptr;
+	
+	UPROPERTY()
 	TObjectPtr<UInventoryAction> InventoryAction;
+	
+	UPROPERTY()
 	TObjectPtr<UInventoryInfo> InventoryInfoWidget;
 public:
 
@@ -58,5 +65,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveItemAction();
 	
+	const TObjectPtr<UWrapBox>& GetInventoryWrapBox() const { return InventoryWrapBox; }
 	TObjectPtr<UInventoryInfo> GetInventoryInfoWidget() const { return InventoryInfoWidget; }
 };

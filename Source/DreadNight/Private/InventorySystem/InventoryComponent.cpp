@@ -23,16 +23,14 @@ void UInventoryComponent::AddItem(UItemInstance* Item)
 	{
 		for (int i = 0; i < Items.Num(); ++i)
 		{
-			if (Items[i] && Items[i]->CanBeStackedWith(Item, UItemInstance::EStackMethod::SameType))
+			if (Items[i] && Items[i]->CanBeStackedWith(Item, UItemInstance::EStackMethod::Partially))
 			{
-				if (Items[i]->GetStackNumber() != Items[i]->GetDataAsset()->StackLimit)
-				{
-					Items[i]->TryStackWith(Item);
-					OnItemModified.Broadcast(Items[i], i);
+				Items[i]->TryStackWith(Item);
+				OnItemModified.Broadcast(Items[i], i);
 					
-					if (Item->IsEmpty())
-						return;
-				}
+				if (Item->IsEmpty())
+					return;
+				
 			}
 		}
 	}
@@ -141,6 +139,7 @@ void UInventoryComponent::DropItems(int SlotIndex, int Amount = 1)
 		{
 			GetWorld()->SpawnActor<AActor>(Items[SlotIndex]->GetDataAsset()->ItemClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
 			Items[SlotIndex]->TryRemove(1);
+			OnItemModified.Broadcast(Items[SlotIndex], SlotIndex);
 		}
 	}
 	
@@ -167,27 +166,29 @@ void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UIt
 		return;
 	
 	int StartSlot = GetItemInstanceSlot(Item).GetValue();
-	for (int i = 0; i < TargetInventory->Items.Num(); ++i)
+	if (TargetInventory->Contains(Item->GetDataAsset(),1))
 	{
-		UItemInstance* TargetItem = TargetInventory->GetItemAtSlot(i);
-		
-		if (!TargetItem || !TargetItem->CanBeStackedWith(Item, UItemInstance::EStackMethod::SameType))
-			continue;
-		if (TargetItem->GetStackNumber() >= TargetItem->GetDataAsset()->StackLimit)
-			continue;
-		
-		if (TargetItem->TryStackWith(Item))
+		for (int i = 0; i < TargetInventory->Items.Num(); ++i)
 		{
-			TargetInventory->OnItemModified.Broadcast(TargetItem, i);
-			
-			if (Item->IsEmpty())
+			UItemInstance* TargetItem = TargetInventory->GetItemAtSlot(i);
+		
+			if (!TargetItem || !TargetItem->CanBeStackedWith(Item, UItemInstance::EStackMethod::Partially))
+				continue;
+		
+			if (TargetItem->TryStackWith(Item))
 			{
-				Items[StartSlot] = nullptr;
-				OnItemRemoved.Broadcast(StartSlot);
-				return;
+				TargetInventory->OnItemModified.Broadcast(TargetItem, i);
+			
+				if (Item->IsEmpty())
+				{
+					Items[StartSlot] = nullptr;
+					OnItemRemoved.Broadcast(StartSlot);
+					return;
+				}
 			}
-		}
+		}	
 	}
+
 	
 	TOptional<int> EmptySlot = TargetInventory->GetEmptySlot();
 	if (!EmptySlot)

@@ -60,11 +60,25 @@ void UHotBarSlot::UpdateSlot(UItemInstance* InItemInstance, const int32 InQuanti
 		return;
 	}
 	
-	//ItemIcon->SetVisibility(ESlateVisibility::Hidden);
 	StackText->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UHotBarSlot::SetShortcutText(const FText& InText)
 {
 	ShortcutText->SetText(InText);
+}
+
+void UHotBarSlot::SetStackText(int Stack)
+{
+	Super::SetStackText(Stack);
+	
+	if (Stack <= 0)
+		StackText->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UHotBarSlot::Reset(const FSlateBrush& Brush)
+{
+	Super::Reset(Brush);
+	
+	SetStackText(0);
 }

@@ -46,7 +46,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetItemImage(UTexture2D* Texture);
 	UFUNCTION(BlueprintCallable)
-	void SetStackText(int Stack);
+	virtual void SetStackText(int Stack);
 	
 	UFUNCTION(BlueprintCallable)
 	int GetSlotIndex() const { return SlotIndex; }
@@ -63,7 +63,7 @@ public:
 	void BindToInventory(UInventoryComponent* InventoryComponent);
 	
 	UFUNCTION(BlueprintCallable)
-	void Reset(const FSlateBrush& Brush);
+	virtual void Reset(const FSlateBrush& Brush);
 	
 	const FSlateBrush& GetImageBrush() const;
 	

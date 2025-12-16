@@ -3,6 +3,7 @@
 #include "IDetailTreeNode.h"
 #include "Items/Data/ItemDataAsset.h"
 #include "Items/Data/ItemGameplayTag.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 void UInventory::NativePreConstruct()
 {
@@ -98,12 +99,14 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	if (InventoryAction)
 		InventoryAction->RemoveFromParent();
 	
+	
 	if (InventoryInfoWidget)
 		OnItemInfoRemoved();
 	
 	UInventorySlot* ClickedSlot = Cast<UInventorySlot>(InventoryWrapBox->GetChildAt(SlotIndex));
 	if (!ClickedSlot)
 		return;
+	
 	
 	InventoryAction = CreateWidget<UInventoryAction>(this, InventoryActionClass);
 	InventoryAction->SetupAction(BindInventoryComponent, BindTargetInventoryComponent, SlotIndex);
@@ -133,11 +136,11 @@ void UInventory::OnItemInfoCreated(int SlotIndex)
 	if (InventoryInfoWidget)
 		InventoryInfoWidget->RemoveFromParent();
 	
-	FVector2d MousePos;
+	FVector2d MousePos = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
 	InventoryInfoWidget = CreateWidget<UInventoryInfo>(this, ItemInfoWidgetClass);
-	GetOwningPlayer()->GetMousePosition(MousePos.X, MousePos.Y);
 	InventoryInfoWidget->SetRenderTranslation(MousePos);
 	InventoryInfoWidget->AddToViewport();
+	InventoryInfoWidget->SetDesiredSizeInViewport(FVector2D(100, 60));
 	
 	if (UItemInstance* ItemData = BindInventoryComponent->GetItemAtSlot(SlotIndex))
 	{
