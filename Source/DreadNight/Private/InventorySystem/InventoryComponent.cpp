@@ -196,7 +196,7 @@ void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UIt
 	
 	int EmptySlotIndex = EmptySlot.GetValue();
 	TargetInventory->Items[EmptySlotIndex] = Item;
-	Items[EmptySlotIndex] = nullptr;
+	Items[StartSlot] = nullptr;
 	
 	OnItemRemoved.Broadcast(StartSlot);
 	TargetInventory->OnItemAdded.Broadcast(Item, EmptySlotIndex);
