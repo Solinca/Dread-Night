@@ -8,6 +8,8 @@
 #include "Components/TextBlock.h"
 #include "InventorySlider.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSliderValidatedEventSignature, int, Amount);
+
 UCLASS()
 class DREADNIGHT_API UInventorySlider : public UUserWidget
 {
@@ -23,10 +25,20 @@ protected:
 	TObjectPtr<UButton> ReturnButton;
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UTextBlock> AmountText;
+	
+	UFUNCTION()
+	void OnSliderValueChanged(float Value);
+	UFUNCTION()
+	void OnValidateButtonClicked();
+	UFUNCTION()
+	void OnReturnButtonClicked();
 public:
-	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	
+	UFUNCTION()
+	void SetupSlider(int MaxSize);
+	
+	FOnSliderValidatedEventSignature OnSliderValidated;
 	
 	TObjectPtr<USlider> GetSlider() const { return Slider; }
 	TObjectPtr<UButton> GetValidateButton() const { return ValidateButton; }
