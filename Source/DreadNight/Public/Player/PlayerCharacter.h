@@ -92,6 +92,9 @@ public:
 	UFUNCTION()
 	bool GetIsSprinting();
 
+	UFUNCTION(BlueprintCallable)
+	bool GetCanShoot();
+
 	UFUNCTION()
 	void SetIsSprinting(bool value);
 
@@ -103,6 +106,9 @@ public:
 
 	UFUNCTION()
 	void UpdateCrouching(float deltatime);
+
+	UFUNCTION()
+	UCameraComponent* GetCamera();
 
 	UFUNCTION()
 	UStaminaComponent* GetStaminaComponent();

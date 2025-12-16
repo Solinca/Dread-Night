@@ -77,6 +77,11 @@ bool APlayerCharacter::GetIsSprinting()
 	return bIsSprinting;
 }
 
+bool APlayerCharacter::GetCanShoot()
+{
+	return BowCombatComponent->CanShoot();
+}
+
 void APlayerCharacter::SetIsSprinting(bool value)
 {
 	bIsSprinting = value;
@@ -107,6 +112,11 @@ void APlayerCharacter::UpdateCrouching(float deltatime)
 			SetCurentCapsuleHalfHeight(FMath::FInterpTo(CurrentCapsuleHalfHeight, PlayerData->CapsuleMaxHalfHeight, deltatime, PlayerData->LerpCrouchSpeed));
 		}
 	}
+}
+
+UCameraComponent* APlayerCharacter::GetCamera()
+{
+	return Camera;
 }
 
 UStaminaComponent* APlayerCharacter::GetStaminaComponent()

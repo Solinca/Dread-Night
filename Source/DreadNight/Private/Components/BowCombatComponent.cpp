@@ -1,6 +1,7 @@
 #include "Components/BowCombatComponent.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
+#include "Player/PlayerCharacter.h"
 
 UBowCombatComponent::UBowCombatComponent()
 {
@@ -41,12 +42,17 @@ void UBowCombatComponent::Shoot()
 	if (!CurrentArrow.IsValid())
 		return;
 	CurrentArrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	CurrentArrow->GetMesh()->SetCollisionProfileName("Arrow");
 	UProjectileMovementComponent* ProjectileComp = CurrentArrow->GetProjectileMovementComponent();
 	if (ProjectileComp)
 	{
-		ProjectileComp->Velocity = CurrentArrow->GetActorForwardVector() * ProjectileComp->InitialSpeed;
+		APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
+		FVector Direction = (Player->GetCamera()->GetComponentLocation() + Player->GetCamera()->GetForwardVector() * 1000.f) - CurrentArrow->GetActorLocation();
+		Direction.Normalize();
+		ProjectileComp->Velocity = Direction * ProjectileComp->InitialSpeed;
 		ProjectileComp->Activate();
 	}
+	CurrentArrow->SetHasBeenShot(true);
 	CurrentArrow = nullptr;
 	bCanShoot = false;
 
@@ -58,6 +64,16 @@ void UBowCombatComponent::Shoot()
 		ShotCooldown,
 		false
 	);
+}
+
+bool UBowCombatComponent::CanShoot()
+{
+	return bCanShoot;
+}
+
+bool UBowCombatComponent::IsAiming()
+{
+	return bIsAiming;
 }
 
 void UBowCombatComponent::SpawnArrow()
@@ -74,6 +90,7 @@ void UBowCombatComponent::SpawnArrow()
 	SpawnLocation = MeshComp->GetSocketLocation(PlayerData->ArrowSocketName);
 	SpawnRotation = Owner->GetActorRotation();
 	FActorSpawnParameters Params;
+	Params.Instigator = Cast<APawn>(Owner);
 	CurrentArrow = GetWorld()->SpawnActor<AProjectileActor>(
 		ArrowProjectileClass,
 		SpawnLocation,

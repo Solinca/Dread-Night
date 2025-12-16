@@ -6,25 +6,29 @@ AProjectileActor::AProjectileActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	RootComponent = CreateDefaultSubobject<USceneComponent>("Root");
+
 	ProjectileMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Projectile Mesh Component");
-	RootComponent = ProjectileMeshComponent;
+	ProjectileMeshComponent->SetupAttachment(RootComponent);
 
 	ProjectileMeshComponent->SetCollisionProfileName("Projectile");
 	
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Movement Component");
 	ProjectileMovementComponent->SetUpdatedComponent(RootComponent);
-	ProjectileMovementComponent->MaxSpeed = 2000.f;
-	ProjectileMovementComponent->InitialSpeed = 2000.f;
-	ProjectileMovementComponent->ProjectileGravityScale = 0.f;
+
+	//ProjectileMovementComponent->InitialSpeed = ProjectileData->InitialSpeed;
+	//ProjectileMovementComponent->MaxSpeed = ProjectileData->MaxSpeed;
+	//ProjectileMovementComponent->ProjectileGravityScale = ProjectileData->GravityScale;
 	ProjectileMovementComponent->Friction = 0.f;
 	ProjectileMovementComponent->bSweepCollision = false;
 
-	InitialLifeSpan = 10.f;
+	//InitialLifeSpan = ProjectileData->LifeSpan;
 }
 
 void AProjectileActor::BeginPlay()
 {
 	Super::BeginPlay();
+
 
 	ProjectileMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectileActor::OnBeginOverlap);
 }
@@ -38,7 +42,7 @@ void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	}
 
 	IDamageable* Damageable{Cast<IDamageable>(OtherActor)};
-	Damageable->TryApplyDamage(Damage, GetInstigator());
+	Damageable->TryApplyDamage(ProjectileData->Damage, GetInstigator());
 	
 	Destroy();
 }
@@ -48,12 +52,27 @@ UProjectileMovementComponent* AProjectileActor::GetProjectileMovementComponent()
 	return ProjectileMovementComponent;
 }
 
+UStaticMeshComponent* AProjectileActor::GetMesh()
+{
+	return ProjectileMeshComponent;
+}
+
 void AProjectileActor::SetDamage(float NewDamage)
 {
-	Damage = NewDamage;
+	ProjectileData->Damage = NewDamage;
 }
 
 float AProjectileActor::GetDamage() const
 {
-	return Damage;
+	return ProjectileData->Damage;
+}
+
+bool AProjectileActor::GetHasBeenShot()
+{
+	return bHasBeenShot;
+}
+
+void AProjectileActor::SetHasBeenShot(bool Bool)
+{
+	bHasBeenShot = Bool;
 }

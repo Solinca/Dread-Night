@@ -249,16 +249,25 @@ void ACustomPlayerController::Attack(const FInputActionValue& Value)
 {
 	USwordCombatComponent* SwordCombatComponent = MyPlayer->GetSwordCombatComponent();
 	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
+	UBowCombatComponent* BowCombatComponent = MyPlayer->GetBowCombatComponent();
 
 	if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
 	{
 
 		if (PlayerData->StartingWeaponDataAsset->Type.GetTagName() == "Item.Weapon.Sword")
+		{
 			SwordCombatComponent->Attack();
+			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
+		}
 		else
-			MyPlayer->GetBowCombatComponent()->Shoot();
+		{
+			if (BowCombatComponent->CanShoot())
+			{
+				BowCombatComponent->Shoot();
+				StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
+			}
+		}
 
-		StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 
 		StaminaComponent->SetCanRegen(false);
 

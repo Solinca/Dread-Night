@@ -18,6 +18,7 @@ protected:
 
 	FTimerHandle ShotCooldownTimer;
 
+	UPROPERTY()
 	bool bCanShoot;
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	bool bIsAiming;
@@ -36,9 +37,12 @@ protected:
 	void ResetShot();
 
 public:
-	//à appeler dans le player controller
 	UFUNCTION()
 	void SetAiming(bool bAiming);
 	UFUNCTION()
-	void Shoot();			
+	void Shoot();
+	UFUNCTION()
+	bool CanShoot();
+	UFUNCTION()
+	bool IsAiming();
 };
