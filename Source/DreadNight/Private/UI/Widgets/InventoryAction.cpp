@@ -63,7 +63,7 @@ void UInventoryAction::OnDropPressed()
 		if (!InventorySliderWidgetClass)
 			return;
 	
-		InventorySlider = CreateWidget<UInventorySlider>(InventorySliderWidgetClass);
+		InventorySlider = CreateWidget<UInventorySlider>(this, InventorySliderWidgetClass);
 		InventorySlider->SetupSlider(Item->GetStackNumber());
 		InventorySlider->OnSliderValidated.AddDynamic(this, &UInventoryAction::OnDropAmountSelected);
 		InventorySlider->AddToViewport();
@@ -85,7 +85,7 @@ void UInventoryAction::OnRemovePressed()
 		if (!InventorySliderWidgetClass)
 			return;
 		
-		InventorySlider = CreateWidget<UInventorySlider>(InventorySliderWidgetClass);
+		InventorySlider = CreateWidget<UInventorySlider>(this, InventorySliderWidgetClass);
 		InventorySlider->SetupSlider(Item->GetStackNumber());
 		InventorySlider->OnSliderValidated.AddDynamic(this, &UInventoryAction::OnRemoveAmountSelected);
 		InventorySlider->AddToViewport();
