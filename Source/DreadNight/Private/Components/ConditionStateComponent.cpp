@@ -18,42 +18,78 @@ void UConditionStateComponent::AddHungerValue(float amount)
 {
 	HungerValue += amount;
 	HungerValue = FMath::Clamp(HungerValue, 0.f, 100.f);
-	OnHungerChanged.Broadcast(HungerValue, EnumHasAnyFlags(States, EConditionState::HUNGRY));
+
+	if (HungerValue > 20.f)
+	{
+		States &= ~EConditionState::HUNGRY;
+	}
+
+	OnHungerChanged.Broadcast(GetHungerValueRatio(), EnumHasAnyFlags(States, EConditionState::HUNGRY));
 }
 
 void UConditionStateComponent::RemoveHungerValue(float amount)
 {
 	HungerValue -= amount;
 	HungerValue = FMath::Clamp(HungerValue, 0.f, 100.f);
-	OnHungerChanged.Broadcast(HungerValue, EnumHasAnyFlags(States, EConditionState::HUNGRY));
+
+	if (HungerValue <= 20.f)
+	{
+		States |= EConditionState::HUNGRY;
+	}
+
+	OnHungerChanged.Broadcast(GetHungerValueRatio(), EnumHasAnyFlags(States, EConditionState::HUNGRY));
 }
 
 void UConditionStateComponent::AddThirstValue(float amount)
 {
 	ThirstValue += amount;
 	ThirstValue = FMath::Clamp(ThirstValue, 0.f, 100.f);
-	OnThirstChanged.Broadcast(ThirstValue, EnumHasAnyFlags(States, EConditionState::THIRSTY));
+
+	if (ThirstValue > 20.f)
+	{
+		States &= ~EConditionState::THIRSTY;
+	}
+
+	OnThirstChanged.Broadcast(GetThirstValueRatio(), EnumHasAnyFlags(States, EConditionState::THIRSTY));
 }
 
 void UConditionStateComponent::RemoveThirstValue(float amount)
 {
 	ThirstValue -= amount;
 	ThirstValue = FMath::Clamp(ThirstValue, 0.f, 100.f);
-	OnThirstChanged.Broadcast(ThirstValue, EnumHasAnyFlags(States, EConditionState::THIRSTY));
+
+	if (ThirstValue <= 20.f)
+	{
+		States |= EConditionState::THIRSTY;
+	}
+
+	OnThirstChanged.Broadcast(GetThirstValueRatio(), EnumHasAnyFlags(States, EConditionState::THIRSTY));
 }
 
 void UConditionStateComponent::AddSanityValue(float amount)
 {
 	SanityValue += amount;
 	SanityValue = FMath::Clamp(SanityValue, 0.f, 100.f);
-	OnSanityChanged.Broadcast(SanityValue, EnumHasAnyFlags(States, EConditionState::AFRAID));
+
+	if (SanityValue > 20.f)
+	{
+		States &= ~EConditionState::AFRAID;
+	}
+
+	OnSanityChanged.Broadcast(GetSanityValueRatio(), EnumHasAnyFlags(States, EConditionState::AFRAID));
 }
 
 void UConditionStateComponent::RemoveSanityValue(float amount)
 {
 	SanityValue -= amount;
 	SanityValue = FMath::Clamp(SanityValue, 0.f, 100.f);
-	OnSanityChanged.Broadcast(SanityValue, EnumHasAnyFlags(States, EConditionState::AFRAID));
+
+	if (SanityValue <= 20.f)
+	{
+		States |= EConditionState::AFRAID;
+	}
+
+	OnSanityChanged.Broadcast(GetSanityValueRatio(), EnumHasAnyFlags(States, EConditionState::AFRAID));
 }
 
 void UConditionStateComponent::ClearStates()
@@ -64,9 +100,9 @@ void UConditionStateComponent::ClearStates()
 
 	States = EConditionState::NONE;
 
-	OnHungerChanged.Broadcast(HungerValue, EnumHasAnyFlags(States, EConditionState::HUNGRY));
-	OnThirstChanged.Broadcast(ThirstValue, EnumHasAnyFlags(States, EConditionState::THIRSTY));
-	OnSanityChanged.Broadcast(SanityValue, EnumHasAnyFlags(States, EConditionState::AFRAID));
+	OnHungerChanged.Broadcast(GetHungerValueRatio(), EnumHasAnyFlags(States, EConditionState::HUNGRY));
+	OnThirstChanged.Broadcast(GetThirstValueRatio(), EnumHasAnyFlags(States, EConditionState::THIRSTY));
+	OnSanityChanged.Broadcast(GetSanityValueRatio(), EnumHasAnyFlags(States, EConditionState::AFRAID));
 }
 
 float UConditionStateComponent::GetHungerValueRatio()

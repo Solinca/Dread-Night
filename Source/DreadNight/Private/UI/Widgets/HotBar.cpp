@@ -6,22 +6,17 @@ void UHotBar::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	SlotsArray.Empty();
-
-	for (int32 i = 0; i < HotBarSlotCount; i++)
+	for (int32 i = 0; i < InventoryWrapBox->GetWrapSize(); i++)
 	{
-		if (!ensureMsgf(HotBarSlotClass, TEXT("HotBarSlotClass is null in %s! Please assign the widget class in the Blueprint."), *GetName()))
+		if (!ensureMsgf(InventorySlotClass, TEXT("HotBarSlotClass is null in %s! Please assign the widget class in the Blueprint."), *GetName()))
 		{
 			return;
 		}
 		
-		UHotBarSlot* SlotWidget = CreateWidget<UHotBarSlot>(this, HotBarSlotClass);
-		
-		SlotsArray.Add(SlotWidget);
-
-		SlotsContainer->AddChildToHorizontalBox(SlotWidget);
-			
-		static constexpr int HotBarMaxSlots = 10;
-		SlotWidget->SetShortcutText(FText::AsNumber((i + 1) % HotBarMaxSlots));
+		if (UHotBarSlot* SlotWidget = Cast<UHotBarSlot>(InventoryWrapBox->GetChildAt(i)))
+		{
+			static constexpr int HotBarMaxSlots = 10;
+			SlotWidget->SetShortcutText(FText::AsNumber((i + 1) % HotBarMaxSlots));
+		}
 	}
 }

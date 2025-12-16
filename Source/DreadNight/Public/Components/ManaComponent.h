@@ -18,13 +18,13 @@ protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values", meta = (ClampMin = 1.f))
-	float MaxMana;
+	float MaxMana = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values")
-	float CurrentMana;
+	float CurrentMana = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values")
-	float RegenSpeed;//en %/s
+	float RegenSpeed = 10.f;//en %/s
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values")
 	float RegenCooldown = 2.f;

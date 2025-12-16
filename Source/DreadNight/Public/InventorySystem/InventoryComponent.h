@@ -27,7 +27,7 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Size = 20;
-
+	
 public:	
 	
 	void AddItem(UItemInstance* Item);
@@ -38,14 +38,16 @@ public:
 	void DropItems(int SlotIndex, int Amount);
 	void Clear();
 	
-	void TransferItem(UInventoryComponent* InventoryComponent, UItemInstance* Item, int SlotIndex);
-	void SwapItem(UInventoryComponent* InventoryComponent, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex);
+	void TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item, int SlotIndex);
+	void SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex);
 	
 	int GetSize() const { return Size; }
+	void SetSize(int NewSize) { Size = NewSize; }
 	TOptional<int> GetEmptySlot() const;
 	UItemInstance* GetItemAtSlot(int SlotIndex) const;
 	UItemDataAsset* GetItemTypeAtSlot(int SlotIndex) const;
 	TOptional<int> GetItemSlot(UItemDataAsset* Item) const;
+	TOptional<int> GetItemInstanceSlot(UItemInstance* Item) const;
 	TOptional<int> GetStackableItemSlot(UItemDataAsset* Item) const;
 	
 	bool Contains(UItemDataAsset* Item, int StackNumber) const;

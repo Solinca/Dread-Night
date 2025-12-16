@@ -11,6 +11,7 @@
 #include "Components/LightComponent.h"
 #include "Data/DayCycleSystem/DayCycleSystemDataAsset.h"
 #include "Blueprint/UserWidget.h"
+#include "NiagaraComponent.h"
 
 void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 {
@@ -88,6 +89,11 @@ void UDayCycleSubSystem::ProcessDayPerSecond()
 	if (hasDuskStarted)
 	{
 		FogComponent->SetFogDensity(FogComponent->FogDensity + (BaseWorldSettings->DayCycleSystemData->MaximalFogDensity / CurrentPhaseTimeInSeconds) * BaseWorldSettings->DayCycleSystemData->ProcessedTimeInterval);
+	
+		for (UNiagaraComponent* VFX : VFXList)
+		{
+			VFX->Activate();
+		}
 	}
 
 	if (!hasDawnEnded)
@@ -110,6 +116,11 @@ void UDayCycleSubSystem::ProcessDayPerSecond()
 		CurrentPhaseRotation = DayRotation;
 
 		hasDawnEnded = true;
+
+		for (UNiagaraComponent* VFX : VFXList)
+		{
+			VFX->Deactivate();
+		}
 	}
 
 	if (SunRotation.Pitch < BaseWorldSettings->DayCycleSystemData->EndSunRotation)
@@ -219,9 +230,14 @@ UDayCycleSubSystem::ThisClass* UDayCycleSubSystem::Get(UObject* WorldContext)
 }
 
 
-void UDayCycleSubSystem::RegisterLightSource(ULightComponent* Light)
+void UDayCycleSubSystem::RegisterLightSource(ULightComponent* Light, UNiagaraComponent* VFX = nullptr)
 {
 	LightList.Add(Light, Light->Intensity);
+
+	if (VFX)
+	{
+		VFXList.Add(VFX);
+	}
 }
 
 void UDayCycleSubSystem::ProcessEveryLightSource()

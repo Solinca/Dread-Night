@@ -23,7 +23,7 @@ void UInventoryComponent::AddItem(UItemInstance* Item)
 	{
 		for (int i = 0; i < Items.Num(); ++i)
 		{
-			if (Items[i]->CanBeStackedWith(Item, UItemInstance::EStackMethod::SameType))
+			if (Items[i] && Items[i]->CanBeStackedWith(Item, UItemInstance::EStackMethod::SameType))
 			{
 				if (Items[i]->GetStackNumber() != Items[i]->GetDataAsset()->StackLimit)
 				{
@@ -158,16 +158,52 @@ void UInventoryComponent::Clear()
 	OnItemCleared.Broadcast();
 }
 
-void UInventoryComponent::TransferItem(UInventoryComponent* InventoryComponent, UItemInstance* Item, int SlotIndex)
+void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item, int SlotIndex)
 {
-	//transfer item from inventory to another, or the same inventory
 	//if item has the same type, we try to stack them
 	//if there is rest, we add it to an empty slot
+	
+	if (!TargetInventory || !Item)
+		return;
+	
+	int StartSlot = GetItemInstanceSlot(Item).GetValue();
+	for (int i = 0; i < TargetInventory->Items.Num(); ++i)
+	{
+		UItemInstance* TargetItem = TargetInventory->GetItemAtSlot(i);
+		
+		if (!TargetItem || !TargetItem->CanBeStackedWith(Item, UItemInstance::EStackMethod::SameType))
+			continue;
+		if (TargetItem->GetStackNumber() >= TargetItem->GetDataAsset()->StackLimit)
+			continue;
+		
+		if (TargetItem->TryStackWith(Item))
+		{
+			TargetInventory->OnItemModified.Broadcast(TargetItem, i);
+			
+			if (Item->IsEmpty())
+			{
+				Items[StartSlot] = nullptr;
+				OnItemRemoved.Broadcast(StartSlot);
+				return;
+			}
+		}
+	}
+	
+	TOptional<int> EmptySlot = TargetInventory->GetEmptySlot();
+	if (!EmptySlot)
+		return;
+	
+	int EmptySlotIndex = EmptySlot.GetValue();
+	TargetInventory->Items[EmptySlotIndex] = Item;
+	Items[EmptySlotIndex] = nullptr;
+	
+	OnItemRemoved.Broadcast(StartSlot);
+	TargetInventory->OnItemAdded.Broadcast(Item, EmptySlotIndex);
 }
 
-void UInventoryComponent::SwapItem(UInventoryComponent* InventoryComponent, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex)
+void UInventoryComponent::SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex)
 {
-	//else we swap them
+	
 }
 
 TOptional<int> UInventoryComponent::GetEmptySlot() const
@@ -183,6 +219,9 @@ TOptional<int> UInventoryComponent::GetEmptySlot() const
 
 UItemInstance* UInventoryComponent::GetItemAtSlot(int SlotIndex) const
 {
+	if (SlotIndex >= Items.Num())
+		return nullptr;
+	
 	return Items[SlotIndex];
 }
 
@@ -202,6 +241,22 @@ TOptional<int> UInventoryComponent::GetItemSlot(UItemDataAsset* Item) const
 	for (int i = 0; i < Items.Num(); ++i)
 	{
 		if (Items[i] && Items[i]->GetDataAsset() == Item)
+		{
+			return i;
+		}
+	}
+	
+	return NullOpt;
+}
+
+TOptional<int> UInventoryComponent::GetItemInstanceSlot(UItemInstance* Item) const
+{
+	if (!Item)
+		return NullOpt;
+	
+	for (int i = 0; i < Items.Num(); ++i)
+	{
+		if (Items[i] == Item)
 		{
 			return i;
 		}

@@ -76,6 +76,9 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UInventory> InventoryWidget;
+	
+	UPROPERTY(Transient)
+	TObjectPtr<UInventory> HotbarInventoryWidget;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UOptionsWidget> OptionsWidget;
@@ -90,7 +93,6 @@ private:
 	void UpdateGamePauseState();
 	
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
-
 	FCollisionQueryParams ObjectPlacementQueryParams;
 
 #if WITH_EDITOR

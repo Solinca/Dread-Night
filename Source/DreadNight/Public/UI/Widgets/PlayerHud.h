@@ -53,16 +53,16 @@ public:
 	void UpdateManaBar(const float CurrentValue, const float MaxValue);
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateThirstRadialBarImage(const float CurrentValue);
+	void UpdateThirstRadialBarImage(const float CurrentValue, bool IsState);
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateHungerRadialBarImage(const float CurrentValue);
+	void UpdateHungerRadialBarImage(const float CurrentValue, bool IsState);
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateMentalRadialBarImage(const float CurrentValue);
+	void UpdateMentalRadialBarImage(const float CurrentValue, bool IsState);
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateFearRadialBarImage(const float CurrentValue);
+	void UpdateFearRadialBarImage(const float CurrentValue, bool IsState);
 	
 	UFUNCTION(BlueprintCallable)
 	void UpdateInteractionText(AActor* NewInteractable);

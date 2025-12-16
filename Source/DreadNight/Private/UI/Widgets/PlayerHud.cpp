@@ -35,7 +35,7 @@ void UPlayerHud::UpdateManaBar(const float CurrentValue, const float MaxValue)
 	ManaBar->UpdateValue(CurrentValue, MaxValue);
 }
 
-void UPlayerHud::UpdateThirstRadialBarImage(const float CurrentValue)
+void UPlayerHud::UpdateThirstRadialBarImage(const float CurrentValue, bool IsState)
 {
 	if (ThirstRadialBarImage)
 	{
@@ -43,7 +43,7 @@ void UPlayerHud::UpdateThirstRadialBarImage(const float CurrentValue)
 	}
 }
 
-void UPlayerHud::UpdateHungerRadialBarImage(const float CurrentValue)
+void UPlayerHud::UpdateHungerRadialBarImage(const float CurrentValue, bool IsState)
 {
 	if (HungerRadialBarImage)
 	{
@@ -51,7 +51,7 @@ void UPlayerHud::UpdateHungerRadialBarImage(const float CurrentValue)
 	}
 }
 
-void UPlayerHud::UpdateMentalRadialBarImage(const float CurrentValue)
+void UPlayerHud::UpdateMentalRadialBarImage(const float CurrentValue, bool IsState)
 {
 	if (MentalRadialBarImage)
 	{
@@ -59,7 +59,7 @@ void UPlayerHud::UpdateMentalRadialBarImage(const float CurrentValue)
 	}
 }
 
-void UPlayerHud::UpdateFearRadialBarImage(const float CurrentValue)
+void UPlayerHud::UpdateFearRadialBarImage(const float CurrentValue, bool IsState)
 {
 	if (FearRadialBarImage)
 	{
