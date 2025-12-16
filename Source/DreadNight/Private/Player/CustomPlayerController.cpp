@@ -7,6 +7,10 @@
 #include "UI/Widgets/PauseMenu.h"
 #include "UserWidgets/OptionsWidget.h"
 #include "UI/Widgets/PlayerHud.h"
+#include "Actors/Building.h"
+#include "Engine/World.h"
+#include "EngineUtils.h"
+#include "GameFramework/Actor.h"
 #include "UI/Widgets/Map/MapWidget.h"
 #include "InteractableSystem/Subsystems/InteractableSubsystem.h"
 
@@ -54,6 +58,9 @@ void ACustomPlayerController::BeginPlay()
 		HUDWidget->AddToViewport();
 		BindUIEvents();
 	}
+
+	ObjectPlacementQueryParams.bTraceComplex = true;
+	ObjectPlacementQueryParams.AddIgnoredActor(GetPawn());
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
@@ -61,6 +68,7 @@ void ACustomPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateCrouching(DeltaTime);
+	UpdateObjectPlacement();
 }
 
 void ACustomPlayerController::SetupInputComponent()
@@ -208,6 +216,31 @@ void ACustomPlayerController::UpdateCrouching(float deltatime)
 	}
 }
 
+void ACustomPlayerController::UpdateObjectPlacement()
+{
+	if (CreatedBuilding)
+	{
+		FHitResult Hit;
+
+		if (GetWorld()->LineTraceSingleByChannel(
+			Hit,
+			PlayerCameraManager->GetCameraLocation(),
+			PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange),
+			ECC_WorldStatic,
+			ObjectPlacementQueryParams) &&
+			!Hit.GetActor()->IsA(ACharacter::StaticClass()))
+		{
+			CreatedBuilding->SetActorLocation(Hit.ImpactPoint);
+		}
+		else
+		{
+			CreatedBuilding->SetActorLocation(PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange));
+		}
+
+		CreatedBuilding->CheckValidPlacement();
+	}
+}
+
 void ACustomPlayerController::Aim(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Aiming");
@@ -345,6 +378,50 @@ void ACustomPlayerController::GoBackToMenu()
 	SaveGame();
 
 	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), PlayerData->MainMenuLevel);
+}
+
+void ACustomPlayerController::PlaceObject(const FInputActionValue& Value)
+{
+	if (CreatedBuilding)
+	{
+		if (CreatedBuilding->CheckValidPlacement())
+		{
+			CreatedBuilding->PlaceBuilding();
+			CreatedBuildings.Add(CreatedBuilding);
+		}
+		else
+		{
+			return;
+		}
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	CreatedBuilding = GetWorld()->SpawnActor<ABuilding>(
+		DebugBuilding,
+		PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange),
+		FRotator::ZeroRotator,
+		SpawnParams
+	);
+
+	ObjectPlacementQueryParams.AddIgnoredActor(CreatedBuilding);
+}
+
+void ACustomPlayerController::RotateObject(const FInputActionValue& Value)
+{
+	if (!CreatedBuilding) return;
+
+	float Axis = Value.Get<float>();
+
+	if (Axis != 0.f)
+	{
+		CreatedBuilding->AddActorLocalRotation(
+			FRotator(0.f,
+				Axis * BuildingRotationSpeed * GetWorld()->GetDeltaSeconds(),
+				0.f)
+		);
+	}
 }
 
 void ACustomPlayerController::PopLastMenu()

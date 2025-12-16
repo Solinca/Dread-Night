@@ -9,7 +9,13 @@ ABuilding::ABuilding()
 	
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	MeshComp->SetupAttachment(RootComponent);
-	
+}
+
+void ABuilding::BeginPlay()
+{
+	Super::BeginPlay();
+
+	MeshComp->SetGenerateOverlapEvents(true);
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	MeshComp->SetCollisionResponseToAllChannels(ECR_Overlap);
 }
@@ -19,7 +25,23 @@ bool ABuilding::CheckValidPlacement()
 	TArray<AActor*> OverlapingActors;
 	MeshComp->GetOverlappingActors(OverlapingActors);
 
-	return OverlapingActors.Num() == 0;
+	bool bIsValid = (OverlapingActors.Num() == 0 && CheckIsOnGround());
+
+	MeshComp->SetOverlayMaterial(bIsValid ? MatPlacementGreen : MatPlacementRed);
+
+	return bIsValid;
+}
+
+bool ABuilding::CheckIsOnGround()
+{
+	FHitResult Hit;
+
+	return GetWorld()->LineTraceSingleByChannel(
+		Hit,
+		GetActorLocation(),
+		GetActorLocation() - FVector(0, 0, 100.f),
+		ECC_Visibility
+	);
 }
 
 void ABuilding::PlaceBuilding()
@@ -29,6 +51,7 @@ void ABuilding::PlaceBuilding()
 	bIsPlaced = true;
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	MeshComp->SetCollisionResponseToAllChannels(ECR_Block);
+	MeshComp->SetOverlayMaterial(nullptr);
 }
 
 void ABuilding::DestroyBuilding()

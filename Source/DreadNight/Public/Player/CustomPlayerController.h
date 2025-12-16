@@ -15,6 +15,7 @@ class UPlayerHud;
 class UPauseMenu;
 class UOptionsWidget;
 class UInventory;
+class ABuilding;
 
 USTRUCT(BlueprintType)
 struct FInputActionSetup
@@ -96,7 +97,8 @@ private:
 	
 	UPROPERTY(Transient)
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
-	
+	FCollisionQueryParams ObjectPlacementQueryParams;
+
 #if WITH_EDITOR
 	UFUNCTION(BlueprintInternalUseOnly)
 	void Prototype_InputAction(const FInputActionValue& Value) {};
@@ -125,6 +127,9 @@ private:
 
 	UFUNCTION()
 	void UpdateCrouching(float deltatime);
+
+	UFUNCTION()
+	void UpdateObjectPlacement();
 
 	UFUNCTION(BlueprintCallable)
 	void Aim(const FInputActionValue& Value);
@@ -161,6 +166,24 @@ private:
 
 	UFUNCTION()
 	void GoBackToMenu();
+
+	UFUNCTION(BlueprintCallable)
+	void PlaceObject(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintCallable)
+	void RotateObject(const FInputActionValue& Value);
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ABuilding> DebugBuilding;
+
+	TArray<AActor*> CreatedBuildings;
+	ABuilding* CreatedBuilding = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	float BuildingRotationSpeed;
+
+	UPROPERTY(EditAnywhere)
+	float ObjectPlacementRange = 200.f;
 
 	// Function to add a Menu to the menu list, so we can leave it with escape
 	template<typename T>
