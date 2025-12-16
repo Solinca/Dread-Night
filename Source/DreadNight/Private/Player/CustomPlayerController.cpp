@@ -395,7 +395,6 @@ void ACustomPlayerController::PlaceObject(const FInputActionValue& Value)
 	);
 
 	ObjectPlacementQueryParams.AddIgnoredActor(CreatedBuilding);
-	//ObjectPlacementQueryParams.AddIgnoredActors(CreatedBuildings);
 }
 
 void ACustomPlayerController::RotateObject(const FInputActionValue& Value)
