@@ -29,10 +29,10 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ResetAttack();
 
+public:
 	UFUNCTION(BlueprintCallable)
 	bool GetIsAttacking() { return IsAttacking; }
 	
-public:
 	void Attack();
 
 	void SetComponentMesh(UStaticMeshComponent* Mesh);
