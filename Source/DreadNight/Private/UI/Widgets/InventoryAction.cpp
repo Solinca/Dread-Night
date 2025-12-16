@@ -51,13 +51,60 @@ void UInventoryAction::OnTransferPressed()
 
 void UInventoryAction::OnDropPressed()
 {
-	InventoryComponent->DropItems(SlotIndex, 1);
-	RemoveFromParent();
+	if (UItemInstance* Item = InventoryComponent->GetItemAtSlot(SlotIndex))
+	{
+		if (Item->GetStackNumber() == 1)
+		{
+			InventoryComponent->DropItems(SlotIndex, 1);
+			RemoveFromParent();
+			return;
+		}
+		
+		if (!InventorySliderWidgetClass)
+			return;
+	
+		InventorySlider = CreateWidget<UInventorySlider>(this, InventorySliderWidgetClass);
+		InventorySlider->SetupSlider(Item->GetStackNumber());
+		InventorySlider->OnSliderValidated.AddDynamic(this, &UInventoryAction::OnDropAmountSelected);
+		InventorySlider->AddToViewport();
+		RemoveFromParent();
+	}
 }
 
 void UInventoryAction::OnRemovePressed()
 {
-	InventoryComponent->RemoveItemsAt(SlotIndex, 1);
-	RemoveFromParent();
+	if (UItemInstance* Item = InventoryComponent->GetItemAtSlot(SlotIndex))
+	{
+		if (Item->GetStackNumber() == 1)
+		{
+			InventoryComponent->RemoveItemsAt(SlotIndex, 1);
+			RemoveFromParent();
+			return;
+		}
+		
+		if (!InventorySliderWidgetClass)
+			return;
+		
+		InventorySlider = CreateWidget<UInventorySlider>(this, InventorySliderWidgetClass);
+		InventorySlider->SetupSlider(Item->GetStackNumber());
+		InventorySlider->OnSliderValidated.AddDynamic(this, &UInventoryAction::OnRemoveAmountSelected);
+		InventorySlider->AddToViewport();
+		RemoveFromParent();
+	}
 }
 
+void UInventoryAction::OnDropAmountSelected(int Amount)
+{
+	if (Amount)
+	{
+		InventoryComponent->DropItems(SlotIndex, Amount);
+	}
+}
+
+void UInventoryAction::OnRemoveAmountSelected(int Amount)
+{
+	if (Amount)
+	{
+		InventoryComponent->RemoveItemsAt(SlotIndex, Amount);
+	}
+}

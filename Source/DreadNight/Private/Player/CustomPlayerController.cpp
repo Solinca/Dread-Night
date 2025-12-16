@@ -13,6 +13,7 @@
 #include "GameFramework/Actor.h"
 #include "UI/Widgets/Map/MapWidget.h"
 #include "InteractableSystem/Subsystems/InteractableSubsystem.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -285,9 +286,12 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 	InventoryWidget = CreateWidget<UInventory>(this, PlayerData->InventoryWidgetClass);
 	InventoryWidget->BindToInventory(MyPlayer->GetInventoryComponent());
 	InventoryWidget->BindTargetInventory(MyPlayer->GetHotbarInventoryComponent());
-	FVector2D WindowSize = GEngine->GameViewport->Viewport->GetSizeXY();
-	InventoryWidget->SetDesiredSizeInViewport(FVector2D(600, 600));
-	InventoryWidget->SetPositionInViewport(FVector2D(WindowSize.X / 2 - 300, WindowSize.Y / 2 - 300));
+	
+	FVector2D WindowSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
+	InventoryWidget->SetDesiredSizeInViewport(FVector2D(600,600));
+	InventoryWidget->SetPositionInViewport(FVector2D(WindowSize.X/2 - (InventoryWidget->GetInventoryWrapBox()->GetWrapSize() / 2) + 35,
+		WindowSize.Y/2 - (InventoryWidget->GetInventoryWrapBox()->GetWrapSize() / 2 ) + 75));
+	
 	SetShowMouseCursor(true);
 
 	PushNewMenu(InventoryWidget, false, [this]

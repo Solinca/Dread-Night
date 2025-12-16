@@ -3,6 +3,7 @@
 #include "IDetailTreeNode.h"
 #include "Items/Data/ItemDataAsset.h"
 #include "Items/Data/ItemGameplayTag.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 void UInventory::NativePreConstruct()
 {
@@ -35,6 +36,8 @@ void UInventory::SetSize(int Size)
 			TempSlot->SetStackText(Item->GetStackNumber());
 		}
 		
+		TempSlot->OnItemInfoCreated.AddDynamic(this, &UInventory::OnItemInfoCreated);
+		TempSlot->OnItemInfoRemoved.AddDynamic(this, &UInventory::OnItemInfoRemoved);
 		TempSlot->OnItemActionCreated.AddDynamic(this, &UInventory::OnItemActionCreated);
 		InventoryWrapBox->AddChildToWrapBox(TempSlot);
 	}
@@ -96,9 +99,14 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	if (InventoryAction)
 		InventoryAction->RemoveFromParent();
 	
+	
+	if (InventoryInfoWidget)
+		OnItemInfoRemoved();
+	
 	UInventorySlot* ClickedSlot = Cast<UInventorySlot>(InventoryWrapBox->GetChildAt(SlotIndex));
 	if (!ClickedSlot)
 		return;
+	
 	
 	InventoryAction = CreateWidget<UInventoryAction>(this, InventoryActionClass);
 	InventoryAction->SetupAction(BindInventoryComponent, BindTargetInventoryComponent, SlotIndex);
@@ -118,6 +126,37 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	{
 		InventoryAction->GetUseButton()->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void UInventory::OnItemInfoCreated(int SlotIndex)
+{
+	if (!ItemInfoWidgetClass)
+		return;
+	
+	if (InventoryInfoWidget)
+		InventoryInfoWidget->RemoveFromParent();
+	
+	FVector2d MousePos = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
+	InventoryInfoWidget = CreateWidget<UInventoryInfo>(this, ItemInfoWidgetClass);
+	InventoryInfoWidget->SetRenderTranslation(MousePos);
+	InventoryInfoWidget->AddToViewport();
+	InventoryInfoWidget->SetDesiredSizeInViewport(FVector2D(100, 60));
+	
+	if (UItemInstance* ItemData = BindInventoryComponent->GetItemAtSlot(SlotIndex))
+	{
+		InventoryInfoWidget->GetItemInfoButton()->SetVisibility(ESlateVisibility::Visible);
+		InventoryInfoWidget->GetItemInfoText()->SetText(FText::FromName(ItemData->GetDataAsset()->ItemName));
+	}
+	else
+	{
+		InventoryInfoWidget->GetItemInfoButton()->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UInventory::OnItemInfoRemoved()
+{
+	if (InventoryInfoWidget)
+		InventoryInfoWidget->RemoveFromParent();
 }
 
 void UInventory::RemoveItemAction()

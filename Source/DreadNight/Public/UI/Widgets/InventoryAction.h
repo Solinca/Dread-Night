@@ -5,6 +5,7 @@
 #include "Components/Button.h"
 #include "Components/Textblock.h"
 #include "InventorySystem/InventoryComponent.h"
+#include "UI/Widgets/InventorySlider.h"
 #include "InventoryAction.generated.h"
 
 UCLASS()
@@ -30,6 +31,11 @@ protected:
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UTextBlock> RemoveText;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UInventorySlider> InventorySliderWidgetClass;
+	UPROPERTY()
+	TObjectPtr<UInventorySlider> InventorySlider;
+	
 	int SlotIndex;
 public:
 	virtual void NativePreConstruct() override;
@@ -47,6 +53,10 @@ public:
 	void OnDropPressed();
 	UFUNCTION(BlueprintCallable)
 	void OnRemovePressed();
+	UFUNCTION()
+	void OnDropAmountSelected(int Amount);
+	UFUNCTION()
+	void OnRemoveAmountSelected(int Amount);
 	
 	int GetSlotIndex() const { return SlotIndex; }
 	void SetSlotIndex(int Index) { SlotIndex = Index; }

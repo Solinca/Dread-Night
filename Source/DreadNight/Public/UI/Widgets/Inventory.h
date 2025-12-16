@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InventoryInfo.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/WrapBox.h"
 #include "InventorySystem/InventoryComponent.h"
@@ -21,10 +22,20 @@ protected:
 	TSubclassOf<UInventorySlot> InventorySlotClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UInventoryAction> InventoryActionClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UUserWidget> ItemInfoWidgetClass;
 	
+	UPROPERTY()
 	TObjectPtr<UInventoryComponent> BindInventoryComponent = nullptr;
+	
+	UPROPERTY()
 	TObjectPtr<UInventoryComponent> BindTargetInventoryComponent = nullptr;
+	
+	UPROPERTY()
 	TObjectPtr<UInventoryAction> InventoryAction;
+	
+	UPROPERTY()
+	TObjectPtr<UInventoryInfo> InventoryInfoWidget;
 public:
 
 	virtual void NativePreConstruct() override;
@@ -48,5 +59,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnItemActionCreated(int SlotIndex);
 	UFUNCTION(BlueprintCallable)
+	void OnItemInfoCreated(int SlotIndex);
+	UFUNCTION(BlueprintCallable)
+	void OnItemInfoRemoved();
+	UFUNCTION(BlueprintCallable)
 	void RemoveItemAction();
+	
+	const TObjectPtr<UWrapBox>& GetInventoryWrapBox() const { return InventoryWrapBox; }
+	TObjectPtr<UInventoryInfo> GetInventoryInfoWidget() const { return InventoryInfoWidget; }
 };

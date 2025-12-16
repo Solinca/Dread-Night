@@ -21,6 +21,7 @@ void UInventorySlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 FReply UInventorySlot::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	FReply Reply = FReply::Unhandled();
+	
 	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton || InMouseEvent.IsTouchEvent())
 	{
 		HasRightClicked = true;
@@ -33,6 +34,17 @@ FReply UInventorySlot::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometr
 	return Reply;
 }
 
+void UInventorySlot::NativeOnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& InMouseEvent)
+{
+	IsMouseOver = true;
+	InfoAction();
+}
+
+void UInventorySlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	IsMouseOver = false;
+}
+
 void UInventorySlot::SetItemImage(UTexture2D* Texture)
 {
 	ItemImage->SetBrushFromTexture(Texture);
@@ -40,16 +52,8 @@ void UInventorySlot::SetItemImage(UTexture2D* Texture)
 
 void UInventorySlot::SetStackText(int Stack)
 {
-	if (Stack > 0) 
-	{
-		StackText->SetText(FText::FromString(FString::FromInt(Stack)));
-		StackText->SetVisibility(ESlateVisibility::Visible);
-	}
-	else
-	{
-		StackText->SetVisibility(ESlateVisibility::Hidden);
-	}
-	
+	StackText->SetText(FText::FromString(FString::FromInt(Stack)));
+	StackText->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UInventorySlot::SetupSlot(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index)
@@ -62,13 +66,29 @@ void UInventorySlot::SetupSlot(UInventoryComponent* OwningInventory, UInventoryC
 void UInventorySlot::SlotAction()
 {
 	if (HasRightClicked)
+	{
 		OnItemActionCreated.Broadcast(SlotIndex);
+	}
+}
+
+void UInventorySlot::InfoAction()
+{
+	if (HasRightClicked)
+		return;
+	
+	if (IsMouseOver)
+	{
+		OnItemInfoCreated.Broadcast(SlotIndex);
+	}
+	else
+	{
+		OnItemInfoRemoved.Broadcast();
+	}
 }
 
 void UInventorySlot::BindToInventory(UInventoryComponent* InventoryComponent)
 {
 	BindInventoryComponent = InventoryComponent;
-	
 }
 
 void UInventorySlot::Reset(const FSlateBrush& Brush)

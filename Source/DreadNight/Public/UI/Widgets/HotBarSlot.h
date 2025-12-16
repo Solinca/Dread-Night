@@ -29,6 +29,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "HotBarSlot")
 	void SetShortcutText(const FText& InText);
+	
+	virtual void SetStackText(int Stack) override;
+	virtual void Reset(const FSlateBrush& Brush) override;
 
 protected:
 	virtual void NativeConstruct() override;
