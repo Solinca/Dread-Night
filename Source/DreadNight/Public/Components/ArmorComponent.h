@@ -5,6 +5,8 @@
 #include "ArmorComponent.generated.h"
 
 
+class UArmorDataAsset;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DREADNIGHT_API UArmorComponent : public UActorComponent
 {
@@ -22,12 +24,21 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values", meta = (ClampMin = 0.f))
 	float CurrentHelmetDmgReductionMultiplier = 0.f;
 
+	UPROPERTY(Transient)
+	TObjectPtr<UStaticMeshComponent> HelmetMesh;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UStaticMeshComponent> ArmorMesh;
 public:
 
+	  
 	UFUNCTION(BlueprintCallable)
-	void SetArmorDmgReductionMultiplier(float NewMultiplier);
+	void EquipArmor(UArmorDataAsset* Armor);
+	
 	UFUNCTION(BlueprintCallable)
-	void SetHelmetDmgReductionMultiplier(float NewMultiplier);
+	void EquipHelmet(UArmorDataAsset* Helmet);
 
+	void SetupMesh(UStaticMeshComponent* Helmet,UStaticMeshComponent* Armor);
+	
 	float GetTotalDmgReductionMultiplier() const { return BaseDmgReductionMultiplier + (CurrentArmorDmgReductionMultiplier + CurrentHelmetDmgReductionMultiplier); }
 };

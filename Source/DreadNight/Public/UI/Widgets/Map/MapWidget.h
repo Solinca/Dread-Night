@@ -26,7 +26,7 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<APawn> OwnerPawn;
 
-	float RotationOffset{ 90.f };
+	float RotationOffset{ 0.f };
 	float MapImageSize{ 900.f };
 	float WorldSize{ 30000.f };
 

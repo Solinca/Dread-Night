@@ -11,6 +11,7 @@
 #include "Engine/World.h"
 #include "EngineUtils.h"
 #include "GameFramework/Actor.h"
+#include "UI/Widgets/Map/MapWidget.h"
 #include "InteractableSystem/Subsystems/InteractableSubsystem.h"
 
 void ACustomPlayerController::BeginPlay()
@@ -331,6 +332,16 @@ void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
 	}
 }
 
+void ACustomPlayerController::DisplayMap(const FInputActionValue& Value)
+{
+	MapWidget = CreateWidget<UMapWidget>(this, PlayerData->MapClass);
+
+	PushNewMenu(MapWidget, false, [this]
+	{
+		MapWidget = nullptr;
+	});
+}
+
 void ACustomPlayerController::GoBackToPrecedentMenu(const FInputActionValue& Value)
 {
 	PopLastMenu();
@@ -456,18 +467,17 @@ void ACustomPlayerController::PopLastMenu()
 		SetShowMouseCursor(false);
 
 		UGameplayStatics::SetGamePaused(GetWorld(), false);
+		return;
 	}
-	else
+	
+	FStackedMenu& NewTopMenu = MenuStack.Last();
+
+	if (NewTopMenu.Widget)
 	{
-		FStackedMenu& NewTopMenu = MenuStack.Last();
-
-		if (NewTopMenu.Widget)
-		{
-			NewTopMenu.Widget->SetVisibility(ESlateVisibility::Visible);
-		}
-
-		UpdateGamePauseState();
+		NewTopMenu.Widget->SetVisibility(ESlateVisibility::Visible);
 	}
+
+	UpdateGamePauseState();
 }
 
 void ACustomPlayerController::ResumeGame()

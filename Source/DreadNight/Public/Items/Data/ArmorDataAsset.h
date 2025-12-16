@@ -14,7 +14,5 @@ public:
 	UPROPERTY(EditAnywhere)
 	float DamageReductionMultiplier;
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UStaticMesh> ArmorMesh;
-	UPROPERTY(EditAnywhere)
-	bool bIsHelmet;
+	TObjectPtr<UStaticMesh> ArmorMesh; 
 };

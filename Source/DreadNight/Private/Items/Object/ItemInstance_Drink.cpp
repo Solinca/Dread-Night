@@ -1,5 +1,6 @@
 ﻿#include "Items/Object/ItemInstance_Drink.h"
 
+#include "Components/ConditionStateComponent.h"
 #include "Items/Data/DrinkDataAsset.h"
 
 FName UItemInstance_Drink::GetActionName()
@@ -9,6 +10,15 @@ FName UItemInstance_Drink::GetActionName()
 
 void UItemInstance_Drink::Use(AActor* Player)
 {
+	if (IsEmpty())
+		return;
+	
+	UConditionStateComponent* StateComponent = Player->GetComponentByClass<UConditionStateComponent>();
+	if (!StateComponent)
+		return;
+
+	StateComponent->AddHungerValue(DrinkDataAsset->ThirstRegenerationValue);
+	
 	StackNumber--;
 	OnItemStackChange.Broadcast(this, StackNumber);
 	DestroyIfEmpty();

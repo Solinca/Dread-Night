@@ -135,4 +135,10 @@ public:
 
 	UFUNCTION()
 	void UnequipHelmet();
+
+	UFUNCTION()
+	void SetupArmorComponent();
+
+	UFUNCTION()
+	void SetupSwordComponent();
 };
