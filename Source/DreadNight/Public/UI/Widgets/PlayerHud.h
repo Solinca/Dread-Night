@@ -4,6 +4,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerHud.generated.h"
 
+class UCompass;
 class UTextBlock;
 class UHorizontalBox;
 class USmartProgressBar;
@@ -41,6 +42,9 @@ protected:
 	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> InteractionText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCompass> PlayerCompass;
 
 public:
 	UFUNCTION(BlueprintCallable)

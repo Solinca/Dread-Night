@@ -84,6 +84,9 @@ private:
 	
 	UPROPERTY(Transient)
 	TObjectPtr<UPlayerHud> HUDWidget;
+	
+	UPROPERTY(Transient)
+	TObjectPtr<UMapWidget> MapWidget;
 
 	TArray<FStackedMenu> MenuStack;
 
@@ -91,6 +94,7 @@ private:
 
 	void UpdateGamePauseState();
 	
+	UPROPERTY(Transient)
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
 	
 #if WITH_EDITOR
@@ -139,6 +143,9 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void DisplayMenu(const FInputActionValue& Value);
+	
+	UFUNCTION(BlueprintCallable)
+	void DisplayMap(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintCallable)
 	void GoBackToPrecedentMenu(const FInputActionValue& Value);
