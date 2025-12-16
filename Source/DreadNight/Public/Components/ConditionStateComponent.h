@@ -12,8 +12,7 @@ enum class EConditionState : uint8
 {
 	NONE = 0,
 	HUNGRY = 1 << 0,  // 1
-	THIRSTY = 1 << 1, // 2
-	AFRAID = 1 << 2   // 4
+	AFRAID = 1 << 1   // 4
 };
 ENUM_CLASS_FLAGS(EConditionState)
 
@@ -32,16 +31,16 @@ protected:
 
 
 	/// <summary>
-	/// Combiner plusieurs états :
+	/// Combiner plusieurs ï¿½tats :
 	/// EConditionState State = EConditionState::HUNGRY | EConditionState::THIRSTY;
 	/// 
-	/// Vérifier si un état est présent :
+	/// Vï¿½rifier si un ï¿½tat est prï¿½sent :
 	/// bool bIsHungry = EnumHasAnyFlags(State, EConditionState::HUNGRY);
 	/// 
-	/// Ajouter un état :
+	/// Ajouter un ï¿½tat :
 	/// State |= EConditionState::AFRAID;
 	/// 
-	/// Retirer un état :
+	/// Retirer un ï¿½tat :
 	/// State &= ~EConditionState::THIRSTY;
 	/// </summary>
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
@@ -54,34 +53,13 @@ protected:
 	float HungerMaxValue = 100.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
-	float ThirstValue = 100.f;// 0 - 100 where 100 is NOT thirsty
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State", meta = (ClampMin = 1.f))
-	float ThirstMaxValue = 100.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
-	float SanityValue = 100.f;// 0 - 100 where 100 is NOT crazy
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State", meta = (ClampMin = 1.f))
-	float SanityMaxValue = 100.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
 	float DecreaseHungerRate = 0.1f;// in unit/s
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
-	float DecreaseThirstRate = 0.1f;// in unit/s
 
 public:
 
 
 	UPROPERTY(BlueprintAssignable)
 	FConditionStateChanged OnHungerChanged;
-
-	UPROPERTY(BlueprintAssignable)
-	FConditionStateChanged OnThirstChanged;
-
-	UPROPERTY(BlueprintAssignable)
-	FConditionStateChanged OnSanityChanged;
 
 
 	UFUNCTION()
@@ -90,28 +68,10 @@ public:
 	UFUNCTION()
 	void RemoveHungerValue(float amount);
 
-	UFUNCTION()
-	void AddThirstValue(float amount);
-
-	UFUNCTION()
-	void RemoveThirstValue(float amount);
-
-	UFUNCTION()
-	void AddSanityValue(float amount);
-
-	UFUNCTION()
-	void RemoveSanityValue(float amount);
-
-	UFUNCTION()
+ 	UFUNCTION()
 	void ClearStates();
 
 	UFUNCTION()
 	float GetHungerValueRatio();
 
-	UFUNCTION()
-	float GetThirstValueRatio();
-
-	UFUNCTION()
-	float GetSanityValueRatio();
-		
 };
