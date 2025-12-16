@@ -287,10 +287,12 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 	InventoryWidget->BindToInventory(MyPlayer->GetInventoryComponent());
 	InventoryWidget->BindTargetInventory(MyPlayer->GetHotbarInventoryComponent());
 	
+	float WidgetOffsetX = 35.f;
+	float WidgetOffsetY = 75.f;
 	FVector2D WindowSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
 	InventoryWidget->SetDesiredSizeInViewport(FVector2D(600,600));
-	InventoryWidget->SetPositionInViewport(FVector2D(WindowSize.X/2 - (InventoryWidget->GetInventoryWrapBox()->GetWrapSize() / 2) + 35,
-		WindowSize.Y/2 - (InventoryWidget->GetInventoryWrapBox()->GetWrapSize() / 2 ) + 75));
+	InventoryWidget->SetPositionInViewport(FVector2D(WindowSize.X / 2 - (InventoryWidget->GetInventoryWrapBox()->GetWrapSize() / 2) + WidgetOffsetX,
+											WindowSize.Y / 2 - (InventoryWidget->GetInventoryWrapBox()->GetWrapSize() / 2 ) + WidgetOffsetY));
 	
 	SetShowMouseCursor(true);
 
@@ -301,10 +303,12 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 			if (UInventory* TempInventory = Cast<UInventory>(InventoryWidget))
 			{
 				TempInventory->RemoveItemAction();
+				TempInventory->OnItemInfoRemoved();
 			}
 			if (UInventory* TempHotBar = Cast<UInventory>(HotbarInventoryWidget))
 			{
 				TempHotBar->RemoveItemAction();
+				TempHotBar->OnItemInfoRemoved();
 			}
 		});
 }
