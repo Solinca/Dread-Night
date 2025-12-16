@@ -1,7 +1,9 @@
 ﻿#include "IA/Characters/BaseAICharacter.h"
-
 #include "AIController.h"
 #include "Components/CapsuleComponent.h"
+#include "Data/Loot/LootData.h"
+#include "InventorySystem/InventoryComponent.h"
+#include "Items/Helper/ItemInstanceFactory.h"
 
 ABaseAICharacter::ABaseAICharacter()
 {
@@ -23,6 +25,7 @@ void ABaseAICharacter::BeginPlay()
 
 void ABaseAICharacter::OnDeath()
 {
+	DropLoot();
 	Destroy();
 }
 
@@ -71,6 +74,25 @@ void ABaseAICharacter::SetMonsterData(UMonsterDataAsset* Data)
 UMonsterDataAsset* ABaseAICharacter::GetMonsterData() const
 {
 	return UsedDataAsset;
+}
+
+void ABaseAICharacter::DropLoot() const
+{
+	float Random = FMath::RandRange(0.0f,100.f);
+	TArray<FLootData*> LootDatas;
+	UsedDataAsset->GetLootDataTable()->GetAllRows("" , LootDatas);
+	for (const auto& LootData : LootDatas)
+	{
+		if (Random < LootData->Percentage)
+		{
+			int RandomStack = FMath::RandRange(1,UsedDataAsset->GetMaxDroppedLootStack());
+			UInventoryComponent* InventoryComp;
+			InventoryComp = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UInventoryComponent>();
+			if (InventoryComp != nullptr)
+				InventoryComp->AddItem(FItemInstanceFactory::CreateItem(InventoryComp->GetOwner(),LootData->ItemDataAsset,RandomStack));
+			
+		}
+	}
 }
 
 void ABaseAICharacter::OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset)
