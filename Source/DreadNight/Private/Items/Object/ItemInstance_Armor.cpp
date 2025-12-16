@@ -7,10 +7,7 @@ FName UItemInstance_Armor::GetActionName()
 	return FName(TEXT("Equip"));
 }
 
-void UItemInstance_Armor::Use(AActor* Player)
-{
-	
-}
+ 
 
 UArmorDataAsset* UItemInstance_Armor::GetDataAsset()
 {

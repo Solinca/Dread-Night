@@ -13,7 +13,7 @@ class DREADNIGHT_API UItemInstance_Armor : public UItemInstance, public IUsableI
 {
 public:
 	virtual FName GetActionName() override;
-	virtual void Use(AActor* Player) override;
+	virtual void Use(AActor* Player) PURE_VIRTUAL(UItemInstance_Armor::Use);
 	UArmorDataAsset* GetDataAsset();
 
 private:

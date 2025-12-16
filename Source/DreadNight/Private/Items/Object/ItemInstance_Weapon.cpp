@@ -1,6 +1,7 @@
 ﻿#include "Items/Object/ItemInstance_Weapon.h"
 
 #include "Items/Data/WeaponDataAsset.h"
+#include "Components/SwordCombatComponent.h"
 
 FName UItemInstance_Weapon::GetActionName()
 {
@@ -9,6 +10,10 @@ FName UItemInstance_Weapon::GetActionName()
 
 void UItemInstance_Weapon::Use(AActor* Player)
 {
+	if (USwordCombatComponent* SwordComponent = Player->GetComponentByClass<USwordCombatComponent>())
+	{
+		SwordComponent->SetWeapon(WeaponDataAsset);
+	}
 }
 
 UWeaponDataAsset* UItemInstance_Weapon::GetDataAsset()
