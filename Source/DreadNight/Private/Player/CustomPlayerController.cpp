@@ -236,7 +236,6 @@ void ACustomPlayerController::Aim(const FInputActionValue& Value)
 {
 	if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
 	{
-		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Aiming");
 		MyPlayer->GetBowCombatComponent()->SetAiming(true);
 	}
 }
@@ -245,9 +244,7 @@ void ACustomPlayerController::StopAim(const FInputActionValue& Value)
 {
 	if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
 	{
-		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Stop Aiming");
-		if (PlayerData->StartingWeaponDataAsset->Type.GetTagName() == "Item.Weapon.Bow")
-			MyPlayer->GetBowCombatComponent()->SetAiming(false);
+		MyPlayer->GetBowCombatComponent()->SetAiming(false);
 	}
 }
 
