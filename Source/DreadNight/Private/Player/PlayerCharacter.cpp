@@ -37,6 +37,8 @@ APlayerCharacter::APlayerCharacter()
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>("InventoryComponent");
 	
 	HotbarInventoryComponent = CreateDefaultSubobject<UInventoryComponent>("HotbarInventoryComponent");
+
+	BowCombatComponent = CreateDefaultSubobject<UBowCombatComponent>("BowCombatComponent");
 }
 
 void APlayerCharacter::BeginPlay()
@@ -46,6 +48,7 @@ void APlayerCharacter::BeginPlay()
 	CurrentCapsuleHalfHeight = PlayerData->CapsuleMaxHalfHeight;
 	HotbarInventoryComponent->SetSize(GetHotbarInventoryComponent()->GetSize());
 	SetupSwordComponent();
+	SetupBowComponent();
 	SetupArmorComponent();
 
 	EquipWeapon(Cast<UItemInstance_Weapon>(UItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1)));
@@ -58,6 +61,11 @@ bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 	HealthComponent->RemoveHealth(Damage / ArmorComponent->GetTotalDmgReductionMultiplier());
 
 	return true;
+}
+
+UPlayerDataAsset* APlayerCharacter::GetData()
+{
+	return PlayerData;
 }
 
 bool APlayerCharacter::GetIsCrouching()
@@ -73,6 +81,11 @@ void APlayerCharacter::SetIsCrouching(bool value)
 bool APlayerCharacter::GetIsSprinting()
 {
 	return bIsSprinting;
+}
+
+bool APlayerCharacter::GetCanShoot()
+{
+	return BowCombatComponent->CanShoot();
 }
 
 void APlayerCharacter::SetIsSprinting(bool value)
@@ -105,6 +118,11 @@ void APlayerCharacter::UpdateCrouching(float deltatime)
 			SetCurentCapsuleHalfHeight(FMath::FInterpTo(CurrentCapsuleHalfHeight, PlayerData->CapsuleMaxHalfHeight, deltatime, PlayerData->LerpCrouchSpeed));
 		}
 	}
+}
+
+UCameraComponent* APlayerCharacter::GetCamera()
+{
+	return Camera;
 }
 
 UStaminaComponent* APlayerCharacter::GetStaminaComponent()
@@ -149,8 +167,13 @@ UInventoryComponent* APlayerCharacter::GetHotbarInventoryComponent()
 
 void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 {
-
-    SwordCombatComponent->SetWeapon(Weapon->GetDataAsset());
+	if (Weapon != nullptr)
+	{
+		if (Weapon->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Sword"))
+			SwordCombatComponent->SetWeapon(Weapon->GetDataAsset());
+		else if (Weapon->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow"))
+			BowCombatComponent->SetWeapon(Weapon->GetDataAsset());
+	}
 }
 
 void APlayerCharacter::EquipArmor(UItemInstance_Armor* Armor)
@@ -184,4 +207,26 @@ void APlayerCharacter::SetupSwordComponent()
 	CurrentWeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
 
 	SwordCombatComponent->SetComponentMesh(CurrentWeaponMesh);
+}
+
+void APlayerCharacter::SetupBowComponent()
+{
+	CurrentWeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->SecondaryHandSocketName);
+
+	BowCombatComponent->SetComponentMesh(CurrentWeaponMesh);
+}
+
+FName APlayerCharacter::GetEquippedObjectTag()
+{
+	return EquippedObjectTag;
+}
+
+void APlayerCharacter::SetEquippedObjectTag(FName NewTag)
+{
+	EquippedObjectTag = NewTag;
+}
+
+UBowCombatComponent* APlayerCharacter::GetBowCombatComponent()
+{
+	return BowCombatComponent;
 }
