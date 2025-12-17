@@ -596,3 +596,23 @@ void ACustomPlayerController::BindUIEvents()
 	MyPlayer->GetManaComponent()->OnManaChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateManaBar);
 	MyPlayer->GetConditionStateComponent()->OnHungerChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateHungerRadialBarImage);
 }
+
+void ACustomPlayerController::AddPlayerUIToViewport()
+{
+	SetInputMode(FInputModeGameOnly());
+
+	if (PlayerData->HotbarInventoryWidgetClass)
+	{
+		HotbarInventoryWidget = CreateWidget<UInventory>(this, PlayerData->HotbarInventoryWidgetClass);
+		HotbarInventoryWidget->BindToInventory(MyPlayer->GetHotbarInventoryComponent());
+		HotbarInventoryWidget->BindTargetInventory(MyPlayer->GetInventoryComponent());
+		HotbarInventoryWidget->AddToViewport();
+	}
+
+	HUDWidget = CreateWidget<UPlayerHud>(this, PlayerData->PlayerHudClass);
+	if (HUDWidget)
+	{
+		HUDWidget->AddToViewport();
+		BindUIEvents();
+	}
+}
