@@ -1,7 +1,6 @@
 #include "Components/BowCombatComponent.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
-#include "Player/PlayerCharacter.h"
 
 UBowCombatComponent::UBowCombatComponent()
 {
@@ -22,7 +21,7 @@ void UBowCombatComponent::SetAiming(bool bAiming)
 
 	// (optionnel) activer un zoom caméra, FOV changes, etc.
 
-	if (bIsAiming && PlayerData->StartingWeaponDataAsset->Type.GetTagName() == "Item.Weapon.Bow")
+	if (bIsAiming)
 	{
 		SpawnArrow();
 		return;
@@ -42,17 +41,7 @@ void UBowCombatComponent::Shoot()
 	if (!CurrentArrow.IsValid())
 		return;
 	CurrentArrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	CurrentArrow->GetMesh()->SetCollisionProfileName("Arrow");
-	UProjectileMovementComponent* ProjectileComp = CurrentArrow->GetProjectileMovementComponent();
-	if (ProjectileComp)
-	{
-		APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
-		FVector Direction = (Player->GetCamera()->GetComponentLocation() + Player->GetCamera()->GetForwardVector() * 1000.f) - CurrentArrow->GetActorLocation();
-		Direction.Normalize();
-		ProjectileComp->Velocity = Direction * ProjectileComp->InitialSpeed;
-		ProjectileComp->Activate();
-	}
-	CurrentArrow->SetHasBeenShot(true);
+	CurrentArrow->GetProjectileMovementComponent()->Activate();
 	CurrentArrow = nullptr;
 	bCanShoot = false;
 
@@ -66,16 +55,6 @@ void UBowCombatComponent::Shoot()
 	);
 }
 
-bool UBowCombatComponent::CanShoot()
-{
-	return bCanShoot;
-}
-
-bool UBowCombatComponent::IsAiming()
-{
-	return bIsAiming;
-}
-
 void UBowCombatComponent::SpawnArrow()
 {
 	AActor* Owner = GetOwner();
@@ -87,10 +66,10 @@ void UBowCombatComponent::SpawnArrow()
 	USkeletalMeshComponent* MeshComp = Owner->FindComponentByClass<USkeletalMeshComponent>();
 	if (!MeshComp)
 		return;
-	SpawnLocation = MeshComp->GetSocketLocation(PlayerData->ArrowSocketName);
-	SpawnRotation = Owner->GetActorRotation();
+	FName HandSocketName = TEXT("hand_rSocket"); //test avec un socket que j'ai ajouté au mannequin unreal, c'était temporaire, faudra ajuster ça avec notre perso
+	SpawnLocation = MeshComp->GetSocketLocation(HandSocketName);
+	SpawnRotation = MeshComp->GetSocketRotation(HandSocketName);
 	FActorSpawnParameters Params;
-	Params.Instigator = Cast<APawn>(Owner);
 	CurrentArrow = GetWorld()->SpawnActor<AProjectileActor>(
 		ArrowProjectileClass,
 		SpawnLocation,
@@ -102,31 +81,12 @@ void UBowCombatComponent::SpawnArrow()
 	CurrentArrow->GetProjectileMovementComponent()->Deactivate();
 	CurrentArrow->AttachToComponent(
 		MeshComp,
-		FAttachmentTransformRules::KeepWorldTransform,
-		PlayerData->ArrowSocketName
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		HandSocketName
 	);
 }
 
 void UBowCombatComponent::ResetShot()
 {
 	bCanShoot = true;
-}
-
-void UBowCombatComponent::SetComponentMesh(UStaticMeshComponent* Mesh)
-{
-	CurrentStaticMesh = Mesh;
-}
-
-void UBowCombatComponent::SetWeapon(UWeaponDataAsset* Weapon)
-{
-	CurrentWeapon = Weapon;
-	if (CurrentStaticMesh)
-	{
-		CurrentStaticMesh->SetStaticMesh(Weapon->WeaponMesh);
-
-		APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
-
-		Player->SetEquippedObjectTag(Weapon->Type.GetTagName());
-		CurrentStaticMesh->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Player->GetData()->SecondaryHandSocketName);
-	}
 }

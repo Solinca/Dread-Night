@@ -234,54 +234,20 @@ void ACustomPlayerController::UpdateObjectPlacement()
 
 void ACustomPlayerController::Aim(const FInputActionValue& Value)
 {
-	if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
-	{
-		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Aiming");
-		MyPlayer->GetBowCombatComponent()->SetAiming(true);
-	}
-}
-
-void ACustomPlayerController::StopAim(const FInputActionValue& Value)
-{
-	if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
-	{
-		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Stop Aiming");
-		if (PlayerData->StartingWeaponDataAsset->Type.GetTagName() == "Item.Weapon.Bow")
-			MyPlayer->GetBowCombatComponent()->SetAiming(false);
-	}
+	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Aiming");
 }
 
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
 {
 	USwordCombatComponent* SwordCombatComponent = MyPlayer->GetSwordCombatComponent();
 	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
-	UBowCombatComponent* BowCombatComponent = MyPlayer->GetBowCombatComponent();
 
-	bool AttackExecuted = false;
-
-	if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Sword"))
+	if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
 	{
-		if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
-		{
-			SwordCombatComponent->Attack();
-			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
+		SwordCombatComponent->Attack();
 
-			AttackExecuted = true;
-		}
-	}
-	else if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
-	{
-		if (BowCombatComponent->IsAiming() && BowCombatComponent->CanShoot() && StaminaComponent->GetCurrentStamina() > 0.f)
-		{
-			BowCombatComponent->Shoot();
-			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
+		StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 
-			AttackExecuted = true;
-		}
-	}
-
-	if (AttackExecuted)
-	{
 		StaminaComponent->SetCanRegen(false);
 
 		// START REGEN STAMINA

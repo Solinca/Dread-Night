@@ -15,7 +15,6 @@
 #include "Items/Data/WeaponDataAsset.h"
 #include "Items/Data/ArmorDataAsset.h"
 #include "Data/Player/PlayerDataAsset.h"
-#include "Components/BowCombatComponent.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -77,17 +76,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UPlayerDataAsset> PlayerData;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	TObjectPtr<UBowCombatComponent> BowCombatComponent;
-
-	UPROPERTY(BlueprintReadOnly)
-	FName EquippedObjectTag;
-
 public:
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
-
-	UFUNCTION()
-	UPlayerDataAsset* GetData();
 
 	UFUNCTION()
 	bool GetIsCrouching();
@@ -97,9 +87,6 @@ public:
 
 	UFUNCTION()
 	bool GetIsSprinting();
-
-	UFUNCTION(BlueprintCallable)
-	bool GetCanShoot();
 
 	UFUNCTION()
 	void SetIsSprinting(bool value);
@@ -112,9 +99,6 @@ public:
 
 	UFUNCTION()
 	void UpdateCrouching(float deltatime);
-
-	UFUNCTION()
-	UCameraComponent* GetCamera();
 
 	UFUNCTION()
 	UStaminaComponent* GetStaminaComponent();
@@ -139,9 +123,6 @@ public:
 	
 	UFUNCTION()
 	UInventoryComponent* GetHotbarInventoryComponent();
-
-	UFUNCTION()
-	UBowCombatComponent* GetBowCombatComponent();
 	
 	UFUNCTION()
 	void EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon);
@@ -160,13 +141,4 @@ public:
 
 	UFUNCTION()
 	void SetupSwordComponent();
-
-	UFUNCTION()
-	void SetupBowComponent();
-
-	UFUNCTION()
-	FName GetEquippedObjectTag();
-
-	UFUNCTION()
-	void SetEquippedObjectTag(FName NewTag);
 };

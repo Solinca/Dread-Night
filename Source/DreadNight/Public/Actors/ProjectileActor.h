@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Data/Projectiles/ProjectileDataAsset.h"
 #include "ProjectileActor.generated.h"
 
 UCLASS(Blueprintable, BlueprintType, Category = "Projectile", ClassGroup = "Projectile")
@@ -18,25 +17,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	TObjectPtr<UProjectileDataAsset> ProjectileData;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bHasBeenShot = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variable", meta = (ClampMin = 0.f))
+	float Damage{0.f};
 public:	
 	AProjectileActor();
 
 	UProjectileMovementComponent* GetProjectileMovementComponent() const;
 
-	UStaticMeshComponent* GetMesh();
-
 	void SetDamage(float NewDamage);
 
 	float GetDamage() const;
-
-	bool GetHasBeenShot();
-
-	void SetHasBeenShot(bool Bool);
 protected:
 	virtual void BeginPlay() override;
 	
