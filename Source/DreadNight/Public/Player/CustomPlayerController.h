@@ -277,4 +277,6 @@ private:
 
 	void BindUIEvents();
 
+	UFUNCTION()
+	void AddPlayerUIToViewport();
 };
