@@ -82,6 +82,9 @@ private:
 	TObjectPtr<UInventory> HotbarInventoryWidget;
 
 	UPROPERTY(Transient)
+	TObjectPtr<UInventory> OtherInventoryWidget;
+	
+	UPROPERTY(Transient)
 	TObjectPtr<UOptionsWidget> OptionsWidget;
 	
 	UPROPERTY(Transient)
@@ -90,7 +93,6 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UGlossary> GlossaryWidget;
 
-	
 	UPROPERTY(Transient)
 	TObjectPtr<UMapWidget> MapWidget;
 
@@ -148,6 +150,9 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void DisplayInventory(const FInputActionValue& Value);
 
+	UFUNCTION(BlueprintCallable)
+	void DisplayOtherInventory(UInventoryComponent* OtherInventory);
+	
 	UFUNCTION(BlueprintCallable)
 	void DisplayGlossary(const FInputActionValue& Value);
 
