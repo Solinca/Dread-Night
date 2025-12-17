@@ -7,9 +7,7 @@ ARotativeBladeTrap::ARotativeBladeTrap()
 	RotatingComponent = CreateDefaultSubobject<URotatingMovementComponent>("RotatingComponent");
 
 	RotatingComponent->Deactivate();
-
 }
-
 
 void ARotativeBladeTrap::BeginPlay()
 {
@@ -20,7 +18,6 @@ void ARotativeBladeTrap::BeginPlay()
 	MeshComp->SetCollisionProfileName("Trap");
 
 	RotatingComponent->RotationRate = FRotator(0.f, TrapData->RotationSpeed, 0.f);
-
 
 	MeshComp->OnComponentBeginOverlap.AddDynamic(this, &ARotativeBladeTrap::OnBladeBeginOverlap);
 }
@@ -41,6 +38,11 @@ void ARotativeBladeTrap::Tick(float DeltaTime)
 
 void ARotativeBladeTrap::OnBladeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (!bIsPlaced)
+	{
+		return;
+	}
+
 	if (ABaseAICharacter * BaseAICharacter{ Cast<ABaseAICharacter>(OtherActor) })
 	{
 		BaseAICharacter->TryApplyDamage(TrapData->TrapDamage, this);

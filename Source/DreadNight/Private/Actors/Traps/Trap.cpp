@@ -6,8 +6,6 @@ ATrap::ATrap()
 
 	TrapCollisionComponent = CreateDefaultSubobject<UBoxComponent>("Trap Collision Component");
 
-	TrapCollisionComponent->SetCollisionProfileName("Trap");
-
 	TrapCollisionComponent->SetupAttachment(RootComponent);
 }
 
@@ -25,9 +23,25 @@ void ATrap::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	GetWorldTimerManager().ClearAllTimersForObject(this);
 }
 
-void ATrap::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-							UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ATrap::PlaceBuilding()
 {
+	if (bIsPlaced || !CheckValidPlacement())
+	{
+		return;
+	}
+
+	bIsPlaced = true;
+
+	TrapCollisionComponent->SetCollisionProfileName("Trap");
+}
+
+void ATrap::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!bIsPlaced)
+	{
+		return;
+	}
+
 	ABaseAICharacter* BaseAICharacter{ Cast<ABaseAICharacter>(OtherActor) };
 
 	if (!TimerHandle_LifeSpanExpired.IsValid() && BaseAICharacter)
@@ -35,6 +49,7 @@ void ATrap::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		SetLifeSpan(TrapData->TrapLifeSpan);
 
 		FTimerHandle TickTimerHandle;
+
 		GetWorldTimerManager().SetTimer(TickTimerHandle, this, &ATrap::OnTrapTick, PrimaryActorTick.TickInterval, true);
 
 		bIsActive = true;

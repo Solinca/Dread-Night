@@ -30,6 +30,8 @@ protected:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	virtual void PlaceBuilding() override;
+
 	virtual void OnTrapTick() {}
 private:
 	UFUNCTION()
