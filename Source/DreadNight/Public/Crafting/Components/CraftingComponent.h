@@ -28,7 +28,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parameters")
-	ECraftMethod CraftMethod;
+	ECraftMethod CraftMethod = ECraftMethod::Basic;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Links")
 	TSubclassOf<UGlossary> CraftingWidgetClass = nullptr;
