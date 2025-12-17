@@ -14,5 +14,5 @@ class DREADNIGHT_API UCraftingFunctionLibrary : public UBlueprintFunctionLibrary
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	static TArray<class UCraftingRecipeItem*> ConvertDataTableToRecipeItems(UDataTable* DataTable);
+	static TArray<class URecipeItem*> ConvertDataTableToRecipeItems(UDataTable* DataTable);
 };

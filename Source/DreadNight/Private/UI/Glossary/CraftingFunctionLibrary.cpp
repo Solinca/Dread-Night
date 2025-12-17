@@ -1,11 +1,11 @@
 
 #include "UI/Glossary/CraftingFunctionLibrary.h"
 
-#include "UI/Glossary/CraftingRecipeItem.h"
+#include "Crafting/Data/Recipe.h"
 
-TArray<UCraftingRecipeItem*> UCraftingFunctionLibrary::ConvertDataTableToRecipeItems(UDataTable* DataTable)
+TArray<URecipeItem*> UCraftingFunctionLibrary::ConvertDataTableToRecipeItems(UDataTable* DataTable)
 {
-	TArray<UCraftingRecipeItem*> ResultItems;
+	TArray<URecipeItem*> ResultItems;
 
 	if (!DataTable)
 	{
@@ -16,9 +16,9 @@ TArray<UCraftingRecipeItem*> UCraftingFunctionLibrary::ConvertDataTableToRecipeI
 
 	for (const FName& RowName : DataTable->GetRowNames())
 	{
-		if (const FCraftingRecipe* RowData = DataTable->FindRow<FCraftingRecipe>(RowName, ContextString))
+		if (const FRecipe* RowData = DataTable->FindRow<FRecipe>(RowName, ContextString))
 		{
-			UCraftingRecipeItem* NewItem = NewObject<UCraftingRecipeItem>();
+			URecipeItem* NewItem = NewObject<URecipeItem>();
             
 			NewItem->RecipeData = *RowData;
 			NewItem->RowName = RowName;

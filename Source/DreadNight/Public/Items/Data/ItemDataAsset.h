@@ -12,21 +12,21 @@ class DREADNIGHT_API UItemDataAsset : public UDataAsset
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, meta=(Categories="Item"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Categories="Item"))
 	FGameplayTag Type;
 
-	UPROPERTY(EditAnywhere, meta=(Categories="Rarity"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Categories="Rarity"))
 	FGameplayTag Rarity;
 	
-	UPROPERTY(EditAnywhere, meta=(ClampMin = 1))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin = 1))
 	int StackLimit = 1;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName ItemName;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UTexture2D> ItemIcon;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AActor> ItemClass;
 };

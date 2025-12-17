@@ -6,30 +6,6 @@
 
 
 
-void UCraftingComponent::OnCraft(FRecipe* Recipe)
-{
-
-	Craft(Recipe, User->GetComponentByClass<UInventoryComponent>());
-
-}
-
-
-
-void UCraftingComponent::OpenGUI(AActor* Caller)
-{
-
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Open GUI");
-
-	User = Caller;
-
-	//CraftingWidget = CreateWidget<UCraftingWidget>(this, CraftingWidgetClass);
-
-	//CraftingWidget->AddToViewport();
-
-}
-
-
-
 UCraftingComponent::UCraftingComponent()
 {
 
@@ -65,6 +41,6 @@ void UCraftingComponent::Craft(FRecipe* Recipe, TObjectPtr<UInventoryComponent> 
 
 	}
 
-	Inventory->AddItem(FItemInstanceFactory::CreateItem(this, Recipe->TargetItem, 1));
+	Inventory->AddItem(UItemInstanceFactory::CreateItem(this, Recipe->TargetItem, 1));
 
 }

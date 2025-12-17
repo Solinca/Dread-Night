@@ -35,6 +35,8 @@ public:
 	virtual FText GetInteractionPromptText_Implementation() override;
 	// End IInteractable Interface
 
+	UCraftingComponent* GetCraftingComponent() const { return CraftingComponent; }
+
 protected:
 
 	ACraftingActor();

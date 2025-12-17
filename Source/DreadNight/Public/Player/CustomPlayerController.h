@@ -15,6 +15,7 @@ class UPlayerHud;
 class UPauseMenu;
 class UOptionsWidget;
 class UInventory;
+class UGlossary;
 class ABuilding;
 
 USTRUCT(BlueprintType)
@@ -85,6 +86,10 @@ private:
 	
 	UPROPERTY(Transient)
 	TObjectPtr<UPlayerHud> HUDWidget;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UGlossary> GlossaryWidget;
+
 	
 	UPROPERTY(Transient)
 	TObjectPtr<UMapWidget> MapWidget;
