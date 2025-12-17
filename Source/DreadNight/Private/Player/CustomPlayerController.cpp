@@ -59,7 +59,7 @@ void ACustomPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateCrouching(DeltaTime);
-	//UpdateObjectPlacement();
+	UpdateObjectPlacement();
 }
 
 void ACustomPlayerController::SetupInputComponent()
@@ -255,39 +255,41 @@ void ACustomPlayerController::Attack(const FInputActionValue& Value)
 	UBowCombatComponent* BowCombatComponent = MyPlayer->GetBowCombatComponent();
 
 	bool AttackExecuted = false;
-
-	if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Sword"))
+	if (!CreatedBuilding)
 	{
-		if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
+		if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Sword"))
 		{
-			SwordCombatComponent->Attack();
-			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
+			if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
+			{
+				SwordCombatComponent->Attack();
+				StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 
-			AttackExecuted = true;
+				AttackExecuted = true;
+			}
 		}
-	}
-	else if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
-	{
-		if (BowCombatComponent->IsAiming() && BowCombatComponent->CanShoot() && StaminaComponent->GetCurrentStamina() > 0.f)
+		else if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
 		{
-			BowCombatComponent->Shoot();
-			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
+			if (BowCombatComponent->IsAiming() && BowCombatComponent->CanShoot() && StaminaComponent->GetCurrentStamina() > 0.f)
+			{
+				BowCombatComponent->Shoot();
+				StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 
-			AttackExecuted = true;
+				AttackExecuted = true;
+			}
 		}
-	}
 
-	if (AttackExecuted)
-	{
-		StaminaComponent->SetCanRegen(false);
+		if (AttackExecuted)
+		{
+			StaminaComponent->SetCanRegen(false);
 
-		// START REGEN STAMINA
-		GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
-			[=] {StaminaComponent->SetCanRegen(true); },
-			StaminaComponent->GetRegenCoolDown(), false
-		);
+			// START REGEN STAMINA
+			GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
+				[=] {StaminaComponent->SetCanRegen(true); },
+				StaminaComponent->GetRegenCoolDown(), false
+			);
 
-		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
+			MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
+		}
 	}
 }
 
@@ -469,24 +471,9 @@ void ACustomPlayerController::PlaceObject(const FInputActionValue& Value)
 		{
 			CreatedBuilding->PlaceBuilding();
 			CreatedBuildings.Add(CreatedBuilding);
-		}
-		else
-		{
-			return;
+			CreatedBuilding = nullptr;
 		}
 	}
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	CreatedBuilding = GetWorld()->SpawnActor<ABuilding>(
-		DebugBuilding,
-		PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange),
-		FRotator::ZeroRotator,
-		SpawnParams
-	);
-
-	ObjectPlacementQueryParams.AddIgnoredActor(CreatedBuilding);
 }
 
 void ACustomPlayerController::RotateObject(const FInputActionValue& Value)
@@ -633,4 +620,19 @@ void ACustomPlayerController::AddPlayerUIToViewport()
 		HUDWidget->AddToViewport();
 		BindUIEvents();
 	}
+}
+
+void ACustomPlayerController::CreateBuilding(TSubclassOf<ABuilding> BuildingClass)
+{
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	CreatedBuilding = GetWorld()->SpawnActor<ABuilding>(
+		BuildingClass,
+		PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange),
+		FRotator::ZeroRotator,
+		SpawnParams
+	);
+
+	ObjectPlacementQueryParams.AddIgnoredActor(CreatedBuilding);
 }

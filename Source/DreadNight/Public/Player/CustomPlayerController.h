@@ -186,10 +186,10 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void RotateObject(const FInputActionValue& Value);
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<ABuilding> DebugBuilding;
-
+	UPROPERTY()
 	TArray<AActor*> CreatedBuildings;
+	
+	UPROPERTY()
 	ABuilding* CreatedBuilding = nullptr;
 
 	UPROPERTY(EditAnywhere)
@@ -287,4 +287,8 @@ private:
 
 	UFUNCTION()
 	void AddPlayerUIToViewport();
+	
+public:
+	
+	void CreateBuilding(TSubclassOf<ABuilding> BuildingClass);
 };

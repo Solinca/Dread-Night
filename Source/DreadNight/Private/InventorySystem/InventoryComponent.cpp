@@ -137,7 +137,6 @@ void UInventoryComponent::DropItems(int SlotIndex, int Amount = 1)
 	{
 		if (!Items[SlotIndex]->IsEmpty())
 		{
-			GetWorld()->SpawnActor<AActor>(Items[SlotIndex]->GetDataAsset()->ItemClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
 			Items[SlotIndex]->TryRemove(1);
 			OnItemModified.Broadcast(Items[SlotIndex], SlotIndex);
 		}

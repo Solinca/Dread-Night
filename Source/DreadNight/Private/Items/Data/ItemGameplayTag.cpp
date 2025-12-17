@@ -10,6 +10,7 @@ UE_DEFINE_GAMEPLAY_TAG(GT_Item_Armor, "Item.Armor")
 UE_DEFINE_GAMEPLAY_TAG(GT_Item_Armor_Chest, "Item.Armor.Chest")
 UE_DEFINE_GAMEPLAY_TAG(GT_Item_Armor_Helmet, "Item.Armor.Helmet")
 UE_DEFINE_GAMEPLAY_TAG(GT_Item_Food, "Item.Food")
+UE_DEFINE_GAMEPLAY_TAG(GT_Item_Building, "Item.Building")
 
 
 UE_DEFINE_GAMEPLAY_TAG(GT_Rarity, "Rarity")
