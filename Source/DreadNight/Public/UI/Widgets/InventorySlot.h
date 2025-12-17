@@ -50,7 +50,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void SetStackText(int Stack);
 	UFUNCTION(BlueprintCallable)
-	void SetImageColor(const FLinearColor& Color);
+	virtual void SetImageColor(const FLinearColor& Color);
 	
 	UFUNCTION(BlueprintCallable)
 	int GetSlotIndex() const { return SlotIndex; }

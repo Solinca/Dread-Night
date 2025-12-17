@@ -18,16 +18,12 @@ protected:
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UButton> TransferButton;
 	UPROPERTY(meta =(BindWidgetOptional))
-	TObjectPtr<UButton> DropButton;
-	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UButton> RemoveButton;
 	
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UTextBlock> UseText;
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UTextBlock> TransferText;
-	UPROPERTY(meta =(BindWidgetOptional))
-	TObjectPtr<UTextBlock> DropText;
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UTextBlock> RemoveText;
 	
@@ -50,11 +46,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnTransferPressed();
 	UFUNCTION(BlueprintCallable)
-	void OnDropPressed();
-	UFUNCTION(BlueprintCallable)
 	void OnRemovePressed();
-	UFUNCTION()
-	void OnDropAmountSelected(int Amount);
 	UFUNCTION()
 	void OnRemoveAmountSelected(int Amount);
 	
@@ -62,11 +54,9 @@ public:
 	void SetSlotIndex(int Index) { SlotIndex = Index; }
 	TObjectPtr<UButton> GetUseButton() const { return UseButton; }
 	TObjectPtr<UButton> GetTransferButton() const { return TransferButton; }
-	TObjectPtr<UButton> GetDropButton() const { return DropButton; }
 	TObjectKey<UButton> GetRemoveButton() const { return RemoveButton; }
 	TObjectPtr<UTextBlock> GetUseText() const { return UseText; }
 	TObjectPtr<UTextBlock> GetTransferText() const { return TransferText; }
-	TObjectPtr<UTextBlock> GetDropText() const { return DropText; }
 	TObjectPtr<UTextBlock> GetRemoveText() const { return RemoveText; }
 	
 	TObjectPtr<UInventoryComponent> InventoryComponent;

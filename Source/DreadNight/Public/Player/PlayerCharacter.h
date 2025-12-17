@@ -82,6 +82,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	FName EquippedObjectTag;
+	
+	
 
 public:
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;

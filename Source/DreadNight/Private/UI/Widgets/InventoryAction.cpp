@@ -11,7 +11,6 @@ void UInventoryAction::NativeConstruct()
 	
 	UseButton->OnClicked.AddDynamic(this, &UInventoryAction::OnUsePressed);
 	TransferButton->OnClicked.AddDynamic(this, &UInventoryAction::OnTransferPressed);
-	DropButton->OnClicked.AddDynamic(this, &UInventoryAction::OnDropPressed);
 	RemoveButton->OnClicked.AddDynamic(this, &UInventoryAction::OnRemovePressed);
 }
 
@@ -49,28 +48,6 @@ void UInventoryAction::OnTransferPressed()
 	RemoveFromParent();
 }
 
-void UInventoryAction::OnDropPressed()
-{
-	if (UItemInstance* Item = InventoryComponent->GetItemAtSlot(SlotIndex))
-	{
-		if (Item->GetStackNumber() == 1)
-		{
-			InventoryComponent->DropItems(SlotIndex, 1);
-			RemoveFromParent();
-			return;
-		}
-		
-		if (!InventorySliderWidgetClass)
-			return;
-	
-		InventorySlider = CreateWidget<UInventorySlider>(this, InventorySliderWidgetClass);
-		InventorySlider->SetupSlider(Item->GetStackNumber());
-		InventorySlider->OnSliderValidated.AddDynamic(this, &UInventoryAction::OnDropAmountSelected);
-		InventorySlider->AddToViewport();
-		RemoveFromParent();
-	}
-}
-
 void UInventoryAction::OnRemovePressed()
 {
 	if (UItemInstance* Item = InventoryComponent->GetItemAtSlot(SlotIndex))
@@ -90,14 +67,6 @@ void UInventoryAction::OnRemovePressed()
 		InventorySlider->OnSliderValidated.AddDynamic(this, &UInventoryAction::OnRemoveAmountSelected);
 		InventorySlider->AddToViewport();
 		RemoveFromParent();
-	}
-}
-
-void UInventoryAction::OnDropAmountSelected(int Amount)
-{
-	if (Amount)
-	{
-		InventoryComponent->DropItems(SlotIndex, Amount);
 	}
 }
 
