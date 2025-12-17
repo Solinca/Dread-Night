@@ -1,6 +1,4 @@
 #include "UI/Widgets/Inventory.h"
-
-#include "IDetailTreeNode.h"
 #include "Items/Data/ItemDataAsset.h"
 #include "Items/Data/ItemGameplayTag.h"
 #include "Blueprint/WidgetLayoutLibrary.h"

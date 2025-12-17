@@ -62,6 +62,7 @@ void AWorldGenerator::GenerateWorld()
 	}
 }
 
+#if WITH_EDITOR
 void AWorldGenerator::CleanUp()
 {
 	for (auto Element : PCG_Array)
@@ -78,3 +79,4 @@ void AWorldGenerator::Generate()
 	}
 }
 
+#endif

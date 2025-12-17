@@ -2,7 +2,6 @@
 #include "Subsystems/World/DayCycleSubSystem.h"
 #include "Global/BaseLevelWorldSettings.h"
 #include "Kismet/GameplayStatics.h"
-#include "AssetTypeActions/AssetDefinition_SoundBase.h"
 #include "Data/Wave/WaveSystemDataAsset.h"
 #include "Data/DayCycleSystem/DayCycleSystemDataAsset.h"
 
