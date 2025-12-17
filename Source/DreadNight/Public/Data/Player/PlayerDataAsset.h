@@ -4,6 +4,7 @@
 #include "Engine/DataAsset.h"
 #include "UI/Widgets/PauseMenu.h"
 #include "UI/Widgets/Inventory.h"
+#include "UI/Widgets/InventoryBackground.h"
 #include "UserWidgets/OptionsWidget.h"
 #include "PlayerDataAsset.generated.h"
 
@@ -101,6 +102,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UInventory> HotbarInventoryWidgetClass;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UInventoryBackground> OtherInventoryBackgroundWidgetClass;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UPlayerHud> PlayerHudClass;

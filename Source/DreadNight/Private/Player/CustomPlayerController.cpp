@@ -8,12 +8,14 @@
 #include "UserWidgets/OptionsWidget.h"
 #include "UI/Widgets/PlayerHud.h"
 #include "Actors/Building.h"
-#include "Actors/BuildingStation.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
+#include "Actors/BuildingStation.h"
 #include "GameFramework/Actor.h"
 #include "UI/Widgets/Map/MapWidget.h"
 #include "InteractableSystem/Subsystems/InteractableSubsystem.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "Buildings/Chest.h"
 #include "UI/Widgets/Glossary.h"
 
 void ACustomPlayerController::BeginPlay()
@@ -40,8 +42,7 @@ void ACustomPlayerController::BeginPlay()
 	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = PlayerData->CrouchMoveSpeed;
 
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
-
-
+	
 	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
 
 	PlayerCameraManager->ViewPitchMax = PlayerData->ViewPitch.Y;
@@ -58,7 +59,7 @@ void ACustomPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateCrouching(DeltaTime);
-	UpdateObjectPlacement();
+	//UpdateObjectPlacement();
 }
 
 void ACustomPlayerController::SetupInputComponent()
@@ -267,16 +268,18 @@ void ACustomPlayerController::Interact(const FInputActionValue& Value)
 
 	if (Subsystem->TryInteract())
 	{
-
 		Subsystem->RequestInteraction(Subsystem->GetLastFocusedActor(), MyPlayer);
-
-		ABuildingStation* Crafting = Cast<ABuildingStation>(Subsystem->GetLastFocusedActor());
-
-		GlossaryWidget = CreateWidget<UGlossary>(this, Crafting->GetCraftingComponent()->GetWidget());
-
-		PushNewMenu(GlossaryWidget, false);
+		
+		if (ABuildingStation* Crafting = Cast<ABuildingStation>(Subsystem->GetLastFocusedActor()))
+		{
+			GlossaryWidget = CreateWidget<UGlossary>(this, Crafting->GetCraftingComponent()->GetWidget());
+			PushNewMenu(GlossaryWidget, false);
+		}
+		if (AChest* Chest = Cast<AChest>(Subsystem->GetLastFocusedActor()))
+		{
+			DisplayOtherInventory(Chest->GetComponentByClass<UInventoryComponent>());
+		}
 	}
-
 }
 
 void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
@@ -288,13 +291,12 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 	InventoryWidget->BindToInventory(MyPlayer->GetInventoryComponent());
 	InventoryWidget->BindTargetInventory(MyPlayer->GetHotbarInventoryComponent());
 	
+	FVector2D WindowSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
 	float WidgetOffsetX = 35.f;
 	float WidgetOffsetY = 75.f;
-	FVector2D WindowSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
 	InventoryWidget->SetDesiredSizeInViewport(FVector2D(600,600));
 	InventoryWidget->SetPositionInViewport(FVector2D(WindowSize.X / 2 - (InventoryWidget->GetInventoryWrapBox()->GetWrapSize() / 2) + WidgetOffsetX,
 											WindowSize.Y / 2 - (InventoryWidget->GetInventoryWrapBox()->GetWrapSize() / 2 ) + WidgetOffsetY));
-	
 	SetShowMouseCursor(true);
 
 	PushNewMenu(InventoryWidget, false, [this]
@@ -312,6 +314,45 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 				TempHotBar->OnItemInfoRemoved();
 			}
 		});
+}
+
+void ACustomPlayerController::DisplayOtherInventory(UInventoryComponent* OtherInventory)
+{
+	if (!PlayerData->InventoryWidgetClass)
+		return;
+	
+	TObjectPtr<UInventoryBackground> BackgroundWidget = CreateWidget<UInventoryBackground>(this, PlayerData->OtherInventoryBackgroundWidgetClass);
+	
+	InventoryWidget = CreateWidget<UInventory>(this, PlayerData->InventoryWidgetClass);
+	InventoryWidget->BindToInventory(MyPlayer->GetInventoryComponent());
+	InventoryWidget->BindTargetInventory(OtherInventory);
+	
+	OtherInventoryWidget = CreateWidget<UInventory>(this, PlayerData->InventoryWidgetClass);
+	OtherInventoryWidget->BindToInventory(OtherInventory);
+	OtherInventoryWidget->BindTargetInventory(MyPlayer->GetInventoryComponent());
+	
+	BackgroundWidget->AddChildToInventoryCanvas(InventoryWidget);
+	BackgroundWidget->AddChildToOtherInventoryCanvas(OtherInventoryWidget);
+	
+	InventoryWidget->GetInventoryWrapBox()->SetExplicitWrapSize(true);
+	OtherInventoryWidget->GetInventoryWrapBox()->SetExplicitWrapSize(true);
+	
+	SetShowMouseCursor(true);
+	PushNewMenu(BackgroundWidget, false, [this]
+	{
+		UGameplayStatics::SetGamePaused(GetWorld(), false);
+				
+		if (UInventory* TempInventory = Cast<UInventory>(InventoryWidget))
+		{
+			TempInventory->RemoveItemAction();
+			TempInventory->OnItemInfoRemoved();
+		}
+		if (UInventory* TempOtherInventory = Cast<UInventory>(OtherInventoryWidget))
+		{
+			TempOtherInventory->RemoveItemAction();
+			TempOtherInventory->OnItemInfoRemoved();
+		}
+	});
 }
 
 void ACustomPlayerController::DisplayGlossary(const FInputActionValue& Value)
@@ -546,7 +587,7 @@ void ACustomPlayerController::BindUIEvents()
 void ACustomPlayerController::AddPlayerUIToViewport()
 {
 	SetInputMode(FInputModeGameOnly());
-	
+
 	if (PlayerData->HotbarInventoryWidgetClass)
 	{
 		HotbarInventoryWidget = CreateWidget<UInventory>(this, PlayerData->HotbarInventoryWidgetClass);
@@ -554,7 +595,7 @@ void ACustomPlayerController::AddPlayerUIToViewport()
 		HotbarInventoryWidget->BindTargetInventory(MyPlayer->GetInventoryComponent());
 		HotbarInventoryWidget->AddToViewport();
 	}
-	
+
 	HUDWidget = CreateWidget<UPlayerHud>(this, PlayerData->PlayerHudClass);
 	if (HUDWidget)
 	{
