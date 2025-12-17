@@ -27,7 +27,7 @@ struct FInputActionSetup
 	TObjectPtr<UInputAction> Action;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
-	ETriggerEvent Event;
+	ETriggerEvent Event = ETriggerEvent::Triggered;
 
 	UPROPERTY(EditAnywhere, meta = (FunctionReference, PrototypeFunction = "/Script/DreadNight.CustomPlayerController.Prototype_InputAction"))
 	FMemberReference ActionName;
