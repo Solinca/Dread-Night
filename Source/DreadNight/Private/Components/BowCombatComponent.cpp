@@ -22,12 +22,12 @@ void UBowCombatComponent::SetAiming(bool bAiming)
 
 	// (optionnel) activer un zoom caméra, FOV changes, etc.
 
-	if (bIsAiming && PlayerData->StartingWeaponDataAsset->Type.GetTagName() == "Item.Weapon.Bow")
+	if (CurrentArrow == nullptr && bIsAiming)
 	{
 		SpawnArrow();
 		return;
 	}
-	if (CurrentArrow.IsValid())
+	if (CurrentArrow.IsValid() && !bIsAiming)
 	{
 		CurrentArrow->Destroy();
 		CurrentArrow = nullptr;
