@@ -43,7 +43,7 @@ public:
 
 	bool TryStackWith(UItemInstance* Other);
 
-	bool TryUse(const int NumberOfInstanceToUse, AActor* User);
+	bool TryUse(AActor* User);
 	
 	bool TryRemove(const int NumberOfInstanceToRemove);
 
