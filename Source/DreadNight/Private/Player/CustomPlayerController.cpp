@@ -17,7 +17,6 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Buildings/Chest.h"
 #include "UI/Widgets/Glossary.h"
-#include "Crafting/Actors/CraftingActor.h"
 
 void ACustomPlayerController::BeginPlay()
 {
