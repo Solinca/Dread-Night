@@ -7,7 +7,7 @@
 UENUM(BlueprintType)
 enum class ECraftMethod : uint8
 {
-    Default         UMETA(DisplayName = "Default"),
+    Basic           UMETA(DisplayName = "Basic"),
     Workshop        UMETA(DisplayName = "Workshop"),
     Smeltery        UMETA(DisplayName = "Smeltery"),
     Forge           UMETA(DisplayName = "Forge")

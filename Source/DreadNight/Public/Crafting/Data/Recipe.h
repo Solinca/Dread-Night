@@ -22,7 +22,7 @@ struct FRecipe : public FTableRowBase
 	int TargetQuantity = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECraftMethod CraftMethod = ECraftMethod::Default;
+	ECraftMethod CraftMethod = ECraftMethod::Basic;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FIngredient> Ingredients;
