@@ -55,6 +55,7 @@ public:
 	bool Contains(UItemDataAsset* Item, int StackNumber) const;
 	bool IsSlotEmpty(int SlotIndex) const;
 	bool IsFull() const;
+	int GetInventoryLimitSize() const;
 	
 	FOnItemAddedEventSignature OnItemAdded;
 	FOnItemRemovedEventSignature OnItemRemoved;

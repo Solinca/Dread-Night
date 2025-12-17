@@ -139,7 +139,7 @@ public:
 	
 	UFUNCTION()
 	UInventoryComponent* GetHotbarInventoryComponent();
-
+	
 	UFUNCTION()
 	UBowCombatComponent* GetBowCombatComponent();
 	
