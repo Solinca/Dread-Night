@@ -254,7 +254,7 @@ private:
 	}
 
 	// Call this function when you need to delete the last menu who has been push in the list
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = "true"))
 	void PopLastMenu();
 	
 	UFUNCTION()
