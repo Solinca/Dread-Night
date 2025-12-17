@@ -8,13 +8,13 @@
 #include "UserWidgets/OptionsWidget.h"
 #include "UI/Widgets/PlayerHud.h"
 #include "Actors/Building.h"
+#include "Actors/BuildingStation.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "UI/Widgets/Map/MapWidget.h"
 #include "InteractableSystem/Subsystems/InteractableSubsystem.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "UI/Widgets/Glossary.h"
-#include "Crafting/Actors/CraftingActor.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -270,7 +270,7 @@ void ACustomPlayerController::Interact(const FInputActionValue& Value)
 
 		Subsystem->RequestInteraction(Subsystem->GetLastFocusedActor(), MyPlayer);
 
-		ACraftingActor* Crafting = Cast<ACraftingActor>(Subsystem->GetLastFocusedActor());
+		ABuildingStation* Crafting = Cast<ABuildingStation>(Subsystem->GetLastFocusedActor());
 
 		GlossaryWidget = CreateWidget<UGlossary>(this, Crafting->GetCraftingComponent()->GetWidget());
 
