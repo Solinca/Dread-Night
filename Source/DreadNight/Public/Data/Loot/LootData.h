@@ -13,13 +13,13 @@ struct DREADNIGHT_API FLootData : public FTableRowBase
 	TObjectPtr<UItemDataAsset> ItemDataAsset;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Percentage;
+	float Percentage = 100;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int MinDroppedAmount = 1;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int MaxDroppedAmount;
+	int MaxDroppedAmount = 1;
 	
 	
 };
