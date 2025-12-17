@@ -2,6 +2,7 @@
 
 #include "Items/Data/WeaponDataAsset.h"
 #include "Components/SwordCombatComponent.h"
+#include "Components/BowCombatComponent.h"
 
 FName UItemInstance_Weapon::GetActionName()
 {
@@ -12,7 +13,13 @@ void UItemInstance_Weapon::Use(AActor* Player)
 {
 	if (USwordCombatComponent* SwordComponent = Player->GetComponentByClass<USwordCombatComponent>())
 	{
-		SwordComponent->SetWeapon(WeaponDataAsset);
+		if (WeaponDataAsset->Type.GetTagName().ToString().Contains("Item.Weapon.Sword"))
+			SwordComponent->SetWeapon(WeaponDataAsset);
+	}
+	if (UBowCombatComponent* BowComponent = Player->GetComponentByClass<UBowCombatComponent>())
+	{
+		if (WeaponDataAsset->Type.GetTagName().ToString().Contains("Item.Weapon.Bow"))
+			BowComponent->SetWeapon(WeaponDataAsset);
 	}
 }
 

@@ -2,7 +2,7 @@
 #include "Components/BoxComponent.h"
 #include "DamageSystem/Interface/Damageable.h"
 #include "Items/Data/WeaponDataAsset.h"
-#include "Items/Data/WeaponDataAsset.h"
+#include "Player/PlayerCharacter.h"
 
 USwordCombatComponent::USwordCombatComponent()
 {
@@ -47,7 +47,11 @@ void USwordCombatComponent::SetWeapon(UWeaponDataAsset* Weapon)
 	if (CurrentStaticMesh)
 	{
 		CurrentStaticMesh->SetStaticMesh(Weapon->WeaponMesh);
+
+		APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
+
+		Player->SetEquippedObjectTag(Weapon->Type.GetTagName());
+		CurrentStaticMesh->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Player->GetData()->HandSocketName);
 	}
-	
 }
  
