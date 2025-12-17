@@ -3,6 +3,7 @@
 #include "Items/Data/ItemDataAsset.h"
 #include "Items/Data/ItemGameplayTag.h"
 #include "Items/Object/ItemInstance_Armor.h"
+#include "Items/Object/ItemInstance_Building.h"
 #include "Items/Object/ItemInstance_ChestArmor.h"
 #include "Items/Object/ItemInstance_Food.h"
 #include "Items/Object/ItemInstance_HelmetArmor.h"
@@ -23,6 +24,8 @@ UItemInstance* UItemInstanceFactory::CreateItem(UObject* Outer,UItemDataAsset* I
 		NewItem = NewObject<UItemInstance_HelmetArmor>(Outer);
 	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Food))
 		NewItem = NewObject<UItemInstance_Food>(Outer);
+	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Building))
+		NewItem = NewObject<UItemInstance_Building>(Outer);
 
 	
 	else if (ItemDataAsset->Type.MatchesTag(GT_Item))
