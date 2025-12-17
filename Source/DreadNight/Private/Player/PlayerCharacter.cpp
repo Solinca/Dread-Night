@@ -161,7 +161,11 @@ UInventoryComponent* APlayerCharacter::GetHotbarInventoryComponent()
 
 void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 {
-    SwordCombatComponent->SetWeapon(Weapon->GetDataAsset());
+	if (Weapon != nullptr)
+	{
+		SwordCombatComponent->SetWeapon(Weapon->GetDataAsset());
+		EquippedObjectTag = Weapon->GetDataAsset()->Type.GetTagName();
+	}
 }
 
 void APlayerCharacter::EquipArmor(UItemInstance_Armor* Armor)
