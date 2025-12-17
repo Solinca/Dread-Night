@@ -3,6 +3,8 @@
 
 #include "CollectibleResource/Actor/CollectibleResource.h"
 
+#include "CollectibleResource/Datas/CollectibleData.h"
+#include "Global/MyGameStateBase.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "Items/Data/ItemDataAsset.h"
 #include "Items/Helper/ItemInstanceFactory.h"
@@ -52,6 +54,33 @@ void ACollectibleResource::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentItemQuantity = FMath::RandRange(ItemQuantityRange.X,ItemQuantityRange.Y);
+
+	AMyGameStateBase* MyGameStateBase = Cast<AMyGameStateBase>(GetWorld()->GetGameState());
+	if (!MyGameStateBase)
+	{
+		return;
+	}
+
+	UDataTable* CollectibleMeshDataTable = MyGameStateBase->CollectibleDataTable;
+	if (!CollectibleMeshDataTable)
+	{
+		return;
+	}
+
+	TArray<FCollectibleData*> CollectibleDatas;
+	CollectibleMeshDataTable->GetAllRows(TEXT("ACollectibleResource::BeginPlay"), CollectibleDatas);
+
+	for (const FCollectibleData* Element : CollectibleDatas)
+	{
+		if (Element->CollectibleResource != GetClass() || Element->StaticMeshArray.IsEmpty())
+		{
+			continue;
+		}
+
+		const int Random = FMath::RandRange(0, Element->StaticMeshArray.Num() - 1);
+
+		ResourceMesh->SetStaticMesh(Element->StaticMeshArray[Random]);
+	}
 }
  
 

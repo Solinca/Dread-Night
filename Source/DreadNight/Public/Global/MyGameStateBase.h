@@ -8,4 +8,8 @@ UCLASS()
 class DREADNIGHT_API AMyGameStateBase : public AGameStateBase
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UDataTable* CollectibleDataTable;
 };
