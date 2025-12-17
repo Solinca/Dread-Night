@@ -14,6 +14,7 @@ void UInventory::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
+	
 }
 
 void UInventory::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -28,12 +29,15 @@ void UInventory::SetSize(int Size)
 	{
 		UInventorySlot* TempSlot = CreateWidget<UInventorySlot>(this, InventorySlotClass);
 		
+		
 		TempSlot->SetupSlot(BindInventoryComponent,BindTargetInventoryComponent, i);
+		TempSlot->SetImageColor(EmptyInventorySlot);
 		
 		if (UItemInstance* Item = BindInventoryComponent->GetItemAtSlot(i))
 		{
 			TempSlot->SetItemImage(Item->GetDataAsset()->ItemIcon);
 			TempSlot->SetStackText(Item->GetStackNumber());
+			TempSlot->SetImageColor(UsedInventorySlot);
 		}
 		
 		TempSlot->OnItemInfoCreated.AddDynamic(this, &UInventory::OnItemInfoCreated);
@@ -49,6 +53,8 @@ void UInventory::OnItemAdded(UItemInstance* Item, int SlotIndex)
 	{
 		TempSlot->SetItemImage(Item->GetDataAsset()->ItemIcon);
 		TempSlot->SetStackText(Item->GetStackNumber());
+
+		TempSlot->SetImageColor(UsedInventorySlot);		
 	}
 }
 
@@ -58,6 +64,7 @@ void UInventory::OnItemRemoved(int SlotIndex)
 	{
 		UInventorySlot* SlotToClone = CreateWidget<UInventorySlot>(this, InventorySlotClass);
 		TempSlot->Reset(SlotToClone->GetImageBrush());
+		TempSlot->SetImageColor(EmptyInventorySlot);
 	}
 }
 

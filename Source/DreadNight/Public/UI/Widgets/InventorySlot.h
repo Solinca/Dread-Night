@@ -23,8 +23,10 @@ protected:
 	TObjectPtr<UTextBlock> StackText;
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UButton> ItemButton;
-	
+
+	UPROPERTY(Transient)
 	TObjectPtr<UInventoryComponent> BindInventoryComponent;
+	UPROPERTY(Transient)
 	TObjectPtr<UInventoryComponent> BindTargetInventoryComponent;
 	
 	int SlotIndex;
@@ -47,6 +49,8 @@ public:
 	void SetItemImage(UTexture2D* Texture);
 	UFUNCTION(BlueprintCallable)
 	virtual void SetStackText(int Stack);
+	UFUNCTION(BlueprintCallable)
+	void SetImageColor(const FLinearColor& Color);
 	
 	UFUNCTION(BlueprintCallable)
 	int GetSlotIndex() const { return SlotIndex; }
