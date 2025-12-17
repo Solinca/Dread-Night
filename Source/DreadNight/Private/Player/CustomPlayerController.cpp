@@ -10,6 +10,7 @@
 #include "Actors/Building.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
+#include "Actors/BuildingStation.h"
 #include "GameFramework/Actor.h"
 #include "UI/Widgets/Map/MapWidget.h"
 #include "InteractableSystem/Subsystems/InteractableSubsystem.h"
@@ -283,7 +284,7 @@ void ACustomPlayerController::Interact(const FInputActionValue& Value)
 	{
 		Subsystem->RequestInteraction(Subsystem->GetLastFocusedActor(), MyPlayer);
 		
-		if (ACraftingActor* Crafting = Cast<ACraftingActor>(Subsystem->GetLastFocusedActor()))
+		if (ABuildingStation* Crafting = Cast<ABuildingStation>(Subsystem->GetLastFocusedActor()))
 		{
 			GlossaryWidget = CreateWidget<UGlossary>(this, Crafting->GetCraftingComponent()->GetWidget());
 			PushNewMenu(GlossaryWidget, false);
