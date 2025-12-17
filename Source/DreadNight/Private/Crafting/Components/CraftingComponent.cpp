@@ -3,7 +3,6 @@
 
 #include "Crafting/Components/CraftingComponent.h"
 #include "Items/Helper/ItemInstanceFactory.h"
-#include <Player/CustomPlayerController.h>
 
 
 
