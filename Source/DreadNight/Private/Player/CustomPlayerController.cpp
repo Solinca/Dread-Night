@@ -438,7 +438,7 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 	if (index == -1)
 		index = 0;
 
-	MyPlayer->GetInventoryComponent()->UseItemAt(index);
+	MyPlayer->GetHotbarInventoryComponent()->UseItemAt(index);
 }
 
 void ACustomPlayerController::SaveGame()

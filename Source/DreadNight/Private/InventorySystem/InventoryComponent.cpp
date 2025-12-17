@@ -99,7 +99,7 @@ void UInventoryComponent::UseItemByType(UItemDataAsset* Item)
 	{
 		if (Items[i] && Items[i]->GetDataAsset() == Item)
 		{
-			Items[i]->TryUse(1,GetOwner());
+			Items[i]->TryUse(GetOwner());
 				
 			if (Items[i]->IsEmpty())
 			{
@@ -118,7 +118,7 @@ void UInventoryComponent::UseItemAt(int SlotIndex)
 	if (!Items[SlotIndex])
 		return;
 	
-	Items[SlotIndex]->TryUse(1,GetOwner());
+	Items[SlotIndex]->TryUse(GetOwner());
 	OnItemModified.Broadcast(Items[SlotIndex],SlotIndex);
 	
 	if (Items[SlotIndex]->IsEmpty())

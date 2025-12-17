@@ -95,10 +95,12 @@ bool UItemInstance::IsEmpty() const
 	return StackNumber == 0;
 }
 
-bool UItemInstance::TryUse(const int NumberOfInstanceToUse,AActor* User)
+bool UItemInstance::TryUse(AActor* User)
 {
-	if (NumberOfInstanceToUse > StackNumber)
+	if (StackNumber <= 0)
+	{
 		return false;
+	}
 
 	if (IUsableItem* UsableItem = Cast<IUsableItem>(this))
 	{
