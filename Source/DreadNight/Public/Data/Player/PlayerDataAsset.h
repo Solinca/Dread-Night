@@ -59,6 +59,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Armor")
 	FName HelmetSocketName = TEXT("HelmetSocket");
 
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	FName SecondaryHandSocketName = TEXT("BowSocket");
+
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	FName ArrowSocketName = TEXT("ArrowSocket");
+
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 	float JumpStaminaCost = 20.f;
 

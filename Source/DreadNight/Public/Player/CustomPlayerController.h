@@ -142,6 +142,9 @@ private:
 	void Aim(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintCallable)
+	void StopAim(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintCallable)
 	void Attack(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintCallable)
