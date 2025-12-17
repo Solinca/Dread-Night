@@ -197,6 +197,16 @@ void APlayerCharacter::SetupSwordComponent()
 	SwordCombatComponent->SetComponentMesh(CurrentWeaponMesh);
 }
 
+FName APlayerCharacter::GetEquippedObjectTag()
+{
+	return EquippedObjectTag;
+}
+
+void APlayerCharacter::SetEquippedObjectTag(FName NewTag)
+{
+	EquippedObjectTag = NewTag;
+}
+
 UBowCombatComponent* APlayerCharacter::GetBowCombatComponent()
 {
 	return BowCombatComponent;

@@ -80,6 +80,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UBowCombatComponent> BowCombatComponent;
 
+	UPROPERTY(BlueprintReadOnly)
+	FName EquippedObjectTag;
+
 public:
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
 
@@ -133,6 +136,12 @@ public:
 	
 	UFUNCTION()
 	UInventoryComponent* GetHotbarInventoryComponent();
+
+	UFUNCTION()
+	UBowCombatComponent* GetBowCombatComponent();
+
+	UFUNCTION()
+	UBowCombatComponent* GetBowCombatComponent();
 	
 	UFUNCTION()
 	void EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon);
@@ -153,5 +162,8 @@ public:
 	void SetupSwordComponent();
 
 	UFUNCTION()
-	UBowCombatComponent* GetBowCombatComponent();
+	FName GetEquippedObjectTag();
+
+	UFUNCTION()
+	void SetEquippedObjectTag(FName NewTag);
 };

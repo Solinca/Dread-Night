@@ -234,15 +234,21 @@ void ACustomPlayerController::UpdateObjectPlacement()
 
 void ACustomPlayerController::Aim(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Aiming");
-	MyPlayer->GetBowCombatComponent()->SetAiming(true);
+	if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
+	{
+		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Aiming");
+		MyPlayer->GetBowCombatComponent()->SetAiming(true);
+	}
 }
 
 void ACustomPlayerController::StopAim(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Stop Aiming");
-	if (PlayerData->StartingWeaponDataAsset->Type.GetTagName() == "Item.Weapon.Bow")
-		MyPlayer->GetBowCombatComponent()->SetAiming(false);
+	if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
+	{
+		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Stop Aiming");
+		if (PlayerData->StartingWeaponDataAsset->Type.GetTagName() == "Item.Weapon.Bow")
+			MyPlayer->GetBowCombatComponent()->SetAiming(false);
+	}
 }
 
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
@@ -251,24 +257,31 @@ void ACustomPlayerController::Attack(const FInputActionValue& Value)
 	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 	UBowCombatComponent* BowCombatComponent = MyPlayer->GetBowCombatComponent();
 
-	if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
-	{
+	bool AttackExecuted = false;
 
-		if (PlayerData->StartingWeaponDataAsset->Type.GetTagName() == "Item.Weapon.Sword")
+	if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Sword"))
+	{
+		if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
 		{
 			SwordCombatComponent->Attack();
 			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
+
+			AttackExecuted = true;
 		}
-		else
+	}
+	else if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
+	{
+		if (BowCombatComponent->IsAiming() && BowCombatComponent->CanShoot() && StaminaComponent->GetCurrentStamina() > 0.f)
 		{
-			if (BowCombatComponent->CanShoot())
-			{
-				BowCombatComponent->Shoot();
-				StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
-			}
+			BowCombatComponent->Shoot();
+			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
+
+			AttackExecuted = true;
 		}
+	}
 
-
+	if (AttackExecuted)
+	{
 		StaminaComponent->SetCanRegen(false);
 
 		// START REGEN STAMINA
