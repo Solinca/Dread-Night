@@ -14,4 +14,12 @@ struct DREADNIGHT_API FLootData : public FTableRowBase
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Percentage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int MinDroppedAmount = 1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int MaxDroppedAmount;
+	
+	
 };

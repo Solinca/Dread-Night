@@ -26,15 +26,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UDataTable> LootDataTable;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int MaxDroppedLootStack;
-	
 public:
 	[[nodiscard]] USkeletalMesh* GetMesh() const;
 	[[nodiscard]] UBehaviorTree* GetBehaviorTree() const;
 	[[nodiscard]] const FName& GetName() const;
 	[[nodiscard]] float GetMaxHealth() const;
 	[[nodiscard]] const TObjectPtr<UDataTable>& GetLootDataTable() const;
-	[[nodiscard]] int GetMaxDroppedLootStack() const;
 	
 };

@@ -83,14 +83,12 @@ void ABaseAICharacter::DropLoot() const
 	UsedDataAsset->GetLootDataTable()->GetAllRows("" , LootDatas);
 	for (const auto& LootData : LootDatas)
 	{
-		if (Random < LootData->Percentage)
+		if (Random < LootData->Percentage) 
 		{
-			int RandomStack = FMath::RandRange(1,UsedDataAsset->GetMaxDroppedLootStack());
-			UInventoryComponent* InventoryComp;
-			InventoryComp = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UInventoryComponent>();
+			int RandomStack = FMath::RandRange(LootData->MinDroppedAmount,LootData->MaxDroppedAmount);
+			UInventoryComponent* InventoryComp = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UInventoryComponent>();
 			if (InventoryComp != nullptr)
 				InventoryComp->AddItem(FItemInstanceFactory::CreateItem(InventoryComp->GetOwner(),LootData->ItemDataAsset,RandomStack));
-			
 		}
 	}
 }
