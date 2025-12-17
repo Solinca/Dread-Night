@@ -14,6 +14,7 @@
 #include "UI/Widgets/Map/MapWidget.h"
 #include "InteractableSystem/Subsystems/InteractableSubsystem.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "UI/Widgets/Glossary.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -273,9 +274,21 @@ void ACustomPlayerController::Attack(const FInputActionValue& Value)
 
 void ACustomPlayerController::Interact(const FInputActionValue& Value)
 {
+
 	TObjectPtr<UInteractableSubsystem> Subsystem = GetWorld()->GetSubsystem<UInteractableSubsystem>();
+
 	if (Subsystem->TryInteract())
+	{
+
 		Subsystem->RequestInteraction(Subsystem->GetLastFocusedActor(), MyPlayer);
+
+		ACraftingActor* Crafting = Cast<ACraftingActor>(Subsystem->GetLastFocusedActor());
+
+		GlossaryWidget = CreateWidget<UGlossary>(this, Crafting->GetCraftingComponent()->GetWidget());
+
+		PushNewMenu(GlossaryWidget, false);
+	}
+
 }
 
 void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)

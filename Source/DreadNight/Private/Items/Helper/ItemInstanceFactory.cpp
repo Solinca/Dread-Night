@@ -9,7 +9,7 @@
 #include "Items/Object/ItemInstance_Weapon.h"
 
 
-UItemInstance* FItemInstanceFactory::CreateItem(UObject* Outer,UItemDataAsset* ItemDataAsset, const int StartStackSize)
+UItemInstance* UItemInstanceFactory::CreateItem(UObject* Outer,UItemDataAsset* ItemDataAsset, const int StartStackSize)
 { 
 	if (!ItemDataAsset)
 		return nullptr;

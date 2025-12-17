@@ -3,30 +3,7 @@
 
 #include "Crafting/Components/CraftingComponent.h"
 #include "Items/Helper/ItemInstanceFactory.h"
-
-
-
-void UCraftingComponent::OnCraft(FRecipe* Recipe)
-{
-
-	Craft(Recipe, User->GetComponentByClass<UInventoryComponent>());
-
-}
-
-
-
-void UCraftingComponent::OpenGUI(AActor* Caller)
-{
-
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Open GUI");
-
-	User = Caller;
-
-	//CraftingWidget = CreateWidget<UCraftingWidget>(this, CraftingWidgetClass);
-
-	//CraftingWidget->AddToViewport();
-
-}
+#include <Player/CustomPlayerController.h>
 
 
 
@@ -65,6 +42,6 @@ void UCraftingComponent::Craft(FRecipe* Recipe, TObjectPtr<UInventoryComponent> 
 
 	}
 
-	Inventory->AddItem(FItemInstanceFactory::CreateItem(this, Recipe->TargetItem, 1));
+	Inventory->AddItem(UItemInstanceFactory::CreateItem(this, Recipe->TargetItem, 1));
 
 }

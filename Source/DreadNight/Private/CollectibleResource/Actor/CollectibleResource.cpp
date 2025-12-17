@@ -17,7 +17,7 @@ bool ACollectibleResource::TryApplyDamage(float Damage, AActor* DamageInstigator
 	if (UInventoryComponent* InventoryComponent = DamageInstigator->GetComponentByClass<UInventoryComponent>())
 	{
 		
-		UItemInstance* ItemInstance = FItemInstanceFactory::CreateItem(this ,ItemDataAsset, ResourceCollected);
+		UItemInstance* ItemInstance = UItemInstanceFactory::CreateItem(this ,ItemDataAsset, ResourceCollected);
 
 		UE_LOG(LogTemp, Log, TEXT("Resource type = %s, collected %d"), *ItemDataAsset->Type.GetTagLeafName().ToString(), ResourceCollected);
 

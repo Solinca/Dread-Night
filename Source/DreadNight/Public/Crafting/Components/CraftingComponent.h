@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Crafting/Data/Recipe.h"
 #include "InventorySystem/InventoryComponent.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/Widgets/Glossary.h"
 #include "CraftingComponent.generated.h"
 
 
@@ -19,9 +19,7 @@ class DREADNIGHT_API UCraftingComponent : public UActorComponent
 
 public:
 
-	void OnCraft(FRecipe* Recipe);
-
-	void OpenGUI(AActor* Caller);
+	TSubclassOf<UGlossary> GetWidget() const { return CraftingWidgetClass; }
 
 protected:
 
@@ -32,15 +30,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parameters")
 	ECraftMethod CraftMethod;
 
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Links")
-	//TSubclassOf<UCraftingWidget> CraftingWidgetClass = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Links")
+	TSubclassOf<UGlossary> CraftingWidgetClass = nullptr;
 
 private:
 
 	void Craft(FRecipe* Recipe, TObjectPtr<UInventoryComponent> Inventory);
-
-	AActor* User;
-
-	//TObjectPtr<UCraftingWidget> CraftingWidget;
 
 };
