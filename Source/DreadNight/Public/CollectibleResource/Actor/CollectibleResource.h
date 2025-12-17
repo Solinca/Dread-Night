@@ -1,6 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "DamageSystem/Interface/Damageable.h"
@@ -27,9 +25,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly)
-	const TObjectPtr<UItemDataAsset> ItemDataAsset;
-
-	UPROPERTY(EditDefaultsOnly)
 	FVector2D ItemQuantityRange;
 
 	UPROPERTY(SaveGame)
@@ -38,6 +33,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UStaticMeshComponent> ResourceMesh;
 	
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UDataTable> ResourceData;
+	
+	void DropItem() const;
 public:
 
 	

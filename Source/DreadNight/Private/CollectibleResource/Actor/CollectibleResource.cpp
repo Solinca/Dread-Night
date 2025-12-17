@@ -1,7 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "CollectibleResource/Actor/CollectibleResource.h"
+﻿#include "CollectibleResource/Actor/CollectibleResource.h"
 
 #include "CollectibleResource/Datas/CollectibleData.h"
 #include "Global/MyGameStateBase.h"
@@ -9,7 +6,8 @@
 #include "Items/Data/ItemDataAsset.h"
 #include "Items/Helper/ItemInstanceFactory.h"
 #include "Items/Object/ItemInstance.h"
-
+#include "Windows/WindowsApplication.h"
+#include "Data/Loot/LootData.h"
 
 bool ACollectibleResource::TryApplyDamage(float Damage, AActor* DamageInstigator)
 {
@@ -18,13 +16,7 @@ bool ACollectibleResource::TryApplyDamage(float Damage, AActor* DamageInstigator
 	//TODO Add cast to player and add inventory logic
 	if (UInventoryComponent* InventoryComponent = DamageInstigator->GetComponentByClass<UInventoryComponent>())
 	{
-		
-		UItemInstance* ItemInstance = UItemInstanceFactory::CreateItem(this ,ItemDataAsset, ResourceCollected);
-
-		UE_LOG(LogTemp, Log, TEXT("Resource type = %s, collected %d"), *ItemDataAsset->Type.GetTagLeafName().ToString(), ResourceCollected);
-
-		InventoryComponent->AddItem(ItemInstance);
-		
+		DropItem();
 		CurrentItemQuantity -= ResourceCollected;
 		if (CurrentItemQuantity <= 0)
 		{
@@ -82,5 +74,21 @@ void ACollectibleResource::BeginPlay()
 		ResourceMesh->SetStaticMesh(Element->StaticMeshArray[Random]);
 	}
 }
- 
 
+void ACollectibleResource::DropItem() const
+{
+	float Random = FMath::RandRange(0.0f,100.f);
+	TArray<FLootData*> LootDatas;
+	ResourceData->GetAllRows("" , LootDatas);
+	
+	for (const auto& LootData : LootDatas)
+	{
+		if (Random < LootData->Percentage)
+		{
+			int RandomStack = FMath::RandRange(LootData->MinDroppedAmount, LootData->MaxDroppedAmount);
+			UInventoryComponent* InventoryComp = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UInventoryComponent>();
+			if (InventoryComp != nullptr)
+				InventoryComp->AddItem(FItemInstanceFactory::CreateItem(InventoryComp->GetOwner(),LootData->ItemDataAsset, RandomStack));
+		}
+	}
+}
