@@ -15,6 +15,7 @@
 #include "InteractableSystem/Subsystems/InteractableSubsystem.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "UI/Widgets/Glossary.h"
+#include "Crafting/Actors/CraftingActor.h"
 
 void ACustomPlayerController::BeginPlay()
 {
