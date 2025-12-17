@@ -36,6 +36,11 @@ protected:
 	
 	UPROPERTY()
 	TObjectPtr<UInventoryInfo> InventoryInfoWidget;
+
+	UPROPERTY(EditDefaultsOnly)
+	FLinearColor EmptyInventorySlot;
+	UPROPERTY(EditDefaultsOnly)
+	FLinearColor UsedInventorySlot;
 public:
 
 	virtual void NativePreConstruct() override;

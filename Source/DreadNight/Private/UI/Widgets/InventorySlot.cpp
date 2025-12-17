@@ -56,6 +56,14 @@ void UInventorySlot::SetStackText(int Stack)
 	StackText->SetVisibility(ESlateVisibility::Visible);
 }
 
+void UInventorySlot::SetImageColor(const FLinearColor& Color)
+{
+	if (ItemImage)
+	{
+		ItemImage->SetColorAndOpacity(Color);
+	}
+}
+
 void UInventorySlot::SetupSlot(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index)
 {
 	BindInventoryComponent = OwningInventory;
