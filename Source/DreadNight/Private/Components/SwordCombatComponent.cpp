@@ -50,6 +50,7 @@ void USwordCombatComponent::SetWeapon(UWeaponDataAsset* Weapon)
 
 		APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
 
+		Player->SetEquippedObjectTag(Weapon->Type.GetTagName());
 		CurrentStaticMesh->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Player->GetData()->HandSocketName);
 	}
 }

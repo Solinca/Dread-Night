@@ -173,7 +173,6 @@ void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 			SwordCombatComponent->SetWeapon(Weapon->GetDataAsset());
 		else if (Weapon->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow"))
 			BowCombatComponent->SetWeapon(Weapon->GetDataAsset());
-		EquippedObjectTag = Weapon->GetDataAsset()->Type.GetTagName();
 	}
 }
 
