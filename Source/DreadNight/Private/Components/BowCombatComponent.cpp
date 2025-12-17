@@ -111,3 +111,21 @@ void UBowCombatComponent::ResetShot()
 {
 	bCanShoot = true;
 }
+
+void UBowCombatComponent::SetComponentMesh(UStaticMeshComponent* Mesh)
+{
+	CurrentStaticMesh = Mesh;
+}
+
+void UBowCombatComponent::SetWeapon(UWeaponDataAsset* Weapon)
+{
+	CurrentWeapon = Weapon;
+	if (CurrentStaticMesh)
+	{
+		CurrentStaticMesh->SetStaticMesh(Weapon->WeaponMesh);
+
+		APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
+
+		CurrentStaticMesh->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Player->GetData()->SecondaryHandSocketName);
+	}
+}

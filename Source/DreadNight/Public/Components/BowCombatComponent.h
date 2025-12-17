@@ -23,6 +23,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	bool bIsAiming;
 
+	UPROPERTY(Transient)
+	UStaticMeshComponent* CurrentStaticMesh;
+	UPROPERTY(Transient)
+	UWeaponDataAsset* CurrentWeapon;
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	float ShotCooldown = 0.8f;
 	UPROPERTY(EditAnywhere, Category = "Combat")
@@ -45,4 +49,8 @@ public:
 	bool CanShoot();
 	UFUNCTION()
 	bool IsAiming();
+
+	void SetComponentMesh(UStaticMeshComponent* Mesh);
+	UFUNCTION()
+	void SetWeapon(UWeaponDataAsset* Bow);
 };

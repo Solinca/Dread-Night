@@ -87,6 +87,9 @@ public:
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
 
 	UFUNCTION()
+	UPlayerDataAsset* GetData();
+
+	UFUNCTION()
 	bool GetIsCrouching();
 
 	UFUNCTION()
@@ -139,9 +142,6 @@ public:
 
 	UFUNCTION()
 	UBowCombatComponent* GetBowCombatComponent();
-
-	UFUNCTION()
-	UBowCombatComponent* GetBowCombatComponent();
 	
 	UFUNCTION()
 	void EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon);
@@ -160,6 +160,9 @@ public:
 
 	UFUNCTION()
 	void SetupSwordComponent();
+
+	UFUNCTION()
+	void SetupBowComponent();
 
 	UFUNCTION()
 	FName GetEquippedObjectTag();
