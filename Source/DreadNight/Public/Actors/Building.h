@@ -10,9 +10,11 @@ class UMaterialInstance;
 UCLASS()
 class DREADNIGHT_API ABuilding : public AActor
 {
+
 	GENERATED_BODY()
 
 protected:
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UStaticMeshComponent* MeshComp;
 
@@ -25,6 +27,7 @@ protected:
 	bool bIsPlaced = false;
 
 public:
+
 	ABuilding();
 	bool CheckValidPlacement();
 	bool CheckIsOnGround();

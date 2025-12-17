@@ -22,7 +22,7 @@ struct FRecipe : public FTableRowBase
 	int TargetQuantity = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECraftMethod CraftMethod = ECraftMethod::Default;
+	ECraftMethod CraftMethod = ECraftMethod::Basic;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FIngredient> Ingredients;
@@ -32,12 +32,15 @@ struct FRecipe : public FTableRowBase
 UCLASS(BlueprintType)
 class DREADNIGHT_API URecipeItem : public UObject
 {
+
 	GENERATED_BODY()
 
 public:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta = (ExposeOnSpawn = true))
 	FRecipe RecipeData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta = (ExposeOnSpawn = true))
 	FName RowName;
+
 };

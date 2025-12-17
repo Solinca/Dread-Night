@@ -4,6 +4,7 @@
 ABuildingStation::ABuildingStation()
 {
 	InteractableComp = CreateDefaultSubobject<UInteractableComponent>(TEXT("Interactable Comp"));
+	CraftingComponent = CreateDefaultSubobject<UCraftingComponent>(TEXT("Crafting Component"));
 }
 
 void ABuildingStation::OnInteract_Implementation(AActor* Caller)
