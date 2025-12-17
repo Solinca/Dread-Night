@@ -42,29 +42,16 @@ void ACustomPlayerController::BeginPlay()
 	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = PlayerData->CrouchMoveSpeed;
 
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
-
-	if (PlayerData->HotbarInventoryWidgetClass)
-	{
-		HotbarInventoryWidget = CreateWidget<UInventory>(this, PlayerData->HotbarInventoryWidgetClass);
-		HotbarInventoryWidget->BindToInventory(MyPlayer->GetHotbarInventoryComponent());
-		HotbarInventoryWidget->BindTargetInventory(MyPlayer->GetInventoryComponent());
-		HotbarInventoryWidget->AddToViewport();
-	}
+	
 	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
 
 	PlayerCameraManager->ViewPitchMax = PlayerData->ViewPitch.Y;
 
-	SetInputMode(FInputModeGameOnly());
-
-	HUDWidget = CreateWidget<UPlayerHud>(this, PlayerData->PlayerHudClass);
-	if (HUDWidget)
-	{
-		HUDWidget->AddToViewport();
-		BindUIEvents();
-	}
-
 	ObjectPlacementQueryParams.bTraceComplex = true;
 	ObjectPlacementQueryParams.AddIgnoredActor(GetPawn());
+	
+	UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
+	MyGameInstance->OnPCGEndGeneration.AddDynamic(this, &ThisClass::AddPlayerUIToViewport);
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
