@@ -432,12 +432,17 @@ void ACustomPlayerController::GoBackToPrecedentMenu(const FInputActionValue& Val
 
 void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 {
-	int index = (int)Value.Get<float>();
+	int Index = (int)Value.Get<float>();
 
-	if (index == -1)
-		index = 0;
+	if (Index >= MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize())
+		return;
 
-	MyPlayer->GetHotbarInventoryComponent()->UseItemAt(index);
+	
+	if (Index == -1)
+		Index = 0;
+
+	
+	MyPlayer->GetHotbarInventoryComponent()->UseItemAt(Index);
 }
 
 void ACustomPlayerController::SaveGame()

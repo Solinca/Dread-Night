@@ -320,3 +320,8 @@ bool UInventoryComponent::IsFull() const
 	
 	return true;
 }
+
+int UInventoryComponent::GetInventoryLimitSize() const
+{
+	return Size;
+}

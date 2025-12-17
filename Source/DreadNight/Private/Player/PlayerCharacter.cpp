@@ -164,7 +164,7 @@ UInventoryComponent* APlayerCharacter::GetHotbarInventoryComponent()
 {
 	return HotbarInventoryComponent;
 }
-
+ 
 void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 {
 	if (Weapon != nullptr)
