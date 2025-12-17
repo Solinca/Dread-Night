@@ -14,13 +14,13 @@ void UBowCombatComponent::SetAiming(bool bAiming)
 {
 	bIsAiming = bAiming;
 
-	// (optionnel) réduire la vitesse du perso en visant :
+	// (optionnel) rï¿½duire la vitesse du perso en visant :
 	// if (auto* Character = Cast<ACharacter>(GetOwner()))
 	// {
 	//     Character->GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? 200.f : 600.f;
 	// }
 
-	// (optionnel) activer un zoom caméra, FOV changes, etc.
+	// (optionnel) activer un zoom camï¿½ra, FOV changes, etc.
 
 	if (CurrentArrow == nullptr && bIsAiming)
 	{
@@ -41,8 +41,6 @@ void UBowCombatComponent::Shoot()
 
 	if (!CurrentArrow.IsValid())
 		return;
-	CurrentArrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	CurrentArrow->GetMesh()->SetCollisionProfileName("Arrow");
 	UProjectileMovementComponent* ProjectileComp = CurrentArrow->GetProjectileMovementComponent();
 	if (ProjectileComp)
 	{
@@ -51,8 +49,10 @@ void UBowCombatComponent::Shoot()
 		Direction.Normalize();
 		ProjectileComp->Velocity = Direction * ProjectileComp->InitialSpeed;
 		ProjectileComp->Activate();
+		CurrentArrow->SetHasBeenShot(true);
+		CurrentArrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		CurrentArrow->GetMesh()->SetCollisionProfileName("Arrow");
 	}
-	CurrentArrow->SetHasBeenShot(true);
 	CurrentArrow = nullptr;
 	bCanShoot = false;
 
