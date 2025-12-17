@@ -1,13 +1,13 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿#include "CollectibleResource/Actor/CollectibleResource.h"
 
-
-#include "CollectibleResource/Actor/CollectibleResource.h"
-
+#include "CollectibleResource/Datas/CollectibleData.h"
+#include "Global/MyGameStateBase.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "Items/Data/ItemDataAsset.h"
 #include "Items/Helper/ItemInstanceFactory.h"
 #include "Items/Object/ItemInstance.h"
-
+#include "Windows/WindowsApplication.h"
+#include "Data/Loot/LootData.h"
 
 bool ACollectibleResource::TryApplyDamage(float Damage, AActor* DamageInstigator)
 {
@@ -16,13 +16,7 @@ bool ACollectibleResource::TryApplyDamage(float Damage, AActor* DamageInstigator
 	//TODO Add cast to player and add inventory logic
 	if (UInventoryComponent* InventoryComponent = DamageInstigator->GetComponentByClass<UInventoryComponent>())
 	{
-		
-		UItemInstance* ItemInstance = FItemInstanceFactory::CreateItem(this ,ItemDataAsset, ResourceCollected);
-
-		UE_LOG(LogTemp, Log, TEXT("Resource type = %s, collected %d"), *ItemDataAsset->Type.GetTagLeafName().ToString(), ResourceCollected);
-
-		InventoryComponent->AddItem(ItemInstance);
-		
+		DropItem();
 		CurrentItemQuantity -= ResourceCollected;
 		if (CurrentItemQuantity <= 0)
 		{
@@ -52,6 +46,49 @@ void ACollectibleResource::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentItemQuantity = FMath::RandRange(ItemQuantityRange.X,ItemQuantityRange.Y);
-}
- 
 
+	AMyGameStateBase* MyGameStateBase = Cast<AMyGameStateBase>(GetWorld()->GetGameState());
+	if (!MyGameStateBase)
+	{
+		return;
+	}
+
+	UDataTable* CollectibleMeshDataTable = MyGameStateBase->CollectibleDataTable;
+	if (!CollectibleMeshDataTable)
+	{
+		return;
+	}
+
+	TArray<FCollectibleData*> CollectibleDatas;
+	CollectibleMeshDataTable->GetAllRows(TEXT("ACollectibleResource::BeginPlay"), CollectibleDatas);
+
+	for (const FCollectibleData* Element : CollectibleDatas)
+	{
+		if (Element->CollectibleResource != GetClass() || Element->StaticMeshArray.IsEmpty())
+		{
+			continue;
+		}
+
+		const int Random = FMath::RandRange(0, Element->StaticMeshArray.Num() - 1);
+
+		ResourceMesh->SetStaticMesh(Element->StaticMeshArray[Random]);
+	}
+}
+
+void ACollectibleResource::DropItem() const
+{
+	float Random = FMath::RandRange(0.0f,100.f);
+	TArray<FLootData*> LootDatas;
+	ResourceData->GetAllRows("" , LootDatas);
+	
+	for (const auto& LootData : LootDatas)
+	{
+		if (Random < LootData->Percentage)
+		{
+			int RandomStack = FMath::RandRange(LootData->MinDroppedAmount, LootData->MaxDroppedAmount);
+			UInventoryComponent* InventoryComp = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UInventoryComponent>();
+			if (InventoryComp != nullptr)
+				InventoryComp->AddItem(UItemInstanceFactory::CreateItem(InventoryComp->GetOwner(),LootData->ItemDataAsset, RandomStack));
+		}
+	}
+}

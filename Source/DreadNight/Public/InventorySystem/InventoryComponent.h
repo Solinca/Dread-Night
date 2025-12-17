@@ -29,7 +29,9 @@ protected:
 	
 public:	
 	
+	UFUNCTION(BlueprintCallable)
 	void AddItem(UItemInstance* Item);
+	UFUNCTION(BlueprintCallable)
 	void RemoveItemsByType(UItemDataAsset* Item, int Amount);
 	void RemoveItemsAt(int SlotIndex, int Amount);
 	void UseItemByType(UItemDataAsset* Item);
@@ -49,6 +51,7 @@ public:
 	TOptional<int> GetItemInstanceSlot(UItemInstance* Item) const;
 	TOptional<int> GetStackableItemSlot(UItemDataAsset* Item) const;
 	
+	UFUNCTION(BlueprintCallable)
 	bool Contains(UItemDataAsset* Item, int StackNumber) const;
 	bool IsSlotEmpty(int SlotIndex) const;
 	bool IsFull() const;

@@ -28,3 +28,16 @@ struct FRecipe : public FTableRowBase
 	TArray<FIngredient> Ingredients;
 
 };
+
+UCLASS(BlueprintType)
+class DREADNIGHT_API URecipeItem : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta = (ExposeOnSpawn = true))
+	FRecipe RecipeData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta = (ExposeOnSpawn = true))
+	FName RowName;
+};
