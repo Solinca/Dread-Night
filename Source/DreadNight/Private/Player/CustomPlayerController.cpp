@@ -9,7 +9,6 @@
 #include "UI/Widgets/PlayerHud.h"
 #include "Actors/Building.h"
 #include "Engine/World.h"
-#include "EngineUtils.h"
 #include "GameFramework/Actor.h"
 #include "UI/Widgets/Map/MapWidget.h"
 #include "InteractableSystem/Subsystems/InteractableSubsystem.h"
@@ -42,28 +41,16 @@ void ACustomPlayerController::BeginPlay()
 
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
 
-	if (PlayerData->HotbarInventoryWidgetClass)
-	{
-		HotbarInventoryWidget = CreateWidget<UInventory>(this, PlayerData->HotbarInventoryWidgetClass);
-		HotbarInventoryWidget->BindToInventory(MyPlayer->GetHotbarInventoryComponent());
-		HotbarInventoryWidget->BindTargetInventory(MyPlayer->GetInventoryComponent());
-		HotbarInventoryWidget->AddToViewport();
-	}
+
 	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
 
 	PlayerCameraManager->ViewPitchMax = PlayerData->ViewPitch.Y;
 
-	SetInputMode(FInputModeGameOnly());
-
-	HUDWidget = CreateWidget<UPlayerHud>(this, PlayerData->PlayerHudClass);
-	if (HUDWidget)
-	{
-		HUDWidget->AddToViewport();
-		BindUIEvents();
-	}
-
 	ObjectPlacementQueryParams.bTraceComplex = true;
 	ObjectPlacementQueryParams.AddIgnoredActor(GetPawn());
+	
+	UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
+	MyGameInstance->OnPCGEndGeneration.AddDynamic(this, &ThisClass::AddPlayerUIToViewport);
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
@@ -554,4 +541,24 @@ void ACustomPlayerController::BindUIEvents()
 	MyPlayer->GetStaminaComponent()->OnStaminaChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateStaminaBar);
 	MyPlayer->GetManaComponent()->OnManaChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateManaBar);
 	MyPlayer->GetConditionStateComponent()->OnHungerChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateHungerRadialBarImage);
+}
+
+void ACustomPlayerController::AddPlayerUIToViewport()
+{
+	SetInputMode(FInputModeGameOnly());
+	
+	if (PlayerData->HotbarInventoryWidgetClass)
+	{
+		HotbarInventoryWidget = CreateWidget<UInventory>(this, PlayerData->HotbarInventoryWidgetClass);
+		HotbarInventoryWidget->BindToInventory(MyPlayer->GetHotbarInventoryComponent());
+		HotbarInventoryWidget->BindTargetInventory(MyPlayer->GetInventoryComponent());
+		HotbarInventoryWidget->AddToViewport();
+	}
+	
+	HUDWidget = CreateWidget<UPlayerHud>(this, PlayerData->PlayerHudClass);
+	if (HUDWidget)
+	{
+		HUDWidget->AddToViewport();
+		BindUIEvents();
+	}
 }
