@@ -36,7 +36,6 @@ public:
 	void RemoveItemsAt(int SlotIndex, int Amount);
 	void UseItemByType(UItemDataAsset* Item);
 	void UseItemAt(int SlotIndex);
-	void DropItems(int SlotIndex, int Amount);
 	void Clear();
 	
 	void TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item, int SlotIndex);

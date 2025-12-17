@@ -16,7 +16,9 @@
 #include "InteractableSystem/Subsystems/InteractableSubsystem.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Buildings/Chest.h"
+#include "Items/Data/ItemGameplayTag.h"
 #include "UI/Widgets/Glossary.h"
+#include "UI/Widgets/HotBar.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -42,6 +44,8 @@ void ACustomPlayerController::BeginPlay()
 	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = PlayerData->CrouchMoveSpeed;
 
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
+	
+	MyPlayer->GetArmorComponent()->OnArmorEquipped.AddDynamic(this, &ThisClass::ChangeArmorUI);
 	
 	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
 
@@ -625,6 +629,18 @@ void ACustomPlayerController::AddPlayerUIToViewport()
 		HUDWidget->AddToViewport();
 		BindUIEvents();
 	}
+}
+
+void ACustomPlayerController::ChangeArmorUI(UArmorDataAsset* NewArmor)
+{
+	if (UHotBar* HotBar = Cast<UHotBar>(HotbarInventoryWidget))
+	{
+		if (NewArmor->Type.MatchesTag(GT_Item_Armor_Helmet))
+			HotBar->SetHelmetBrush(NewArmor->ItemIcon);
+		else if  (NewArmor->Type.MatchesTag(GT_Item_Armor_Chest))
+			HotBar->SetArmorBrush(NewArmor->ItemIcon);
+	}
+
 }
 
 void ACustomPlayerController::CreateBuilding(TSubclassOf<ABuilding> BuildingClass)

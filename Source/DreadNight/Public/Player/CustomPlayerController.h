@@ -288,6 +288,9 @@ private:
 	UFUNCTION()
 	void AddPlayerUIToViewport();
 	
+	UFUNCTION()
+	void ChangeArmorUI(UArmorDataAsset* NewArmor);
+	
 public:
 	
 	void CreateBuilding(TSubclassOf<ABuilding> BuildingClass);

@@ -19,3 +19,18 @@ void UHotBar::NativeConstruct()
 		}
 	}
 }
+
+void UHotBar::SetHelmetBrush(UTexture2D* HelmetTexture) const
+{
+	HelmetImage->SetBrushFromTexture(HelmetTexture);
+}
+
+void UHotBar::SetArmorBrush(UTexture2D* ArmorTexture) const
+{
+	ArmorImage->SetBrushFromTexture(ArmorTexture);
+}
+
+void UHotBar::SetWeaponBrush(UTexture2D* WeaponTexture) const
+{
+	WeaponImage->SetBrushFromTexture(WeaponTexture);
+}

@@ -7,6 +7,8 @@
 
 class UArmorDataAsset;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnArmorEquipped, UArmorDataAsset*, ArmorData);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DREADNIGHT_API UArmorComponent : public UActorComponent
 {
@@ -29,8 +31,15 @@ protected:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UStaticMeshComponent> ArmorMesh;
+	
+	UPROPERTY()
+	TObjectPtr<UArmorDataAsset> HelmetDataAsset;
+	
+	UPROPERTY()
+	TObjectPtr<UArmorDataAsset> ArmorDataAsset;
 public:
 
+	FOnArmorEquipped OnArmorEquipped;
 	  
 	UFUNCTION(BlueprintCallable)
 	void EquipArmor(UArmorDataAsset* Armor);

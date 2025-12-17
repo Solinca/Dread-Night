@@ -128,27 +128,6 @@ void UInventoryComponent::UseItemAt(int SlotIndex)
 	}
 }
 
-void UInventoryComponent::DropItems(int SlotIndex, int Amount = 1)
-{
-	if (!Items[SlotIndex])
-		return;
-	
-	for (int i = 0; i < Amount; ++i)
-	{
-		if (!Items[SlotIndex]->IsEmpty())
-		{
-			Items[SlotIndex]->TryRemove(1);
-			OnItemModified.Broadcast(Items[SlotIndex], SlotIndex);
-		}
-	}
-	
-	if (Items[SlotIndex]->IsEmpty())
-	{
-		OnItemRemoved.Broadcast(SlotIndex);
-		Items[SlotIndex] = nullptr;
-	}
-}
-
 void UInventoryComponent::Clear()
 {
 	Items.Empty();
