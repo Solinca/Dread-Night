@@ -77,6 +77,12 @@ void ACollectibleResource::BeginPlay()
 
 void ACollectibleResource::DropItem() const
 {
+	if (!ResourceData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No data table assigned in the class %s"), *GetClass()->GetName());
+		return;
+	}
+	
 	float Random = FMath::RandRange(0.0f,100.f);
 	TArray<FLootData*> LootDatas;
 	ResourceData->GetAllRows("" , LootDatas);
