@@ -35,6 +35,7 @@ protected:
 	APlayerCharacter();
 
 	virtual void BeginPlay() override;
+	void TimerHealthRegen();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UCameraComponent> Camera = nullptr;
@@ -83,8 +84,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	FName EquippedObjectTag;
-	
-	
+
+	FTimerHandle THHealthRegen;
 
 public:
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
