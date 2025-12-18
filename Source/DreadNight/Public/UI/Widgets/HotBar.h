@@ -16,18 +16,26 @@ protected:
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UImage> HelmetImage;
 	UPROPERTY(meta =(BindWidgetOptional))
-	TObjectPtr<UImage> ArmorImage;
+	TObjectPtr<UImage> ChestImage;
 	UPROPERTY(meta =(BindWidgetOptional))
-	TObjectPtr<UImage> WeaponImage;
+	TObjectPtr<UImage> PantImage;
+	UPROPERTY(meta =(BindWidgetOptional))
+	TObjectPtr<UImage> GloveImage;
 	
 public:
 	virtual void NativeConstruct() override;
 	
 	TObjectPtr<UImage> GetHelmetImage() const { return HelmetImage; }
-	TObjectPtr<UImage> GetArmorImage() const { return ArmorImage; }
-	TObjectPtr<UImage> GetWeaponImage() const { return WeaponImage; }
+	TObjectPtr<UImage> GetChestImage() const { return ChestImage; }
+	TObjectPtr<UImage> GetPantImage() const { return PantImage; }
+	TObjectPtr<UImage> GetGloveImage() const { return GloveImage; }
 	
 	void SetHelmetBrush(UTexture2D* HelmetTexture) const;
-	void SetArmorBrush(UTexture2D* ArmorTexture) const;
-	void SetWeaponBrush(UTexture2D* WeaponTexture) const;
+	void SetChestBrush(UTexture2D* ChestTexture) const;
+	void SetPantBrush(UTexture2D* PantTexture) const;
+	void SetGloveBrush(UTexture2D* GloveTexture) const;
+	
+	void SetArmorImagesVisibility(ESlateVisibility ArmorImagesVisibility) const;
+	
+	
 };
