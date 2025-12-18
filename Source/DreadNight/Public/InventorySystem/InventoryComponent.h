@@ -21,10 +21,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(SaveGame)
+	TArray<FItemInstanceSave> SavedItems;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TObjectPtr<UItemInstance>> Items;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, SaveGame,BlueprintReadWrite)
 	int Size = 20;
 	
 public:	
@@ -55,6 +58,9 @@ public:
 	bool IsSlotEmpty(int SlotIndex) const;
 	bool IsFull() const;
 	int GetInventoryLimitSize() const;
+
+	void SerializeInventory();
+	void DeserializeInventory();
 	
 	FOnItemAddedEventSignature OnItemAdded;
 	FOnItemRemovedEventSignature OnItemRemoved;

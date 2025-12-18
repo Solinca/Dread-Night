@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "DN_SaveGame.generated.h"
 
 class ISavableActor;
@@ -53,6 +54,8 @@ class DREADNIGHT_API UDN_SaveGame : public USaveGame
 
 	TMap<FName, AActor*> BuildWorldActorCache(UWorld* WorldContext) const;
 	TMap<FName, ISavableActor*> BuildWorldSavableCache(UWorld* WorldContext) const;
+
+	void SerializeActorComponents(AActor* Actor, FObjectAndNameAsStringProxyArchive& Ar);
 public:
 	UFUNCTION(BlueprintCallable)
 	void GatherAllSaveData(UWorld* WorldContext);

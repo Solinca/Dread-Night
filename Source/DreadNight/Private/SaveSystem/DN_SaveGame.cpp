@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "SaveSystem/SavableActor.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
+#include "UObject/UnrealTypePrivate.h"
 
 
 void UDN_SaveGame::CollectSaveData(UWorld* WorldContext)
@@ -21,6 +22,7 @@ void UDN_SaveGame::CollectSaveData(UWorld* WorldContext)
     	FSaveDataStruct ActorSaveInfo;
 
     	ISavableActor* SavableObject = Cast<ISavableActor>(*It);
+    	SavableObject->OnPreSave();
     	
     	ActorSaveInfo.bIsDynamicActor = SavableObject->IsDynamicallySpawned();
     	ActorSaveInfo.SpawnTransform = SavableObject->GetSpawnTransform();
@@ -33,8 +35,9 @@ void UDN_SaveGame::CollectSaveData(UWorld* WorldContext)
     	
     	FMemoryWriter MemoryWriter(ActorSaveInfo.Data, true);
     	FObjectAndNameAsStringProxyArchive Ar(MemoryWriter, false);
-    	Ar.ArIsSaveGame = true;
+    	Ar.ArIsSaveGame = true; 
     	It->Serialize(Ar);
+    	SerializeActorComponents(*It, Ar);
 
     	GameSaveData.GameData.Add(ActorSaveInfo);
 	}
@@ -75,6 +78,25 @@ TMap<FName, ISavableActor*> UDN_SaveGame::BuildWorldSavableCache(UWorld* WorldCo
 	}
 
 	return MoveTemp(SavableCache);	
+}
+
+void UDN_SaveGame::SerializeActorComponents(AActor* Actor, FObjectAndNameAsStringProxyArchive& Ar)
+{
+	for (TFieldIterator<FProperty> PropIt(Actor->GetClass()); PropIt; ++PropIt)
+	{
+		if (PropIt->HasAnyPropertyFlags(CPF_SaveGame))
+		{
+			if (FObjectProperty* ObjProp = CastField<FObjectProperty>(*PropIt))
+			{
+				UObject* ObjValue = ObjProp->GetObjectPropertyValue_InContainer(Actor);
+
+				if (UActorComponent* Comp = Cast<UActorComponent>(ObjValue))
+				{
+					Comp->Serialize(Ar);
+				}
+			}
+		}
+	}
 }
 
 void UDN_SaveGame::GatherAllSaveData(UWorld* WorldContext)
@@ -120,7 +142,8 @@ void UDN_SaveGame::UseAllSaveData(UWorld* WorldContext)
 			FMemoryReader MemoryReader(SaveActorData.Data, true);
 			FObjectAndNameAsStringProxyArchive Ar(MemoryReader, false);
     		Ar.ArIsSaveGame = true;
-			TargetActor->Serialize(Ar); 
+			TargetActor->Serialize(Ar);
+			SerializeActorComponents(TargetActor, Ar);
 		}
 	}
 	TMap<FName, ISavableActor*> FinalSavableCache = BuildWorldSavableCache(WorldContext);

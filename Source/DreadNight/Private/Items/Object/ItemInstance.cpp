@@ -1,6 +1,7 @@
 ﻿#include "Items/Object/ItemInstance.h"
 #include "Items/Interface/UsableItem.h"
 #include "Items/Data/ItemDataAsset.h"
+#include "Items/Helper/ItemInstanceFactory.h"
 
 bool UItemInstance::TryStealInstance(UItemInstance* Other)
 {
@@ -95,6 +96,7 @@ bool UItemInstance::IsEmpty() const
 	return StackNumber == 0;
 }
 
+
 bool UItemInstance::TryUse(AActor* User)
 {
 	if (StackNumber <= 0)
@@ -119,4 +121,22 @@ bool UItemInstance::TryRemove(const int NumberOfInstanceToRemove)
 	OnItemStackChange.Broadcast(this, StackNumber);
 	DestroyIfEmpty();
 	return true;
+}
+
+
+
+
+FItemInstanceSave FItemInstanceSave::SerializeItemInstance(UItemInstance* Item)
+{
+	FItemInstanceSave Save;
+	if (!Item)
+		return Save;
+	Save.Type = Item->GetDataAsset();
+	Save.StackNumber = Item->GetStackNumber();
+	return Save;
+}
+
+UItemInstance* FItemInstanceSave::DeserializeItemInstance(UObject* Context) const
+{
+	return UItemInstanceFactory::CreateItem(Context, Type.Get(), StackNumber);
 }
