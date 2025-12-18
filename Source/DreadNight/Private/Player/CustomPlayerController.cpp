@@ -19,6 +19,7 @@
 #include "Items/Data/ItemGameplayTag.h"
 #include "UI/Widgets/Glossary.h"
 #include "UI/Widgets/HotBar.h"
+#include "Global/MyGameUserSettings.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -53,6 +54,8 @@ void ACustomPlayerController::BeginPlay()
 
 	ObjectPlacementQueryParams.bTraceComplex = true;
 	ObjectPlacementQueryParams.AddIgnoredActor(GetPawn());
+
+	MySettings = Cast<UMyGameUserSettings>(GEngine->GetGameUserSettings());
 	
 	UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
 	MyGameInstance->OnPCGEndGeneration.AddDynamic(this, &ThisClass::AddPlayerUIToViewport);
@@ -67,9 +70,9 @@ void ACustomPlayerController::Tick(float DeltaTime)
 }
 
 void ACustomPlayerController::SetupInputComponent()
-
 {
 	Super::SetupInputComponent();
+
 	if (TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
 		for (FInputActionSetup i : IA_Setup)
@@ -105,9 +108,9 @@ void ACustomPlayerController::Look(const FInputActionValue& Value)
 {
 	FVector2D mouseInput = Value.Get<FVector2D>();
 
-	AddYawInput(mouseInput.X * GetWorld()->GetDeltaSeconds() * PlayerData->CameraSensitivity);
+	AddYawInput(mouseInput.X * GetWorld()->GetDeltaSeconds() * MySettings->GetPlayerCameraSensitivity());
 
-	AddPitchInput(mouseInput.Y * GetWorld()->GetDeltaSeconds() * PlayerData->CameraSensitivity);
+	AddPitchInput(mouseInput.Y * GetWorld()->GetDeltaSeconds() * MySettings->GetPlayerCameraSensitivity());
 }
 
 void ACustomPlayerController::Jump(const FInputActionValue& Value)
