@@ -47,21 +47,33 @@ protected:
 	void SetupComboBox(
 		UComboBoxString* ComboBox,
 		TMap<FString, TValue>& Map,
-		const TValue& CurrentValue) {
-		if (!ComboBox) return;
-
+		const TValue& CurrentValue)
+	{
+		if (!ComboBox)
+		{
+			return;
+		}
+		
 		ComboBox->ClearOptions();
-
-		for (const auto& Pair : Map) ComboBox->AddOption(Pair.Key);
+		
+		FString OptionToSelect;
 
 		for (const auto& Pair : Map)
 		{
+			ComboBox->AddOption(Pair.Key);
 			if (Pair.Value == CurrentValue)
 			{
-				ComboBox->SetSelectedOption(Pair.Key);
-				break;
+				OptionToSelect = Pair.Key;
 			}
 		}
+
+		if (OptionToSelect.IsEmpty())
+		{
+			ComboBox->SetSelectedOption(ComboBox->GetOptionAtIndex(0));
+			return;
+		}
+		
+		ComboBox->SetSelectedOption(OptionToSelect);
 	};
 
 	UFUNCTION()
@@ -80,8 +92,6 @@ protected:
 	void OnReturnClicked();
 
 public:
-	UOptionsWidget(const FObjectInitializer& ObjectInitializer);
-
 	UPROPERTY(BlueprintAssignable)
 	FOnReturn OnReturn;
 
