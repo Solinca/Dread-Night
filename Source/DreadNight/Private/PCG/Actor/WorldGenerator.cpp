@@ -20,10 +20,31 @@ void AWorldGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (auto Element : PCG_Array)
+	GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (!GameInstance)
+		return;
+
+	if (!GameInstance->IsNewGame())
+	{
+		GameInstance->Load(GetWorld());
+	}
+
+	 
+	
+	for (auto Element : AlwaysLoadPCG)
 	{
 		RegisterVolume(Element);
 	}
+	
+	if (GameInstance->IsNewGame())
+	{		
+		for (auto Element : OnFirstLoadPCG)
+		{
+			RegisterVolume(Element);
+		}
+	}
+	
+	SetSeed(GameInstance->GetSeed());
 	GenerateWorld();
 }
 
@@ -32,7 +53,7 @@ void AWorldGenerator::RegisterVolume(APCGVolume* Volume)
 	if (!Volume)
 		return;
 	Volume->PCGComponent->OnPCGGraphGeneratedDelegate.AddLambda([this](UPCGComponent*)
-	{
+	{ 
 		++PCGCurrentGenerationNumber;
 		if (PCGCurrentGenerationNumber >= PCGGenerationNumber)
 		{
@@ -53,30 +74,47 @@ void AWorldGenerator::Tick(float DeltaTime)
 
 void AWorldGenerator::GenerateWorld()
 {
-	int Seed = FMath::RandRange(0, 999999);
-	for (APCGVolume* Volume : PCG_Array)
-	{
-		Volume->PCGComponent->Cleanup();
-		Volume->PCGComponent->Seed = Seed;
-		Volume->PCGComponent->Generate();
-	}
+	CleanUp();
+	Generate();
 }
 
-#if WITH_EDITOR
+void AWorldGenerator::SetSeed(int Seed)
+{
+	DoForAllVolume([Seed](APCGVolume* Volume)
+	{
+		Volume->PCGComponent->Seed = Seed;
+	});
+}
+ 
 void AWorldGenerator::CleanUp()
 {
-	for (auto Element : PCG_Array)
+	DoForAllVolume([](APCGVolume* Volume)
 	{
-		Element->PCGComponent->Cleanup();
-	}
+		Volume->PCGComponent->Cleanup();
+	});
+}
+
+void AWorldGenerator::GenerateInEditor()
+{
+	DoForAllVolume([](APCGVolume* Volume)
+	{
+		Volume->PCGComponent->Generate();
+	});	
 }
 
 void AWorldGenerator::Generate()
 {
-	for (auto Element : PCG_Array)
+	for (auto Element : AlwaysLoadPCG)
 	{
 		Element->PCGComponent->Generate();
 	}
-}
 
-#endif
+	if (GameInstance->IsNewGame())
+	{
+		for (auto Element : OnFirstLoadPCG)
+		{
+			Element->PCGComponent->Generate();
+		}
+	}
+}
+ 

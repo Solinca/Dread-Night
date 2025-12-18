@@ -16,13 +16,14 @@
 #include "Items/Data/ArmorDataAsset.h"
 #include "Data/Player/PlayerDataAsset.h"
 #include "Components/BowCombatComponent.h"
+#include "SaveSystem/SavableActor.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class DREADNIGHT_API APlayerCharacter : public ACharacter, public IDamageable
+class DREADNIGHT_API APlayerCharacter : public ACharacter, public IDamageable, public ISavableActor
 {
 	GENERATED_BODY()
-
+	GENERATE_GENERIC_SAVABLE_OBJECT()
 private:
 	bool bIsCrouching = false;
 
@@ -68,10 +69,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> CurrentHelmetMesh = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
 	TObjectPtr<UInventoryComponent> InventoryComponent = nullptr;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
 	TObjectPtr<UInventoryComponent> HotbarInventoryComponent = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
@@ -171,4 +172,8 @@ public:
 
 	UFUNCTION()
 	void SetEquippedObjectTag(FName NewTag);
+
+	virtual void OnPreSave() override;
+
+	virtual void OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache) override;
 };

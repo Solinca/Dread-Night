@@ -228,6 +228,16 @@ void APlayerCharacter::SetEquippedObjectTag(FName NewTag)
 	EquippedObjectTag = NewTag;
 }
 
+void APlayerCharacter::OnPreSave()
+{
+	InventoryComponent->SerializeInventory();
+}
+
+void APlayerCharacter::OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache)
+{
+	InventoryComponent->DeserializeInventory();
+}
+
 UBowCombatComponent* APlayerCharacter::GetBowCombatComponent()
 {
 	return BowCombatComponent;

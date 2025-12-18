@@ -28,6 +28,7 @@ class DREADNIGHT_API ISavableActor
 public:
 	virtual FName GetUniqueIdentifier() const = 0;
 
+	virtual void OnPreSave();
 	virtual void OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache);
 
 	virtual void SetIsDynamicallySpawned(UClass* SpawnClass, FGuid UniqueID = FGuid::NewGuid()) = 0;

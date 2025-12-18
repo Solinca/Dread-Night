@@ -5,6 +5,7 @@
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	
 }
 
 void UInventoryComponent::BeginPlay()
@@ -303,4 +304,24 @@ bool UInventoryComponent::IsFull() const
 int UInventoryComponent::GetInventoryLimitSize() const
 {
 	return Size;
+}
+
+
+void UInventoryComponent::SerializeInventory()
+{
+	SavedItems.Empty();
+	for (auto Item : Items)
+	{
+		SavedItems.Add(FItemInstanceSave::SerializeItemInstance(Item));
+	}
+}
+
+void UInventoryComponent::DeserializeInventory()
+{
+	Items.SetNum(Size);
+	for (auto Element : SavedItems)
+	{
+		AddItem(Element.DeserializeItemInstance(this));
+	}
+	SavedItems.Empty();
 }

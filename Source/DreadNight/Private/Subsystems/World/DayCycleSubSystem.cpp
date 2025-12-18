@@ -12,6 +12,7 @@
 #include "Data/DayCycleSystem/DayCycleSystemDataAsset.h"
 #include "Blueprint/UserWidget.h"
 #include "NiagaraComponent.h"
+#include "Global/MyGameInstance.h"
 
 void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 {
@@ -37,7 +38,10 @@ void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 
 	UWaveWorldSubsystem::Get(&InWorld)->OnWaveEnd.AddDynamic(this, &UDayCycleSubSystem::StartDayCycle);
 
-	StartDayCycle();
+	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
+	{
+		GameInstance->OnPCGEndGeneration.AddDynamic(this, &UDayCycleSubSystem::StartDayCycle);
+	} 
 }
 
 bool UDayCycleSubSystem::ShouldCreateSubsystem(UObject* Outer) const
@@ -50,8 +54,9 @@ bool UDayCycleSubSystem::ShouldCreateSubsystem(UObject* Outer) const
 void UDayCycleSubSystem::StartDayCycle()
 {
 	DayCounter++;
-	
-	SpawnPopUpWidget("WBP_NewDay");
+
+	SpawnNewDayPopUp();
+
 	
 	hasDawnEnded = hasDuskStarted = false;
 
@@ -257,4 +262,14 @@ void UDayCycleSubSystem::ProcessEveryLightSource()
 			Pair.Key->SetIntensity(Pair.Key->Intensity - (Pair.Value / CurrentPhaseTimeInSeconds) * BaseWorldSettings->DayCycleSystemData->ProcessedTimeInterval);
 		}
 	}
+}
+
+void UDayCycleSubSystem::SpawnNewDayPopUp()
+{	
+	SpawnPopUpWidget("WBP_NewDay");
+}
+
+void UDayCycleSubSystem::OnPostLoad()
+{
+	--DayCounter;
 }
