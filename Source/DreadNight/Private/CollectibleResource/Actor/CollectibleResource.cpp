@@ -8,24 +8,39 @@
 #include "Items/Object/ItemInstance.h"
 #include "Windows/WindowsApplication.h"
 #include "Data/Loot/LootData.h"
+#include "Global/MyGameInstance.h"
+#include "Kismet/GameplayStatics.h"
+#include "Subsystems/World/DayCycleSubSystem.h"
 
 bool ACollectibleResource::TryApplyDamage(float Damage, AActor* DamageInstigator)
-{
-	const int ResourceCollected = FMath::Min(Damage, CurrentItemQuantity);
-	
+{	
 	if (UInventoryComponent* InventoryComponent = DamageInstigator->GetComponentByClass<UInventoryComponent>())
 	{
 		DropItem();
-		CurrentItemQuantity -= ResourceCollected;
-		if (CurrentItemQuantity <= 0)
+		--CurrentLife;
+		if (CurrentLife <= 0)
 		{
-			Destroy();
+			RespawnDayDelay = 1;
+			TemporaryDestroyCollectible();
 		}
 		return true;
 	}
 	
 
 	return false;
+}
+
+void ACollectibleResource::OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache)
+{
+	++RespawnDayDelay;
+	if (!bIsDestroyed)
+	{
+		RespawnCollectible();
+	}
+	else
+	{
+		TemporaryDestroyCollectible();
+	}
 }
 
 ACollectibleResource::ACollectibleResource()
@@ -44,9 +59,16 @@ void ACollectibleResource::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentItemQuantity = FMath::RandRange(ItemQuantityRange.X,ItemQuantityRange.Y);
+	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this));
+		GameInstance && GameInstance->IsNewGame())
+	{
+		CurrentLife = 1;//TODO : Possibly change this to a random life
+	} 
+	
 	SetMesh();
 	SetIsDynamicallySpawned(GetClass());
+
+	GetWorld()->GetSubsystem<UDayCycleSubSystem>()->OnDawnStart.AddDynamic(this, &ACollectibleResource::HealCollectible);
 }
 
 void ACollectibleResource::DropItem() const
@@ -101,4 +123,30 @@ void ACollectibleResource::SetMesh()
 
 		ResourceMesh->SetStaticMesh(Element->StaticMeshArray[Random]);
 	}
+}
+
+void ACollectibleResource::HealCollectible()
+{
+	--RespawnDayDelay;
+	if (RespawnDayDelay <= 0)
+	{
+		RespawnCollectible();
+	}	
+}
+
+void ACollectibleResource::TemporaryDestroyCollectible()
+{
+	bIsDestroyed = true;
+	CollisionType = ResourceMesh->GetCollisionEnabled();
+	SetActorEnableCollision(false);  
+	ResourceMesh->SetVisibility(false, true);
+}
+
+void ACollectibleResource::RespawnCollectible()
+{
+	bIsDestroyed = false;
+	CurrentLife = 1;
+ 
+	SetActorEnableCollision(true);  
+	ResourceMesh->SetVisibility(true, false);
 }
