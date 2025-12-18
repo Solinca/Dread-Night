@@ -37,6 +37,8 @@ protected:
 	TObjectPtr<UDataTable> ResourceData;
 	
 	void DropItem() const;
+
+	void SetMesh();
 public:
 
 	

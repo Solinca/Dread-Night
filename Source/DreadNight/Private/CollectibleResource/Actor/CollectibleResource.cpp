@@ -13,7 +13,6 @@ bool ACollectibleResource::TryApplyDamage(float Damage, AActor* DamageInstigator
 {
 	const int ResourceCollected = FMath::Min(Damage, CurrentItemQuantity);
 	
-	//TODO Add cast to player and add inventory logic
 	if (UInventoryComponent* InventoryComponent = DamageInstigator->GetComponentByClass<UInventoryComponent>())
 	{
 		DropItem();
@@ -46,7 +45,36 @@ void ACollectibleResource::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentItemQuantity = FMath::RandRange(ItemQuantityRange.X,ItemQuantityRange.Y);
+	SetMesh();
+	SetIsDynamicallySpawned(GetClass());
+}
 
+void ACollectibleResource::DropItem() const
+{
+	if (!ResourceData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No data table assigned in the class %s"), *GetClass()->GetName());
+		return;
+	}
+	
+	float Random = FMath::RandRange(0.0f,100.f);
+	TArray<FLootData*> LootDatas;
+	ResourceData->GetAllRows("" , LootDatas);
+	
+	for (const auto& LootData : LootDatas)
+	{
+		if (Random < LootData->Percentage)
+		{
+			int RandomStack = FMath::RandRange(LootData->MinDroppedAmount, LootData->MaxDroppedAmount);
+			UInventoryComponent* InventoryComp = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UInventoryComponent>();
+			if (InventoryComp != nullptr)
+				InventoryComp->AddItem(UItemInstanceFactory::CreateItem(InventoryComp->GetOwner(),LootData->ItemDataAsset, RandomStack));
+		}
+	}
+}
+
+void ACollectibleResource::SetMesh()
+{
 	AMyGameStateBase* MyGameStateBase = Cast<AMyGameStateBase>(GetWorld()->GetGameState());
 	if (!MyGameStateBase)
 	{
@@ -72,29 +100,5 @@ void ACollectibleResource::BeginPlay()
 		const int Random = FMath::RandRange(0, Element->StaticMeshArray.Num() - 1);
 
 		ResourceMesh->SetStaticMesh(Element->StaticMeshArray[Random]);
-	}
-}
-
-void ACollectibleResource::DropItem() const
-{
-	if (!ResourceData)
-	{
-		UE_LOG(LogTemp, Error, TEXT("No data table assigned in the class %s"), *GetClass()->GetName());
-		return;
-	}
-	
-	float Random = FMath::RandRange(0.0f,100.f);
-	TArray<FLootData*> LootDatas;
-	ResourceData->GetAllRows("" , LootDatas);
-	
-	for (const auto& LootData : LootDatas)
-	{
-		if (Random < LootData->Percentage)
-		{
-			int RandomStack = FMath::RandRange(LootData->MinDroppedAmount, LootData->MaxDroppedAmount);
-			UInventoryComponent* InventoryComp = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UInventoryComponent>();
-			if (InventoryComp != nullptr)
-				InventoryComp->AddItem(UItemInstanceFactory::CreateItem(InventoryComp->GetOwner(),LootData->ItemDataAsset, RandomStack));
-		}
 	}
 }

@@ -21,13 +21,14 @@ void UMyGameInstance::Save(UWorld* World)
 		SaveGame->Seed = Seed;
 		UGameplayStatics::SaveGameToSlot(SaveGame, SaveSlotName.ToString(), UserIndex);
 	}
+	bIsNewGame = false;
 }
 
 void UMyGameInstance::Load(UWorld* World)
 {
 	if (!UGameplayStatics::DoesSaveGameExist(SaveSlotName.ToString(),UserIndex))
 	{
-		Save(World);
+		NewGame();
 		return;
 	}
 	if (SaveGame = Cast<UDN_SaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName.ToString(), UserIndex));SaveGame)

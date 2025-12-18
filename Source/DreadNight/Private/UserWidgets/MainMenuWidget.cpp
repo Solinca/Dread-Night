@@ -17,7 +17,7 @@ void UMainMenuWidget::NativeConstruct()
 
 void UMainMenuWidget::OnContinueClicked()
 {
-	// TODO: Load save if exists or disable button if not
+	UGameplayStatics::OpenLevel(this, TEXT("BaseLevel"));
 }
 
 void UMainMenuWidget::OnNewGameClicked()

@@ -20,16 +20,30 @@ void AWorldGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)); 
+	GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (!GameInstance)
+		return;
+
+	if (!GameInstance->IsNewGame())
+	{
+		GameInstance->Load(GetWorld());
+	}
+
+	 
 	
 	for (auto Element : AlwaysLoadPCG)
 	{
 		RegisterVolume(Element);
 	}
-	for (auto Element : OnFirstLoadPCG)
-	{
-		RegisterVolume(Element);
+	
+	if (GameInstance->IsNewGame())
+	{		
+		for (auto Element : OnFirstLoadPCG)
+		{
+			RegisterVolume(Element);
+		}
 	}
+	
 	SetSeed(GameInstance->GetSeed());
 	GenerateWorld();
 }
@@ -39,7 +53,7 @@ void AWorldGenerator::RegisterVolume(APCGVolume* Volume)
 	if (!Volume)
 		return;
 	Volume->PCGComponent->OnPCGGraphGeneratedDelegate.AddLambda([this](UPCGComponent*)
-	{
+	{ 
 		++PCGCurrentGenerationNumber;
 		if (PCGCurrentGenerationNumber >= PCGGenerationNumber)
 		{
@@ -60,18 +74,47 @@ void AWorldGenerator::Tick(float DeltaTime)
 
 void AWorldGenerator::GenerateWorld()
 {
-	for (APCGVolume* Volume : OnFirstLoadPCG)
-	{
-		Volume->PCGComponent->Cleanup();
-		Volume->PCGComponent->Generate();
-	}
-	for (APCGVolume* Volume : AlwaysLoadPCG)
-	{
-		Volume->PCGComponent->Cleanup();
-		Volume->PCGComponent->Generate();
-	}
+	CleanUp();
+	Generate();
 }
 
-#if WITH_EDITOR
+void AWorldGenerator::SetSeed(int Seed)
+{
+	DoForAllVolume([Seed](APCGVolume* Volume)
+	{
+		Volume->PCGComponent->Seed = Seed;
+	});
+}
+ 
+void AWorldGenerator::CleanUp()
+{
+	DoForAllVolume([](APCGVolume* Volume)
+	{
+		Volume->PCGComponent->Cleanup();
+	});
+}
 
-#endif
+void AWorldGenerator::GenerateInEditor()
+{
+	DoForAllVolume([](APCGVolume* Volume)
+	{
+		Volume->PCGComponent->Generate();
+	});	
+}
+
+void AWorldGenerator::Generate()
+{
+	for (auto Element : AlwaysLoadPCG)
+	{
+		Element->PCGComponent->Generate();
+	}
+
+	if (GameInstance->IsNewGame())
+	{
+		for (auto Element : OnFirstLoadPCG)
+		{
+			Element->PCGComponent->Generate();
+		}
+	}
+}
+ 
