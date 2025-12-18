@@ -24,5 +24,7 @@ void ARangeAICharacter::OnDataAssetInitialization(UBlackboardComponent* Blackboa
 		BlackboardComponent->SetValueAsFloat("AttackDamage", RangeMonsterDataAsset->GetAttackDamage());
 		BlackboardComponent->SetValueAsFloat("FleeRange", RangeMonsterDataAsset->GetFleeRange());
 		BlackboardComponent->SetValueAsClass("SpawnedProjectile", RangeMonsterDataAsset->GetSpawnedProjectile());
+		BlackboardComponent->SetValueAsObject("AttackAnimationMontage", RangeMonsterDataAsset->GetAttackAnimationMontage());
+		BlackboardComponent->SetValueAsName("ThrowingBoneName", RangeMonsterDataAsset->GetThrowBoneName());
 	}
 }
