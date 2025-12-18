@@ -80,7 +80,16 @@ void UOptionsWidget::OnWindowModeChanged(FString SelectedItem, ESelectInfo::Type
 	UGameUserSettings* Settings = GEngine->GetGameUserSettings();
 
 	Settings->SetFullscreenMode(WindowModeMap[SelectedItem]);
+
+	if (Settings->GetFullscreenMode() == EWindowMode::WindowedFullscreen)
+	{
+		const FString NewResolution = ComboBoxResolution->GetOptionAtIndex(ResolutionMap.Num() - 1);
+		ComboBoxResolution->SetSelectedIndex(ResolutionMap.Num() - 1);
+		Settings->SetScreenResolution(ResolutionMap[NewResolution]);
+	}
+	
 	Settings->ApplySettings(false);
+	Settings->SaveSettings();
 }
 
 void UOptionsWidget::OnResolutionChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
@@ -91,6 +100,7 @@ void UOptionsWidget::OnResolutionChanged(FString SelectedItem, ESelectInfo::Type
 
 	Settings->SetScreenResolution(ResolutionMap[SelectedItem]);
 	Settings->ApplySettings(false);
+	Settings->SaveSettings();
 }
 
 void UOptionsWidget::OnGraphicsChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
@@ -101,6 +111,7 @@ void UOptionsWidget::OnGraphicsChanged(FString SelectedItem, ESelectInfo::Type S
 
 	Settings->SetOverallScalabilityLevel(GraphicsMap[SelectedItem]);
 	Settings->ApplySettings(false);
+	Settings->SaveSettings();
 }
 
 void UOptionsWidget::OnCheckboxVSyncChanged(bool bIsChecked)
@@ -108,6 +119,7 @@ void UOptionsWidget::OnCheckboxVSyncChanged(bool bIsChecked)
 	UGameUserSettings* Settings = GEngine->GetGameUserSettings();
 	Settings->bUseVSync = bIsChecked;
 	Settings->ApplySettings(false);
+	Settings->SaveSettings();
 }
 
 void UOptionsWidget::OnReturnClicked()
@@ -122,11 +134,6 @@ void UOptionsWidget::OnReturnClicked()
 		MainMenuWidgetClass = nullptr;
 		RemoveFromParent();
 	}
-}
-
-UOptionsWidget::UOptionsWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-{
-
 }
 
 void UOptionsWidget::SetMainMenuWidgetClass(TSubclassOf<UMainMenuWidget> MMWC)
