@@ -58,9 +58,24 @@ void APlayerCharacter::BeginPlay()
 	EquipArmor(Cast<UItemInstance_Armor>(UItemInstanceFactory::CreateItem(this, PlayerData->StartingHelmetDataAsset, 1)));
 }
 
+void APlayerCharacter::TimerHealthRegen()
+{
+	HealthComponent->AddHealth(PlayerData->PassiveHealthRegenAmount * GetConditionStateComponent()->GetHungerValueRatio());
+
+	if (HealthComponent->GetHealthRatio() == 1) GetWorldTimerManager().ClearTimer(THHealthRegen);
+}
+
 bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 {
 	HealthComponent->RemoveHealth(Damage / ArmorComponent->GetTotalDmgReductionMultiplier());
+
+	if (HealthComponent->GetHealthRatio() < 1)
+	{
+		if (!GetWorld()->GetTimerManager().IsTimerActive(THHealthRegen))
+		{
+			GetWorld()->GetTimerManager().SetTimer(THHealthRegen, this, &APlayerCharacter::TimerHealthRegen, PlayerData->PassiveHealthRegenTimer, true);
+		}
+	}
 
 	return true;
 }

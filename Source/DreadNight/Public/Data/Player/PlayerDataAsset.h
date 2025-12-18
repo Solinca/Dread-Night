@@ -76,6 +76,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Mana")
 	float SpellManaCost = 20.f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Life")
+	float PassiveHealthRegenAmount = 20.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Life")
+	float PassiveHealthRegenTimer = 60.f;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Hunger")
 	float HungerSprintCost = 0.1f;
 
