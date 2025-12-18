@@ -125,19 +125,26 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	if (IUsableItem* UsableItem = Cast<IUsableItem>(ItemData))
 	{
 		InventoryAction->GetUseButton()->SetVisibility(ESlateVisibility::Visible);
-		InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Visible);
+		if (!ItemData->GetDataAsset()->Type.MatchesTag(GT_Item_Armor))
+		{
+			InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Collapsed);
+		}
 		InventoryAction->GetUseText()->SetText(FText::FromName(UsableItem->GetActionName()));
 	}
 	else
 	{
-		InventoryAction->GetUseButton()->SetVisibility(ESlateVisibility::Hidden);
+		InventoryAction->GetUseButton()->SetVisibility(ESlateVisibility::Collapsed);
 		if (BindTargetInventoryComponent.GetName() != "HotBarInventoryComponent")
 		{
 			InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Visible);
 		}
 		else
 		{
-			InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Hidden);
+			InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
 }
