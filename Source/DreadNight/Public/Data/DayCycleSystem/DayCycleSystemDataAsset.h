@@ -10,7 +10,7 @@ class DREADNIGHT_API UDayCycleSystemDataAsset : public UDataAsset
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, Category = "Global Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Global Settings")
 	float DayTimeInSeconds = 900;
 
 	UPROPERTY(EditAnywhere, Category = "Global Settings")
