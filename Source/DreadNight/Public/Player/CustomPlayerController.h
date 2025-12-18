@@ -98,6 +98,9 @@ private:
 
 	TArray<FStackedMenu> MenuStack;
 
+	UPROPERTY(Transient)
+	TObjectPtr<class UMyGameUserSettings> MySettings = nullptr;
+
 	int32 PauseCounter = 0;
 
 	void UpdateGamePauseState();

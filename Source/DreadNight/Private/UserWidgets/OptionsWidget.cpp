@@ -1,7 +1,7 @@
 #include "UserWidgets/OptionsWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "GameFramework/GameUserSettings.h"
 #include "UserWidgets/MainMenuWidget.h"
+#include "Global/MyGameUserSettings.h"
 
 void UOptionsWidget::NativeConstruct()
 {
@@ -30,15 +30,16 @@ void UOptionsWidget::NativeConstruct()
 	
 	if (ButtonReturn) ButtonReturn->OnClicked.AddDynamic(this, &UOptionsWidget::OnReturnClicked);
 
-	UGameUserSettings* Settings = GEngine->GetGameUserSettings();
-	Settings->LoadSettings();
+	MySettings = Cast<UMyGameUserSettings>(GEngine->GetGameUserSettings());
+
+	MySettings->LoadSettings();
 
 	if (ComboBoxWindowMode)
 	{
 		SetupComboBox<EWindowMode::Type>(
 			ComboBoxWindowMode,
 			WindowModeMap,
-			Settings->GetFullscreenMode()
+			MySettings->GetFullscreenMode()
 		);
 
 		ComboBoxWindowMode->OnSelectionChanged.AddDynamic(this, &UOptionsWidget::OnWindowModeChanged);
@@ -49,7 +50,7 @@ void UOptionsWidget::NativeConstruct()
 		SetupComboBox<FIntPoint>(
 			ComboBoxResolution,
 			ResolutionMap,
-			Settings->GetScreenResolution()
+			MySettings->GetScreenResolution()
 		);
 
 		ComboBoxResolution->OnSelectionChanged.AddDynamic(this, &UOptionsWidget::OnResolutionChanged);
@@ -60,7 +61,7 @@ void UOptionsWidget::NativeConstruct()
 		SetupComboBox<int>(
 			ComboBoxGraphics,
 			GraphicsMap,
-			Settings->GetOverallScalabilityLevel()
+			MySettings->GetOverallScalabilityLevel()
 		);
 
 		ComboBoxGraphics->OnSelectionChanged.AddDynamic(this, &UOptionsWidget::OnGraphicsChanged);
@@ -68,8 +69,22 @@ void UOptionsWidget::NativeConstruct()
 
 	if (CheckBoxVSync)
 	{
-		CheckBoxVSync->SetIsChecked(Settings->bUseVSync);
+		CheckBoxVSync->SetIsChecked(MySettings->bUseVSync);
 		CheckBoxVSync->OnCheckStateChanged.AddDynamic(this, &UOptionsWidget::OnCheckboxVSyncChanged);
+	}
+
+	if (CameraSensitivity)
+	{
+		CameraSensitivity->SetValue(MySettings->GetPlayerCameraSensitivity());
+
+		CameraSensitivity->OnValueChanged.AddDynamic(this, &UOptionsWidget::OnCameraSensitivityChanged);
+
+		CameraSensitivity->OnMouseCaptureEnd.AddDynamic(this, &UOptionsWidget::OnCameraSensitivityCaptureEnd);
+
+		if (CameraSensitivityValue)
+		{
+			CameraSensitivityValue->SetText(FText::FromString(FString::FromInt(MySettings->GetPlayerCameraSensitivity())));
+		}
 	}
 }
 
@@ -77,49 +92,54 @@ void UOptionsWidget::OnWindowModeChanged(FString SelectedItem, ESelectInfo::Type
 {
 	if (!WindowModeMap.Contains(SelectedItem)) return;
 
-	UGameUserSettings* Settings = GEngine->GetGameUserSettings();
+	MySettings->SetFullscreenMode(WindowModeMap[SelectedItem]);
 
-	Settings->SetFullscreenMode(WindowModeMap[SelectedItem]);
-
-	if (Settings->GetFullscreenMode() == EWindowMode::WindowedFullscreen)
+	if (MySettings->GetFullscreenMode() == EWindowMode::WindowedFullscreen)
 	{
 		const FString NewResolution = ComboBoxResolution->GetOptionAtIndex(ResolutionMap.Num() - 1);
 		ComboBoxResolution->SetSelectedIndex(ResolutionMap.Num() - 1);
-		Settings->SetScreenResolution(ResolutionMap[NewResolution]);
+		MySettings->SetScreenResolution(ResolutionMap[NewResolution]);
 	}
 	
-	Settings->ApplySettings(false);
-	Settings->SaveSettings();
+	MySettings->ApplySettings(false);
+	MySettings->SaveSettings();
 }
 
 void UOptionsWidget::OnResolutionChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
 {
 	if (!ResolutionMap.Contains(SelectedItem)) return;
 
-	UGameUserSettings* Settings = GEngine->GetGameUserSettings();
-
-	Settings->SetScreenResolution(ResolutionMap[SelectedItem]);
-	Settings->ApplySettings(false);
-	Settings->SaveSettings();
+	MySettings->SetScreenResolution(ResolutionMap[SelectedItem]);
+	MySettings->ApplySettings(false);
+	MySettings->SaveSettings();
 }
 
 void UOptionsWidget::OnGraphicsChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
 {
 	if (!GraphicsMap.Contains(SelectedItem)) return;
 
-	UGameUserSettings* Settings = GEngine->GetGameUserSettings();
-
-	Settings->SetOverallScalabilityLevel(GraphicsMap[SelectedItem]);
-	Settings->ApplySettings(false);
-	Settings->SaveSettings();
+	MySettings->SetOverallScalabilityLevel(GraphicsMap[SelectedItem]);
+	MySettings->ApplySettings(false);
+	MySettings->SaveSettings();
 }
 
 void UOptionsWidget::OnCheckboxVSyncChanged(bool bIsChecked)
 {
-	UGameUserSettings* Settings = GEngine->GetGameUserSettings();
-	Settings->bUseVSync = bIsChecked;
-	Settings->ApplySettings(false);
-	Settings->SaveSettings();
+	MySettings->bUseVSync = bIsChecked;
+	MySettings->ApplySettings(false);
+	MySettings->SaveSettings();
+}
+
+void UOptionsWidget::OnCameraSensitivityChanged(float value)
+{
+	CameraSensitivityValue->SetText(FText::FromString(FString::FromInt(value)));
+
+	MySettings->SetPlayerCameraSensitivity(value);
+}
+
+void UOptionsWidget::OnCameraSensitivityCaptureEnd()
+{
+	MySettings->SaveSettings();
 }
 
 void UOptionsWidget::OnReturnClicked()

@@ -6,6 +6,7 @@
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/CheckBox.h"
+#include "Components/Slider.h"
 #include "OptionsWidget.generated.h"
 
 class UMainMenuWidget;
@@ -22,6 +23,9 @@ private:
 	TMap<FString, FIntPoint> ResolutionMap;
 	TMap<FString, int> GraphicsMap;
 
+	UPROPERTY(Transient)
+	TObjectPtr<class UMyGameUserSettings> MySettings = nullptr;
+
 protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> TBTitle = nullptr;
@@ -37,6 +41,12 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UCheckBox* CheckBoxVSync = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	USlider* CameraSensitivity = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> CameraSensitivityValue = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* ButtonReturn = nullptr;
@@ -87,6 +97,12 @@ protected:
 
 	UFUNCTION()
 	void OnCheckboxVSyncChanged(bool bIsChecked);
+
+	UFUNCTION()
+	void OnCameraSensitivityChanged(float value);
+
+	UFUNCTION()
+	void OnCameraSensitivityCaptureEnd();
 
 	UFUNCTION()
 	void OnReturnClicked();
