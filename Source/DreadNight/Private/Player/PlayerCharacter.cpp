@@ -51,6 +51,8 @@ void APlayerCharacter::BeginPlay()
 	SetupBowComponent();
 	SetupArmorComponent();
 
+	if (PlayerData->StartingWeaponDataAsset)
+		HotbarInventoryComponent->AddItem(UItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1));
 	EquipWeapon(Cast<UItemInstance_Weapon>(UItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1)));
 	EquipArmor(Cast<UItemInstance_Armor>(UItemInstanceFactory::CreateItem(this, PlayerData->StartingArmorDataAsset, 1)));
 	EquipArmor(Cast<UItemInstance_Armor>(UItemInstanceFactory::CreateItem(this, PlayerData->StartingHelmetDataAsset, 1)));
