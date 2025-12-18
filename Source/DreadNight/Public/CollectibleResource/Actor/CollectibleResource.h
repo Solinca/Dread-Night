@@ -14,6 +14,7 @@ class DREADNIGHT_API ACollectibleResource : public AActor, public IDamageable, p
 public:
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
 
+	virtual void OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache) override;
 private:
 	GENERATED_BODY()
 	GENERATE_GENERIC_SAVABLE_OBJECT()
@@ -23,12 +24,17 @@ public:
 
 protected: 
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditDefaultsOnly)
-	FVector2D ItemQuantityRange;
+ 
+	UPROPERTY(SaveGame)
+	int CurrentLife = 1;
 
 	UPROPERTY(SaveGame)
-	int CurrentItemQuantity;
+	bool bIsDestroyed;
+	
+	UPROPERTY(SaveGame)
+	int RespawnDayDelay;
+
+	ECollisionEnabled::Type CollisionType;
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UStaticMeshComponent> ResourceMesh;
@@ -39,6 +45,13 @@ protected:
 	void DropItem() const;
 
 	void SetMesh();
+
+	UFUNCTION()
+	void HealCollectible();
+
+	void TemporaryDestroyCollectible();
+
+	void RespawnCollectible();
 public:
 
 	

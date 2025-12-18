@@ -75,6 +75,8 @@ void UDayCycleSubSystem::StartDayCycle()
 	FogComponent->SetFogDensity(BaseWorldSettings->DayCycleSystemData->MaximalFogDensity);
 
 	GetWorld()->GetTimerManager().SetTimer(ProcessDayTimer, this, &UDayCycleSubSystem::ProcessDayPerSecond, BaseWorldSettings->DayCycleSystemData->ProcessedTimeInterval, true);
+
+	OnDawnStart.Broadcast();
 }
 
 void UDayCycleSubSystem::ProcessDayPerSecond()
