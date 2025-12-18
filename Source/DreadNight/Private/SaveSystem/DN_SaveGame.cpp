@@ -84,16 +84,18 @@ void UDN_SaveGame::SerializeActorComponents(AActor* Actor, FObjectAndNameAsStrin
 {
 	for (TFieldIterator<FProperty> PropIt(Actor->GetClass()); PropIt; ++PropIt)
 	{
-		if (PropIt->HasAnyPropertyFlags(CPF_SaveGame))
+		if (!PropIt->HasAnyPropertyFlags(CPF_SaveGame))
 		{
-			if (FObjectProperty* ObjProp = CastField<FObjectProperty>(*PropIt))
-			{
-				UObject* ObjValue = ObjProp->GetObjectPropertyValue_InContainer(Actor);
+			continue;
+		}
+		
+		if (FObjectProperty* ObjProp = CastField<FObjectProperty>(*PropIt))
+		{
+			UObject* ObjValue = ObjProp->GetObjectPropertyValue_InContainer(Actor);
 
-				if (UActorComponent* Comp = Cast<UActorComponent>(ObjValue))
-				{
-					Comp->Serialize(Ar);
-				}
+			if (UActorComponent* Comp = Cast<UActorComponent>(ObjValue))
+			{
+				Comp->Serialize(Ar);
 			}
 		}
 	}
