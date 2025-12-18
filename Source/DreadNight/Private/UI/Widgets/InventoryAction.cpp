@@ -40,12 +40,27 @@ void UInventoryAction::OnTransferPressed()
 		return;
 	}
 	
-	if (UItemInstance* ItemTransfered = InventoryComponent->GetItemAtSlot(SlotIndex))
+	if (TargetInventoryComponent->GetName() == "HotBarInventoryComponent")
 	{
-		InventoryComponent->TransferItem(TargetInventoryComponent, ItemTransfered, TargetInventoryComponent->GetEmptySlot().GetValue());
+		if (UInventoryQuickAddSlot* QuickAddWidget = CreateWidget<UInventoryQuickAddSlot>(this, InventoryQuikAddWidgetClass))
+		{
+			QuickAddWidget->SetSize(TargetInventoryComponent->GetSize());
+			
+			FVector2D WidgetPos = GetCachedGeometry().GetAbsolutePosition();
+			float OffsetX = 240.f;
+			float OffsetY = 100.f;
+			QuickAddWidget->SetPositionInViewport(FVector2D(WidgetPos.X - QuickAddWidget->GetVerticalBox()->GetDesiredSize().X / 2 - OffsetX,
+			 										WidgetPos.Y - QuickAddWidget->GetVerticalBox()->GetDesiredSize().Y / 2 - OffsetY));
+			
+			QuickAddWidget->OnQuickActionPressedEvent.AddDynamic(this, &UInventoryAction::OnQuickActionPressed);
+			QuickAddWidget->AddToViewport();
+			InventoryQuickAddSlot = QuickAddWidget;
+		}
 	}
-	
-	RemoveFromParent();
+	else
+	{
+		RemoveFromParent();
+	}
 }
 
 void UInventoryAction::OnRemovePressed()
@@ -75,5 +90,14 @@ void UInventoryAction::OnRemoveAmountSelected(int Amount)
 	if (Amount)
 	{
 		InventoryComponent->RemoveItemsAt(SlotIndex, Amount);
+	}
+}
+
+void UInventoryAction::OnQuickActionPressed()
+{
+	if (UItemInstance* ItemTransfered = InventoryComponent->GetItemAtSlot(SlotIndex))
+	{
+		InventoryComponent->TransferItem(TargetInventoryComponent, ItemTransfered, TargetInventoryComponent->GetEmptySlot().GetValue());
+		InventoryQuickAddSlot->RemoveFromParent();
 	}
 }

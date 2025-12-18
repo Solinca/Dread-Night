@@ -6,6 +6,7 @@
 #include "Components/Textblock.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "UI/Widgets/InventorySlider.h"
+#include "UI/Widgets/InventoryQuickAddSlot.h"
 #include "InventoryAction.generated.h"
 
 UCLASS()
@@ -31,6 +32,10 @@ protected:
 	TSubclassOf<UInventorySlider> InventorySliderWidgetClass;
 	UPROPERTY()
 	TObjectPtr<UInventorySlider> InventorySlider;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UInventoryQuickAddSlot> InventoryQuikAddWidgetClass;
+	UPROPERTY()
+	TObjectPtr<UInventoryQuickAddSlot> InventoryQuickAddSlot;
 	
 	int SlotIndex;
 public:
@@ -49,6 +54,8 @@ public:
 	void OnRemovePressed();
 	UFUNCTION()
 	void OnRemoveAmountSelected(int Amount);
+	UFUNCTION()
+	void OnQuickActionPressed();
 	
 	int GetSlotIndex() const { return SlotIndex; }
 	void SetSlotIndex(int Index) { SlotIndex = Index; }
