@@ -60,7 +60,7 @@ void APlayerCharacter::BeginPlay()
 
 void APlayerCharacter::TimerHealthRegen()
 {
-	HealthComponent->AddHealth(20.f * GetConditionStateComponent()->GetHungerValueRatio());
+	HealthComponent->AddHealth(PlayerData->PassiveHealthRegenAmount * GetConditionStateComponent()->GetHungerValueRatio());
 
 	if (HealthComponent->GetHealthRatio() == 1) GetWorldTimerManager().ClearTimer(THHealthRegen);
 }
@@ -73,7 +73,7 @@ bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 	{
 		if (!GetWorld()->GetTimerManager().IsTimerActive(THHealthRegen))
 		{
-			GetWorld()->GetTimerManager().SetTimer(THHealthRegen, this, &APlayerCharacter::TimerHealthRegen, 60.f, true);
+			GetWorld()->GetTimerManager().SetTimer(THHealthRegen, this, &APlayerCharacter::TimerHealthRegen, PlayerData->PassiveHealthRegenTimer, true);
 		}
 	}
 
