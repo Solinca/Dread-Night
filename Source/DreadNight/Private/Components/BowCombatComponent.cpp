@@ -14,6 +14,13 @@ void UBowCombatComponent::SetAiming(bool bAiming)
 {
 	bIsAiming = bAiming;
 
+	APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
+
+	//if (Player->GetInventoryComponent()->Contains())
+	//{
+		
+	//}
+
 	// (optionnel) r�duire la vitesse du perso en visant :
 	// if (auto* Character = Cast<ACharacter>(GetOwner()))
 	// {
