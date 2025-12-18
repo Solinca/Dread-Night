@@ -131,7 +131,14 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	else
 	{
 		InventoryAction->GetUseButton()->SetVisibility(ESlateVisibility::Hidden);
-		InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Hidden);
+		if (BindTargetInventoryComponent.GetName() != "HotBarInventoryComponent")
+		{
+			InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 }
 
