@@ -9,3 +9,8 @@ float URangeMonsterDataAsset::GetFleeRange() const
 {
 	return FleeRange;
 }
+
+const FName& URangeMonsterDataAsset::GetThrowBoneName() const
+{
+	return ThrowBoneName;
+}

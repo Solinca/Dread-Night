@@ -22,5 +22,6 @@ void AWarriorAICharacter::OnDataAssetInitialization(UBlackboardComponent* Blackb
 		BlackboardComponent->SetValueAsFloat("AcceptableRadius", HostileMonsterDataAsset->GetAcceptableRadius());
 		BlackboardComponent->SetValueAsFloat("AttackCooldown", HostileMonsterDataAsset->GetAttackCooldown());
 		BlackboardComponent->SetValueAsFloat("AttackDamage", HostileMonsterDataAsset->GetAttackDamage());
+		BlackboardComponent->SetValueAsObject("AttackAnimationMontage", HostileMonsterDataAsset->GetAttackAnimationMontage());
 	}
 }

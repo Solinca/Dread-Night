@@ -19,3 +19,8 @@ float UHostileMonsterDataAsset::GetAcceptableRadius() const
 {
 	return AcceptableRadius;
 }
+
+UAnimMontage* UHostileMonsterDataAsset::GetAttackAnimationMontage()
+{
+	return AttackAnimationMontage;
+}

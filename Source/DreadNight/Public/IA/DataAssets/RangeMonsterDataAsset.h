@@ -17,7 +17,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float FleeRange;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ThrowBoneName;
+
 public:
-	TSubclassOf<AProjectileActor> GetSpawnedProjectile() const;
-	float GetFleeRange() const;
+	[[nodiscard]] TSubclassOf<AProjectileActor> GetSpawnedProjectile() const;
+	[[nodiscard]] float GetFleeRange() const;
+	[[nodiscard]] const FName& GetThrowBoneName() const;
 };
