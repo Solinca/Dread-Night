@@ -328,6 +328,11 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 	InventoryWidget->BindToInventory(MyPlayer->GetInventoryComponent());
 	InventoryWidget->BindTargetInventory(MyPlayer->GetHotbarInventoryComponent());
 	
+	if (UHotBar* HotBar = Cast<UHotBar>(HotbarInventoryWidget))
+	{
+		HotBar->SetArmorImagesVisibility(ESlateVisibility::Visible);
+	}
+	
 	FVector2D WindowSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
 	float WidgetOffsetX = 35.f;
 	float WidgetOffsetY = 75.f;
@@ -345,10 +350,11 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 				TempInventory->RemoveItemAction();
 				TempInventory->OnItemInfoRemoved();
 			}
-			if (UInventory* TempHotBar = Cast<UInventory>(HotbarInventoryWidget))
+			if (UHotBar* TempHotBar = Cast<UHotBar>(HotbarInventoryWidget))
 			{
 				TempHotBar->RemoveItemAction();
 				TempHotBar->OnItemInfoRemoved();
+				TempHotBar->SetArmorImagesVisibility(ESlateVisibility::Hidden);
 			}
 		});
 }
@@ -638,9 +644,12 @@ void ACustomPlayerController::ChangeArmorUI(UArmorDataAsset* NewArmor)
 		if (NewArmor->Type.MatchesTag(GT_Item_Armor_Helmet))
 			HotBar->SetHelmetBrush(NewArmor->ItemIcon);
 		else if  (NewArmor->Type.MatchesTag(GT_Item_Armor_Chest))
-			HotBar->SetArmorBrush(NewArmor->ItemIcon);
+			HotBar->SetChestBrush(NewArmor->ItemIcon);
+		else if  (NewArmor->Type.MatchesTag(GT_Item_Armor_Pant))
+			HotBar->SetPantBrush(NewArmor->ItemIcon);
+		else if  (NewArmor->Type.MatchesTag(GT_Item_Armor_Glove))
+			HotBar->SetGloveBrush(NewArmor->ItemIcon);
 	}
-
 }
 
 void ACustomPlayerController::CreateBuilding(TSubclassOf<ABuilding> BuildingClass)

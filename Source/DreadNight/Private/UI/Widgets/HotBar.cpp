@@ -18,6 +18,8 @@ void UHotBar::NativeConstruct()
 			SlotWidget->SetShortcutText(FText::AsNumber(i + 1));
 		}
 	}
+	
+	SetArmorImagesVisibility(ESlateVisibility::Hidden);
 }
 
 void UHotBar::SetHelmetBrush(UTexture2D* HelmetTexture) const
@@ -25,12 +27,25 @@ void UHotBar::SetHelmetBrush(UTexture2D* HelmetTexture) const
 	HelmetImage->SetBrushFromTexture(HelmetTexture);
 }
 
-void UHotBar::SetArmorBrush(UTexture2D* ArmorTexture) const
+void UHotBar::SetChestBrush(UTexture2D* ChestTexture) const
 {
-	ArmorImage->SetBrushFromTexture(ArmorTexture);
+	ChestImage->SetBrushFromTexture(ChestTexture);
 }
 
-void UHotBar::SetWeaponBrush(UTexture2D* WeaponTexture) const
+void UHotBar::SetPantBrush(UTexture2D* PantTexture) const
 {
-	WeaponImage->SetBrushFromTexture(WeaponTexture);
+	PantImage->SetBrushFromTexture(PantTexture);
+}
+
+void UHotBar::SetGloveBrush(UTexture2D* GloveTexture) const
+{
+	GloveImage->SetBrushFromTexture(GloveTexture);
+}
+
+void UHotBar::SetArmorImagesVisibility(ESlateVisibility ArmorImagesVisibility) const
+{
+	HelmetImage->SetVisibility(ArmorImagesVisibility);	
+	ChestImage->SetVisibility(ArmorImagesVisibility);	
+	PantImage->SetVisibility(ArmorImagesVisibility);	
+	GloveImage->SetVisibility(ArmorImagesVisibility);
 }
