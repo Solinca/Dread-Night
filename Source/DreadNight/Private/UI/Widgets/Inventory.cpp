@@ -125,11 +125,13 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	if (IUsableItem* UsableItem = Cast<IUsableItem>(ItemData))
 	{
 		InventoryAction->GetUseButton()->SetVisibility(ESlateVisibility::Visible);
+		InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Visible);
 		InventoryAction->GetUseText()->SetText(FText::FromName(UsableItem->GetActionName()));
 	}
 	else
 	{
 		InventoryAction->GetUseButton()->SetVisibility(ESlateVisibility::Hidden);
+		InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
