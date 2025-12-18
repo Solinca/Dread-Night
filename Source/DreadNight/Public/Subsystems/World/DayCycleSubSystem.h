@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SaveSystem/SavableObject.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "DayCycleSubSystem.generated.h"
 
@@ -15,7 +16,7 @@ class ULightComponent;
 class UNiagaraComponent;
 
 UCLASS()
-class DREADNIGHT_API UDayCycleSubSystem : public UWorldSubsystem
+class DREADNIGHT_API UDayCycleSubSystem : public UWorldSubsystem, public ISavableObject
 {
 	GENERATED_BODY()
 
@@ -26,16 +27,22 @@ private:
 
 	FRotator SunRotation, MoonRotation;
 
+	UPROPERTY(Transient)
 	ABaseLevelWorldSettings* BaseWorldSettings = nullptr;
 
+	UPROPERTY(Transient)
 	UDirectionalLightComponent* Sun = nullptr;
-
+	
+	UPROPERTY(Transient)
 	UDirectionalLightComponent* Moon = nullptr;
 
+	UPROPERTY(Transient)
 	UExponentialHeightFogComponent* FogComponent = nullptr;
 
+	UPROPERTY(Transient)
 	USkyAtmosphereComponent* Sky = nullptr;
-
+	
+	UPROPERTY(Transient)
 	UVolumetricCloudComponent* Cloud = nullptr;
 
 	UPROPERTY(Transient)
@@ -47,10 +54,13 @@ private:
 
 	float CurrentPhaseRotation, DawnRotation, DuskRotation, DayRotation;
 
+	UPROPERTY(SaveGame)
 	int DayCounter = 0;
-
+	
+	UPROPERTY(Transient)
 	TMap<ULightComponent*, float> LightList;
-
+	
+	UPROPERTY(Transient)
 	TArray<UNiagaraComponent*> VFXList;
 
 	UFUNCTION()
@@ -73,6 +83,11 @@ private:
 	void SpawnPopUpWidget(const FString& InKey);
 
 	void ProcessEveryLightSource();
+
+	UFUNCTION()
+	void SpawnNewDayPopUp();
+
+	void OnPostLoad() override;
 
 protected:
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;

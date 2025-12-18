@@ -6,6 +6,7 @@
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "SaveSystem/SavableActor.h"
+#include "SaveSystem/SavableObject.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "UObject/UnrealTypePrivate.h"
 
@@ -101,13 +102,61 @@ void UDN_SaveGame::SerializeActorComponents(AActor* Actor, FObjectAndNameAsStrin
 	}
 }
 
-void UDN_SaveGame::GatherAllSaveData(UWorld* WorldContext)
+void UDN_SaveGame::SerializeWorldSubsystem(UWorld* World)
 {
-	GameSaveData.GameData.Empty();
-	CollectSaveData(WorldContext);	
+	TArray<TSavableObject<UWorldSubsystem>> SavableWorldSubsystem; 
+	Algo::CopyIf( World->GetSubsystemArrayCopy<UWorldSubsystem>(), SavableWorldSubsystem, [](UWorldSubsystem* WorldSubsystem)
+	{
+		TSavableObject Subsystem = WorldSubsystem;
+		return Subsystem.IsValid();
+	});
+	
+	for (auto Subsystem : SavableWorldSubsystem)
+	{
+		FUniqueObjectSave UniqueObject;
+		UniqueObject.Identifier = *Subsystem.Object->GetName();
+		FMemoryWriter MemoryWriter(UniqueObject.Data, true);
+		FObjectAndNameAsStringProxyArchive Ar(MemoryWriter, false);
+		Ar.ArIsSaveGame = true;
+
+		Subsystem.SavableObject->OnPreSave();
+		Subsystem.Object->Serialize(Ar);
+		WorldSubsystemSave.Add(MoveTemp(UniqueObject));
+		Subsystem.SavableObject->OnPostSave();
+		
+	}
 }
 
-void UDN_SaveGame::UseAllSaveData(UWorld* WorldContext)
+void UDN_SaveGame::DeserializeWorldSubsystem(UWorld* World)
+{
+	TMap<FName, TSavableObject<UWorldSubsystem>> SubSystemCache;
+	for (auto Subsystem : World->GetSubsystemArrayCopy<UWorldSubsystem>())
+	{
+		if (TSavableObject SavableSubsystem = Subsystem; SavableSubsystem.IsValid())
+		{
+			SubSystemCache.Add(*Subsystem->GetName(),MoveTemp(SavableSubsystem));			
+		}		
+	}
+
+	for (auto SubsystemSave : WorldSubsystemSave)
+	{
+		if (!SubSystemCache.Contains(SubsystemSave.Identifier))
+		{
+			continue;
+		}
+
+		TSavableObject Subsystem = SubSystemCache[SubsystemSave.Identifier];
+		FMemoryReader MemoryReader(SubsystemSave.Data, true);
+		FObjectAndNameAsStringProxyArchive Ar(MemoryReader, false);
+		Ar.ArIsSaveGame = true;
+
+		Subsystem.SavableObject->OnPreLoad();
+		Subsystem.Object->Serialize(Ar); 
+		Subsystem.SavableObject->OnPostLoad();
+	}
+}
+
+void UDN_SaveGame::DeserializeActor(UWorld* WorldContext)
 {
 	TMap<FName, AActor*> ActorCache = BuildWorldActorCache(WorldContext);
 	for (FSaveDataStruct& SaveActorData : GameSaveData.GameData)
@@ -143,7 +192,7 @@ void UDN_SaveGame::UseAllSaveData(UWorld* WorldContext)
 		{ 
 			FMemoryReader MemoryReader(SaveActorData.Data, true);
 			FObjectAndNameAsStringProxyArchive Ar(MemoryReader, false);
-    		Ar.ArIsSaveGame = true;
+			Ar.ArIsSaveGame = true;
 			TargetActor->Serialize(Ar);
 			SerializeActorComponents(TargetActor, Ar);
 		}
@@ -153,4 +202,17 @@ void UDN_SaveGame::UseAllSaveData(UWorld* WorldContext)
 	{
 		Savable.Value->OnPostLoad(FinalSavableCache);
 	}
+}
+
+void UDN_SaveGame::GatherAllSaveData(UWorld* WorldContext)
+{
+	GameSaveData.GameData.Empty();
+	SerializeWorldSubsystem(WorldContext);
+	CollectSaveData(WorldContext);	
+}
+
+void UDN_SaveGame::UseAllSaveData(UWorld* WorldContext)
+{
+	DeserializeWorldSubsystem(WorldContext);
+	DeserializeActor(WorldContext);
 }
