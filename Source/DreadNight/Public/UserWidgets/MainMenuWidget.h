@@ -17,7 +17,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> TBTitle = nullptr;
+	TObjectPtr<UImage> Logo = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ButtonContinue = nullptr;
