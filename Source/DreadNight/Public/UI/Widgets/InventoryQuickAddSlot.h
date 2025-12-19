@@ -7,7 +7,7 @@
 #include "UI/Widgets/InventoryQuickAddButton.h"
 #include "InventoryQuickAddSlot.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuickActionPressedEventSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuickActionPressedEventSignature, int, SlotIndex);
 
 UCLASS()
 class DREADNIGHT_API UInventoryQuickAddSlot : public UUserWidget
@@ -23,16 +23,11 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UInventoryQuickAddButton> QuickAddButton;
 	
-	UPROPERTY()
-	TObjectPtr<UInventoryComponent> TargetInventory;
 public:
-	virtual void NativePreConstruct() override;
-	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	UFUNCTION()
-	void SetupMenu(UInventoryComponent* Inventory);
+	void SetupMenu(UInventoryComponent* Inventory, UInventoryComponent* TargetInventory);
 	UFUNCTION()
-	void OnClicked();
+	void OnClicked(int Index);
 		
 	TObjectPtr<UVerticalBox> GetVerticalBox() const { return VerticalBox; }
 	TObjectPtr<UInventoryQuickAddButton> GetInventoryQuickAddButton() const { return QuickAddButton; }

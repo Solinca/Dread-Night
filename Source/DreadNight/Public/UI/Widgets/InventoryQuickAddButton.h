@@ -6,6 +6,8 @@
 #include "Components/TextBlock.h"
 #include "InventoryQuickAddButton.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuickAddButtonClickedEventSignature, int, SlotIndex);
+
 UCLASS()
 class DREADNIGHT_API UInventoryQuickAddButton : public UUserWidget
 {
@@ -16,12 +18,17 @@ protected:
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UTextBlock> QuickAddText;
 	
+	int SlotIndex = 1;
 public:
-	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
+	
+	UFUNCTION()
+	void SetupButtonSlot(int Index);
+	UFUNCTION()
+	void OnButtonClicked();
 	
 	TObjectPtr<UButton> GetQuickAddButton() const { return QuickAddButton; }
 	TObjectPtr<UTextBlock> GetQuickAddText() const { return QuickAddText; }
-	void SetQuickAddText(const FText& Text) const { QuickAddText->SetText(Text); }
 	
+	FOnQuickAddButtonClickedEventSignature OnQuickAddButtonClicked;
 };

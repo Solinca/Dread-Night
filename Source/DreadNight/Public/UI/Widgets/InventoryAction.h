@@ -42,6 +42,7 @@ public:
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeDestruct() override;
 	
 	UFUNCTION(BlueprintCallable)
 	void SetupAction(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index);
@@ -55,7 +56,7 @@ public:
 	UFUNCTION()
 	void OnRemoveAmountSelected(int Amount);
 	UFUNCTION()
-	void OnQuickActionPressed();
+	void OnQuickActionPressed(int Index);
 	
 	int GetSlotIndex() const { return SlotIndex; }
 	void SetSlotIndex(int Index) { SlotIndex = Index; }

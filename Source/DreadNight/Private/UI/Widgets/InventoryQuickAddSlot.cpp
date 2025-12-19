@@ -1,52 +1,39 @@
 #include "UI/Widgets/InventoryQuickAddSlot.h"
+#include "Items/Data/ItemDataAsset.h"
 
-#include "Components/Button.h"
-
-void UInventoryQuickAddSlot::NativePreConstruct()
+void UInventoryQuickAddSlot::SetupMenu(UInventoryComponent* Inventory, UInventoryComponent* TargetInventory)
 {
-}
-
-void UInventoryQuickAddSlot::NativeConstruct()
-{
-}
-
-void UInventoryQuickAddSlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-}
-
-void UInventoryQuickAddSlot::SetupMenu(UInventoryComponent* Inventory)
-{
-	if (!Inventory)
+	if (!TargetInventory)
 		return;
 	
-	TargetInventory = Inventory;
 	VerticalBox->ClearChildren();
 	
-	for (int i = 0; i < Inventory->GetSize(); ++i)
+	for (int i = 0; i < TargetInventory->GetSize(); ++i)
 	{
-		QuickAddButton = CreateWidget<UInventoryQuickAddButton>(this, QuickAddButtonClass);
+		UInventoryQuickAddButton* NewQuickAddButton = CreateWidget<UInventoryQuickAddButton>(this, QuickAddButtonClass);
 	
-		QuickAddButton->SetVisibility(ESlateVisibility::Collapsed);
-		if (UItemInstance* Item = Inventory->GetItemAtSlot(i))
+		NewQuickAddButton->SetVisibility(ESlateVisibility::Collapsed);
+		if (UItemInstance* Item = TargetInventory->GetItemAtSlot(i))
 		{
-			if (Inventory->GetStackableItemSlot(Item->GetDataAsset()))
+			if (Inventory->GetItemAtSlot(i)->GetDataAsset()->Type == Item->GetDataAsset()->Type)
 			{
-				QuickAddButton->SetVisibility(ESlateVisibility::Visible);
+				if (TargetInventory->GetStackableItemSlot(Item->GetDataAsset()))
+				{
+					NewQuickAddButton->SetVisibility(ESlateVisibility::Visible);
+				}
 			}
 		}
-		else if (Inventory->IsSlotEmpty(i))
+		else if (TargetInventory->IsSlotEmpty(i))
 		{
-			QuickAddButton->SetVisibility(ESlateVisibility::Visible);
+			NewQuickAddButton->SetVisibility(ESlateVisibility::Visible);
 		}
-		
-		QuickAddButton->GetQuickAddButton()->OnClicked.AddDynamic(this, &UInventoryQuickAddSlot::OnClicked);
-		QuickAddButton->SetQuickAddText(FText::FromString(FString::FromInt(i+1)));
-		VerticalBox->AddChildToVerticalBox(QuickAddButton);
+		NewQuickAddButton->SetupButtonSlot(i);
+		NewQuickAddButton->OnQuickAddButtonClicked.AddDynamic(this, &UInventoryQuickAddSlot::OnClicked);
+		VerticalBox->AddChildToVerticalBox(NewQuickAddButton);
 	}
 }
 
-void UInventoryQuickAddSlot::OnClicked()
+void UInventoryQuickAddSlot::OnClicked(int Index)
 {
-	OnQuickActionPressedEvent.Broadcast();
+	OnQuickActionPressedEvent.Broadcast(Index);
 }

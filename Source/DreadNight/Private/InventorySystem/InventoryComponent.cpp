@@ -292,7 +292,7 @@ TOptional<int> UInventoryComponent::GetStackableItemSlot(UItemDataAsset* Item) c
 	
 	for (int i = 0; i < Items.Num(); ++i)
 	{
-		if (Items[i] && Items[i]->GetDataAsset() == Item)
+		if (Items[i] && Items[i]->GetDataAsset()->Type == Item->Type)
 		{
 			if (Items[i]->GetStackNumber() < Items[i]->GetDataAsset()->StackLimit)
 			{

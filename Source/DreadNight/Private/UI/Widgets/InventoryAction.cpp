@@ -19,6 +19,18 @@ void UInventoryAction::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
+void UInventoryAction::NativeDestruct()
+{
+	if (InventoryQuickAddSlot)
+	{
+		InventoryQuickAddSlot->RemoveFromParent();
+	}
+	if (InventorySlider)
+	{
+		InventorySlider->RemoveFromParent();
+	}
+}
+
 void UInventoryAction::SetupAction(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index)
 {
 	InventoryComponent = OwningInventory;
@@ -44,7 +56,7 @@ void UInventoryAction::OnTransferPressed()
 	{
 		if (UInventoryQuickAddSlot* QuickAddWidget = CreateWidget<UInventoryQuickAddSlot>(this, InventoryQuickAddWidgetClass))
 		{
-			QuickAddWidget->SetupMenu(TargetInventoryComponent);
+			QuickAddWidget->SetupMenu(InventoryComponent,TargetInventoryComponent);
 			
 			FVector2D WidgetPos = GetCachedGeometry().GetAbsolutePosition();
 			float OffsetX = 240.f;
@@ -97,12 +109,11 @@ void UInventoryAction::OnRemoveAmountSelected(int Amount)
 	}
 }
 
-void UInventoryAction::OnQuickActionPressed()
+void UInventoryAction::OnQuickActionPressed(int Index)
 {
 	if (UItemInstance* ItemTransfered = InventoryComponent->GetItemAtSlot(SlotIndex))
 	{
-		int TextIndex = FCString::Atoi(*InventoryQuickAddSlot->GetInventoryQuickAddButton()->GetQuickAddText()->GetText().ToString());
-		InventoryComponent->TransferItemAt(TargetInventoryComponent, ItemTransfered, TextIndex - 1);
+		InventoryComponent->TransferItemAt(TargetInventoryComponent, ItemTransfered, Index);
 	}
 	InventoryQuickAddSlot->RemoveFromParent();
 	RemoveFromParent();
