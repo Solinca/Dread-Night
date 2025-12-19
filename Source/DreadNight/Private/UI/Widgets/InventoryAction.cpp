@@ -95,6 +95,9 @@ void UInventoryAction::OnRemovePressed()
 		InventorySlider->SetupSlider(Item->GetStackNumber());
 		InventorySlider->OnSliderValidated.AddDynamic(this, &UInventoryAction::OnRemoveAmountSelected);
 		InventorySlider->AddToViewport();
+		
+		SetVisibility(ESlateVisibility::Collapsed);
+		return;
 	}
 	RemoveFromParent();
 }

@@ -134,8 +134,15 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 			UseButtonVisibility = ESlateVisibility::Visible;
 		}
 		
+		ESlateVisibility RemoveButtonVisibility = ESlateVisibility::Collapsed;
+		if (BindInventoryComponent->GetName() != "HotbarInventoryComponent")
+		{
+			RemoveButtonVisibility = ESlateVisibility::Visible;
+		}
+		
 		InventoryAction->GetUseButton()->SetVisibility(UseButtonVisibility);
 		InventoryAction->GetTransferButton()->SetVisibility(TransferButtonVisibility);
+		InventoryAction->GetRemoveButton()->SetVisibility(RemoveButtonVisibility);
 	}
 	else
 	{
