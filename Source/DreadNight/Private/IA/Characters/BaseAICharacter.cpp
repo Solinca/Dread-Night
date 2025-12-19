@@ -26,17 +26,13 @@ void ABaseAICharacter::BeginPlay()
 void ABaseAICharacter::OnDeath()
 {
 	DropLoot();
+
 	Destroy();
 }
 
 bool ABaseAICharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 {
 	HealthComponent->RemoveHealth(Damage);
-	FString Msg = FString::Printf(
-		TEXT("enemy hit, dealt %f damages"),
-		Damage
-	);
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, Msg);
 
 	return true;
 }
@@ -63,6 +59,7 @@ void ABaseAICharacter::PossessedBy(AController* NewController)
 	AIController = Cast<AAIController>(NewController);
 
 	UBlackboardComponent* BlackboardComponent{AIController->GetBlackboardComponent()};
+
 	BP_OnDataAssetInitialization(BlackboardComponent, UsedDataAsset);
 }
 
@@ -78,17 +75,29 @@ UMonsterDataAsset* ABaseAICharacter::GetMonsterData() const
 
 void ABaseAICharacter::DropLoot() const
 {
-	float Random = FMath::RandRange(0.0f,100.f);
+	if (!UsedDataAsset->GetLootDataTable())
+	{
+		return;
+	}
+
+	float Random = FMath::RandRange(0.0f, 100.f);
+
 	TArray<FLootData*> LootDatas;
+
 	UsedDataAsset->GetLootDataTable()->GetAllRows("" , LootDatas);
+
 	for (const auto& LootData : LootDatas)
 	{
 		if (Random < LootData->Percentage) 
 		{
 			int RandomStack = FMath::RandRange(LootData->MinDroppedAmount,LootData->MaxDroppedAmount);
+
 			UInventoryComponent* InventoryComp = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UInventoryComponent>();
+
 			if (InventoryComp != nullptr)
+			{
 				InventoryComp->AddItem(UItemInstanceFactory::CreateItem(InventoryComp->GetOwner(),LootData->ItemDataAsset,RandomStack));
+			}
 		}
 	}
 }
@@ -100,8 +109,7 @@ void ABaseAICharacter::OnDataAssetInitialization(UBlackboardComponent* Blackboar
 	HealthComponent->SetMaxHealth(MonsterDataAsset->GetMaxHealth());
 }
 
-void ABaseAICharacter::BP_OnDataAssetInitialization_Implementation(UBlackboardComponent* BlackboardComponent,
-                                                                   UMonsterDataAsset* MonsterDataAsset)
+void ABaseAICharacter::BP_OnDataAssetInitialization_Implementation(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset)
 {
 	OnDataAssetInitialization(BlackboardComponent, MonsterDataAsset);
 }
