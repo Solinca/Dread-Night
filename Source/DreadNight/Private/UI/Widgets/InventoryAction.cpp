@@ -55,28 +55,25 @@ void UInventoryAction::OnTransferPressed()
 	UInventoryQuickAddSlot* QuickAddWidget = CreateWidget<UInventoryQuickAddSlot>(this, InventoryQuickAddWidgetClass);
 	if (TargetInventoryComponent->GetName() == "HotBarInventoryComponent" && QuickAddWidget)
 	{
-		{
-			QuickAddWidget->SetupMenu(TargetInventoryComponent);
+		QuickAddWidget->SetupMenu(TargetInventoryComponent);
 			
-			FVector2D WidgetPos = GetCachedGeometry().GetAbsolutePosition();
-			float OffsetX = 240.f;
-			float OffsetY = 30.f;
-			QuickAddWidget->SetPositionInViewport(FVector2D(WidgetPos.X - QuickAddWidget->GetVerticalBox()->GetDesiredSize().X / 2 - OffsetX,
-			 										WidgetPos.Y - QuickAddWidget->GetVerticalBox()->GetDesiredSize().Y / 2 - OffsetY));
+		FVector2D WidgetPos = GetCachedGeometry().GetAbsolutePosition();
+		float OffsetX = 240.f;
+		float OffsetY = 30.f;
+		QuickAddWidget->SetPositionInViewport(FVector2D(WidgetPos.X - QuickAddWidget->GetVerticalBox()->GetDesiredSize().X / 2 - OffsetX,
+												 WidgetPos.Y - QuickAddWidget->GetVerticalBox()->GetDesiredSize().Y / 2 - OffsetY));
 			
-			QuickAddWidget->OnQuickActionPressedEvent.AddDynamic(this, &UInventoryAction::OnQuickActionPressed);
-			InventoryQuickAddSlot = QuickAddWidget;
-			QuickAddWidget->AddToViewport();
-		}
+		QuickAddWidget->OnQuickActionPressedEvent.AddDynamic(this, &UInventoryAction::OnQuickActionPressed);
+		InventoryQuickAddSlot = QuickAddWidget;
+		QuickAddWidget->AddToViewport();
+		return;
 	}
-	else
+	
+	if (UItemInstance* ItemTransfered = InventoryComponent->GetItemAtSlot(SlotIndex))
 	{
-		if (UItemInstance* ItemTransfered = InventoryComponent->GetItemAtSlot(SlotIndex))
-		{
-			InventoryComponent->TransferItem(TargetInventoryComponent, ItemTransfered);
-		}
-		RemoveFromParent();
+		InventoryComponent->TransferItem(TargetInventoryComponent, ItemTransfered);
 	}
+	RemoveFromParent();
 }
 
 void UInventoryAction::OnRemovePressed()
