@@ -196,27 +196,26 @@ void UInventoryComponent::TransferItemAt(UInventoryComponent* TargetInventory, U
 		return;
 	}
 	
-	if (TargetInventory->Contains(Item->GetDataAsset(),1))
+	if (!TargetInventory->Contains(Item->GetDataAsset(),1))
+		return;
+	
+	for (int i = 0; i < TargetInventory->Items.Num(); ++i)
 	{
-		for (int i = 0; i < TargetInventory->Items.Num(); ++i)
-		{
-			UItemInstance* TargetItem = TargetInventory->GetItemAtSlot(i);
+		UItemInstance* TargetItem = TargetInventory->GetItemAtSlot(i);
 		
-			if (!TargetItem || !TargetItem->CanBeStackedWith(Item, UItemInstance::EStackMethod::Partially))
-				continue;
+		if (!TargetItem || !TargetItem->CanBeStackedWith(Item, UItemInstance::EStackMethod::Partially))
+			continue;
+		if (!TargetItem->TryStackWith(Item))
+			continue;
 		
-			if (TargetItem->TryStackWith(Item))
-			{
-				TargetInventory->OnItemModified.Broadcast(TargetItem, i);
+		TargetInventory->OnItemModified.Broadcast(TargetItem, i);
 			
-				if (Item->IsEmpty())
-				{
-					Items[StartSlot] = nullptr;
-					OnItemRemoved.Broadcast(StartSlot);
-					return;
-				}
-			}
-		}	
+		if (Item->IsEmpty())
+		{
+			Items[StartSlot] = nullptr;
+			OnItemRemoved.Broadcast(StartSlot);
+			return;
+		}
 	}
 }
 
