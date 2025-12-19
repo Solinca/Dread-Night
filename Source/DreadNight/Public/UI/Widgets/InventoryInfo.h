@@ -21,6 +21,6 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
-	TObjectPtr<UButton> GetItemInfoButton() const { return ItemInfoButton; }
-	TObjectPtr<UTextBlock> GetItemInfoText() const { return ItemInfoText; }
+	UButton* GetItemInfoButton() const { return ItemInfoButton; }
+	UTextBlock* GetItemInfoText() const { return ItemInfoText; }
 };

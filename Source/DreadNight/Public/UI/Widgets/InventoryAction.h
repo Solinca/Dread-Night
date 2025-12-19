@@ -60,12 +60,12 @@ public:
 	
 	int GetSlotIndex() const { return SlotIndex; }
 	void SetSlotIndex(int Index) { SlotIndex = Index; }
-	TObjectPtr<UButton> GetUseButton() const { return UseButton; }
-	TObjectPtr<UButton> GetTransferButton() const { return TransferButton; }
-	TObjectKey<UButton> GetRemoveButton() const { return RemoveButton; }
-	TObjectPtr<UTextBlock> GetUseText() const { return UseText; }
-	TObjectPtr<UTextBlock> GetTransferText() const { return TransferText; }
-	TObjectPtr<UTextBlock> GetRemoveText() const { return RemoveText; }
+	UButton* GetUseButton() const { return UseButton; }
+	UButton* GetTransferButton() const { return TransferButton; }
+	UButton* GetRemoveButton() const { return RemoveButton; }
+	UTextBlock* GetUseText() const { return UseText; }
+	UTextBlock* GetTransferText() const { return TransferText; }
+	UTextBlock* GetRemoveText() const { return RemoveText; }
 	
 	TObjectPtr<UInventoryComponent> InventoryComponent;
 	TObjectPtr<UInventoryComponent> TargetInventoryComponent;

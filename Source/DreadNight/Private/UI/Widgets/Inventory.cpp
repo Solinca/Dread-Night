@@ -11,8 +11,6 @@ void UInventory::NativePreConstruct()
 void UInventory::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
-	
 }
 
 void UInventory::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -104,14 +102,12 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	if (InventoryAction)
 		InventoryAction->RemoveFromParent();
 	
-	
 	if (InventoryInfoWidget)
 		OnItemInfoRemoved();
 	
 	UInventorySlot* ClickedSlot = Cast<UInventorySlot>(InventoryWrapBox->GetChildAt(SlotIndex));
 	if (!ClickedSlot)
 		return;
-	
 	
 	InventoryAction = CreateWidget<UInventoryAction>(this, InventoryActionClass);
 	InventoryAction->SetupAction(BindInventoryComponent, BindTargetInventoryComponent, SlotIndex);
@@ -159,14 +155,11 @@ void UInventory::OnItemInfoCreated(int SlotIndex)
 	InventoryInfoWidget->AddToViewport();
 	InventoryInfoWidget->SetDesiredSizeInViewport(FVector2D(100, 60));
 	
+	InventoryInfoWidget->GetItemInfoButton()->SetVisibility(ESlateVisibility::Hidden);
 	if (UItemInstance* ItemData = BindInventoryComponent->GetItemAtSlot(SlotIndex))
 	{
 		InventoryInfoWidget->GetItemInfoButton()->SetVisibility(ESlateVisibility::Visible);
 		InventoryInfoWidget->GetItemInfoText()->SetText(FText::FromName(ItemData->GetDataAsset()->ItemName));
-	}
-	else
-	{
-		InventoryInfoWidget->GetItemInfoButton()->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -181,5 +174,3 @@ void UInventory::RemoveItemAction()
 	if (InventoryAction)
 		InventoryAction->RemoveFromParent();
 }
-
-

@@ -70,6 +70,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveItemAction();
 	
-	const TObjectPtr<UWrapBox>& GetInventoryWrapBox() const { return InventoryWrapBox; }
-	TObjectPtr<UInventoryInfo> GetInventoryInfoWidget() const { return InventoryInfoWidget; }
+	UWrapBox* GetInventoryWrapBox() const { return InventoryWrapBox; }
+	UInventoryInfo* GetInventoryInfoWidget() const { return InventoryInfoWidget; }
 };

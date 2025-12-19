@@ -25,10 +25,10 @@ protected:
 public:
 	virtual void NativeConstruct() override;
 	
-	TObjectPtr<UImage> GetHelmetImage() const { return HelmetImage; }
-	TObjectPtr<UImage> GetChestImage() const { return ChestImage; }
-	TObjectPtr<UImage> GetPantImage() const { return PantImage; }
-	TObjectPtr<UImage> GetGloveImage() const { return GloveImage; }
+	UImage* GetHelmetImage() const { return HelmetImage; }
+	UImage* GetChestImage() const { return ChestImage; }
+	UImage* GetPantImage() const { return PantImage; }
+	UImage* GetGloveImage() const { return GloveImage; }
 	
 	void SetHelmetBrush(UTexture2D* HelmetTexture) const;
 	void SetChestBrush(UTexture2D* ChestTexture) const;

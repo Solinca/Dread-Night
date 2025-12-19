@@ -25,12 +25,12 @@ protected:
 	
 public:
 	UFUNCTION()
-	void SetupMenu(UInventoryComponent* Inventory, UInventoryComponent* TargetInventory);
+	void SetupMenu(UInventoryComponent* TargetInventory);
 	UFUNCTION()
 	void OnClicked(int Index);
-		
-	TObjectPtr<UVerticalBox> GetVerticalBox() const { return VerticalBox; }
-	TObjectPtr<UInventoryQuickAddButton> GetInventoryQuickAddButton() const { return QuickAddButton; }
+	
+	UVerticalBox* GetVerticalBox() const { return VerticalBox; }
+	UInventoryQuickAddButton* GetInventoryQuickAddButton() const { return QuickAddButton; }
 	
 	FOnQuickActionPressedEventSignature OnQuickActionPressedEvent;
 };

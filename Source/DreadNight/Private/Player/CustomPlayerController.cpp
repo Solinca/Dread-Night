@@ -449,13 +449,6 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 		Index = 0;
 	
 	CurrentHotbarIndex = Index;
-	if (UItemInstance* BuildingItem = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex))
-	{
-		if (IUsableItem* UsableItem = Cast<IUsableItem>(BuildingItem))
-		{
-			MyPlayer->GetHotbarInventoryComponent()->UseItemAt(CurrentHotbarIndex);
-		}
-	}
 }
 
 void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
@@ -464,18 +457,16 @@ void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
 	float Index = Value.Get<float>();
 	
 	CurrentHotbarIndex = (CurrentHotbarIndex + static_cast<int>(Index) + InventoryLimit) % InventoryLimit;
-	if (UItemInstance* BuildingItem = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex))
-	{
-		if (IUsableItem* UsableItem = Cast<IUsableItem>(BuildingItem))
-		{
-			MyPlayer->GetHotbarInventoryComponent()->UseItemAt(CurrentHotbarIndex);
-		}
-	}
 }
 
 void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 {
-	MyPlayer->GetHotbarInventoryComponent()->UseItemAt(CurrentHotbarIndex);
+	UItemInstance* BuildingItem = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
+	IUsableItem* UsableItem = Cast<IUsableItem>(BuildingItem);
+	if (BuildingItem && UsableItem)
+	{
+		MyPlayer->GetHotbarInventoryComponent()->UseItemAt(CurrentHotbarIndex);
+	}
 }
 
 void ACustomPlayerController::SaveGame()

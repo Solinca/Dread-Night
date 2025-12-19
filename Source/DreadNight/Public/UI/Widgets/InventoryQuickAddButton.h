@@ -27,8 +27,8 @@ public:
 	UFUNCTION()
 	void OnButtonClicked();
 	
-	TObjectPtr<UButton> GetQuickAddButton() const { return QuickAddButton; }
-	TObjectPtr<UTextBlock> GetQuickAddText() const { return QuickAddText; }
+	UButton* GetQuickAddButton() const { return QuickAddButton; }
+	UTextBlock* GetQuickAddText() const { return QuickAddText; }
 	
 	FOnQuickAddButtonClickedEventSignature OnQuickAddButtonClicked;
 };

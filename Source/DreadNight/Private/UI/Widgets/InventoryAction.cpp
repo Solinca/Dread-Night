@@ -56,7 +56,7 @@ void UInventoryAction::OnTransferPressed()
 	{
 		if (UInventoryQuickAddSlot* QuickAddWidget = CreateWidget<UInventoryQuickAddSlot>(this, InventoryQuickAddWidgetClass))
 		{
-			QuickAddWidget->SetupMenu(InventoryComponent,TargetInventoryComponent);
+			QuickAddWidget->SetupMenu(TargetInventoryComponent);
 			
 			FVector2D WidgetPos = GetCachedGeometry().GetAbsolutePosition();
 			float OffsetX = 240.f;

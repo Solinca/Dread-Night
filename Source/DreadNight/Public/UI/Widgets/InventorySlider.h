@@ -40,8 +40,8 @@ public:
 	
 	FOnSliderValidatedEventSignature OnSliderValidated;
 	
-	TObjectPtr<USlider> GetSlider() const { return Slider; }
-	TObjectPtr<UButton> GetValidateButton() const { return ValidateButton; }
-	TObjectPtr<UButton> GetReturnButton() const { return ReturnButton; }
-	TObjectPtr<UTextBlock> GetAmountText() const { return AmountText; }
+	USlider* GetSlider() const { return Slider; }
+	UButton* GetValidateButton() const { return ValidateButton; }
+	UButton* GetReturnButton() const { return ReturnButton; }
+	UTextBlock* GetAmountText() const { return AmountText; }
 };
