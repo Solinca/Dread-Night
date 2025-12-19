@@ -1,6 +1,7 @@
 #include "Subsystems/World/DayCycleSubSystem.h"
 #include "Subsystems/World/WaveWorldSubsystem.h"
 #include "Global/BaseLevelWorldSettings.h"
+#include "Global/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/ExponentialHeightFog.h"
@@ -9,10 +10,10 @@
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/VolumetricCloudComponent.h"
 #include "Components/LightComponent.h"
+#include "Components/AudioComponent.h"
 #include "Data/DayCycleSystem/DayCycleSystemDataAsset.h"
 #include "Blueprint/UserWidget.h"
 #include "NiagaraComponent.h"
-#include "Global/MyGameInstance.h"
 
 void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 {
@@ -57,7 +58,20 @@ void UDayCycleSubSystem::StartDayCycle()
 
 	SpawnNewDayPopUp();
 
-	
+	if (NightMusic)
+	{
+		NightMusic->FadeOut(BaseWorldSettings->DayCycleSystemData->NightFadeOutDuration, 0);
+
+		GetWorld()->GetTimerManager().SetTimer(MusicHandler, [this]
+		{
+			DayMusic = UGameplayStatics::SpawnSound2D(GetWorld(), BaseWorldSettings->DayCycleSystemData->DayMusic);
+		}, BaseWorldSettings->DayCycleSystemData->NightFadeOutDuration, false);
+	}
+	else
+	{
+		DayMusic = UGameplayStatics::SpawnSound2D(GetWorld(), BaseWorldSettings->DayCycleSystemData->DayMusic);
+	}
+
 	hasDawnEnded = hasDuskStarted = false;
 
 	CurrentPhaseTimeInSeconds = BaseWorldSettings->DayCycleSystemData->DawnTimeInSeconds;
@@ -139,9 +153,24 @@ void UDayCycleSubSystem::ProcessDayPerSecond()
 void UDayCycleSubSystem::StartMoonCycle()
 {
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
 	TimerManager.ClearTimer(ProcessDayTimer);
 
 	OnNightStart.Broadcast();
+
+	if (DayMusic)
+	{
+		DayMusic->FadeOut(BaseWorldSettings->DayCycleSystemData->DayFadeOutDuration, 0);
+
+		TimerManager.SetTimer(MusicHandler, [this]
+		{
+			NightMusic = UGameplayStatics::SpawnSound2D(GetWorld(), BaseWorldSettings->DayCycleSystemData->NightMusic);
+		}, BaseWorldSettings->DayCycleSystemData->DayFadeOutDuration, false);
+	}
+	else
+	{
+		NightMusic = UGameplayStatics::SpawnSound2D(GetWorld(), BaseWorldSettings->DayCycleSystemData->NightMusic);
+	}
 
 	TimerManager.SetTimer(WidgetSpawnDelayTimerHandle, [this]
 	{

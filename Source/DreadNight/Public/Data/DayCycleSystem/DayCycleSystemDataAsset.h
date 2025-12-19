@@ -78,4 +78,16 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "UI")
 	float WidgetSpawnDelay = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Music")
+	TObjectPtr<USoundBase> DayMusic = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Music")
+	TObjectPtr<USoundBase> NightMusic = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Music")
+	float DayFadeOutDuration = 2.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Music")
+	float NightFadeOutDuration = 2.0f;
 };

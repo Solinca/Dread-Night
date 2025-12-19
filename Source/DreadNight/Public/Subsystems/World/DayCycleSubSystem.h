@@ -14,6 +14,7 @@ class USkyAtmosphereComponent;
 class UVolumetricCloudComponent;
 class ULightComponent;
 class UNiagaraComponent;
+class UAudioComponent;
 
 UCLASS()
 class DREADNIGHT_API UDayCycleSubSystem : public UWorldSubsystem, public ISavableObject
@@ -24,6 +25,8 @@ private:
 	FTimerHandle ProcessDayTimer;
 
 	FTimerHandle WidgetSpawnDelayTimerHandle;
+
+	FTimerHandle MusicHandler;
 
 	FRotator SunRotation, MoonRotation;
 
@@ -62,6 +65,12 @@ private:
 	
 	UPROPERTY(Transient)
 	TArray<UNiagaraComponent*> VFXList;
+
+	UPROPERTY(Transient)
+	UAudioComponent* DayMusic = nullptr;
+
+	UPROPERTY(Transient)
+	UAudioComponent* NightMusic = nullptr;
 
 	UFUNCTION()
 	void StartDayCycle();
