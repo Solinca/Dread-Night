@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -10,18 +8,21 @@ class UButton;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnButtonClickedEventSignature);
 
-
 UCLASS()
 class DREADNIGHT_API UPauseMenu : public UUserWidget
 {
 	GENERATED_BODY()
+
 protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ResumeButton;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> OptionsButton;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> MenuButton;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> DesktopButton;
 
@@ -39,6 +40,7 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnButtonClickedEventSignature OnQuitToDesktop;
+
 private:
 	UFUNCTION()
 	void OnResumeButtonClicked();

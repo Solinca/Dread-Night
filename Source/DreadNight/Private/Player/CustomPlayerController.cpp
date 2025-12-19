@@ -420,11 +420,10 @@ void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
 
 		PauseMenuWidget->OnQuitToDesktop.AddDynamic(this, &ThisClass::LeaveGame);
 
-
 		PushNewMenu(PauseMenuWidget, true, [this]
-			{
-				PauseMenuWidget = nullptr;
-			});
+		{
+			PauseMenuWidget = nullptr;
+		});
 	}
 }
 
@@ -476,9 +475,16 @@ void ACustomPlayerController::LoadGame()
 
 void ACustomPlayerController::GoBackToMenu()
 {
-	SaveGame();
+	PopLastMenu();
 
-	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), PlayerData->MainMenuLevel);
+	SetInputMode(FInputModeUIOnly());
+
+	PlayerCameraManager->StartCameraFade(0, 1, 1, FColor::Black, true, true);
+
+	GetWorldTimerManager().SetTimer(SwitchLevel, [this]
+	{
+		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), PlayerData->MainMenuLevel);
+	}, 1, false);
 }
 
 void ACustomPlayerController::PlaceObject(const FInputActionValue& Value)
@@ -553,6 +559,7 @@ void ACustomPlayerController::PopLastMenu()
 		SetShowMouseCursor(false);
 
 		UGameplayStatics::SetGamePaused(GetWorld(), false);
+
 		return;
 	}
 	
@@ -585,9 +592,9 @@ void ACustomPlayerController::AccessOptions()
 		OptionsWidget->OnReturn.AddDynamic(this, &ThisClass::QuitOptions);
 
 		PushNewMenu(OptionsWidget, true, [this]
-			{
-				OptionsWidget = nullptr;
-			});
+		{
+			OptionsWidget = nullptr;
+		});
 	}
 }
 
