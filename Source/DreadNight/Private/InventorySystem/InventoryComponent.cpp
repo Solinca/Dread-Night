@@ -219,9 +219,20 @@ void UInventoryComponent::TransferItemAt(UInventoryComponent* TargetInventory, U
 	}
 }
 
-void UInventoryComponent::SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex)
+void UInventoryComponent::SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int TargetSlotIndex)
 {
+	if (!TargetInventory || !FromItem || !ToItem)
+		return;
 	
+	int FromSlotIndex = GetItemInstanceSlot(FromItem).GetValue();
+	
+	TargetInventory->Items[TargetSlotIndex] = FromItem;
+	Items[FromSlotIndex] = ToItem;
+	
+	OnItemRemoved.Broadcast(FromSlotIndex);
+	OnItemAdded.Broadcast(ToItem, FromSlotIndex);
+	TargetInventory->OnItemRemoved.Broadcast(TargetSlotIndex);
+	TargetInventory->OnItemAdded.Broadcast(FromItem, TargetSlotIndex);
 }
 
 TOptional<int> UInventoryComponent::GetEmptySlot() const

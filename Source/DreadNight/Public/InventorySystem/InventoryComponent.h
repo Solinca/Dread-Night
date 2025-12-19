@@ -43,7 +43,7 @@ public:
 	
 	void TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item);
 	void TransferItemAt(UInventoryComponent* TargetInventory, UItemInstance* Item, int IndexSlot);
-	void SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex);
+	void SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int TargetSlotIndex);
 	
 	int GetSize() const { return Size; }
 	void SetSize(int NewSize) { Size = NewSize; }

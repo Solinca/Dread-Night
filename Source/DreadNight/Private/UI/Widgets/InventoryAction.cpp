@@ -1,4 +1,5 @@
 #include "UI/Widgets/InventoryAction.h"
+#include "Items/Data/ItemDataAsset.h"
 
 void UInventoryAction::NativePreConstruct()
 {
@@ -108,10 +109,17 @@ void UInventoryAction::OnRemoveAmountSelected(int Amount)
 
 void UInventoryAction::OnQuickActionPressed(int Index)
 {
-	if (UItemInstance* ItemTransfered = InventoryComponent->GetItemAtSlot(SlotIndex))
+	UItemInstance* ItemFrom = InventoryComponent->GetItemAtSlot(SlotIndex);
+	UItemInstance* ItemTo = TargetInventoryComponent->GetItemAtSlot(Index - 1);
+	if (ItemFrom && ItemTo && ItemFrom->GetDataAsset()->Type != ItemTo->GetDataAsset()->Type)
 	{
-		InventoryComponent->TransferItemAt(TargetInventoryComponent, ItemTransfered, Index-1);
+		InventoryComponent->SwapItem(TargetInventoryComponent, ItemFrom, ItemTo, Index-1);
 	}
+	else
+	{
+		InventoryComponent->TransferItemAt(TargetInventoryComponent, ItemFrom, Index-1);
+	}
+	
 	InventoryQuickAddSlot->RemoveFromParent();
 	RemoveFromParent();
 }
