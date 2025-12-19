@@ -249,10 +249,7 @@ void ACustomPlayerController::Aim(const FInputActionValue& Value)
 
 void ACustomPlayerController::StopAim(const FInputActionValue& Value)
 {
-	if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
-	{
-		MyPlayer->GetBowCombatComponent()->SetAiming(false);
-	}
+	MyPlayer->GetBowCombatComponent()->SetAiming(false);
 }
 
 void ACustomPlayerController::Attack(const FInputActionValue& Value)
@@ -303,7 +300,6 @@ void ACustomPlayerController::Attack(const FInputActionValue& Value)
 
 void ACustomPlayerController::Interact(const FInputActionValue& Value)
 {
-
 	TObjectPtr<UInteractableSubsystem> Subsystem = GetWorld()->GetSubsystem<UInteractableSubsystem>();
 
 	if (Subsystem->TryInteract())
