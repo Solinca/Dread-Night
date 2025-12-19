@@ -21,6 +21,7 @@ public:
 	virtual void NativeConstruct() override;
 	
 	TObjectPtr<UButton> GetQuickAddButton() const { return QuickAddButton; }
-	void SetQuickAddText(const FText& Text) { QuickAddText->SetText(Text); }
+	TObjectPtr<UTextBlock> GetQuickAddText() const { return QuickAddText; }
+	void SetQuickAddText(const FText& Text) const { QuickAddText->SetText(Text); }
 	
 };

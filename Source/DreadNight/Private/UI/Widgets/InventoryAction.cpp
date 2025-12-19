@@ -42,23 +42,27 @@ void UInventoryAction::OnTransferPressed()
 	
 	if (TargetInventoryComponent->GetName() == "HotBarInventoryComponent")
 	{
-		if (UInventoryQuickAddSlot* QuickAddWidget = CreateWidget<UInventoryQuickAddSlot>(this, InventoryQuikAddWidgetClass))
+		if (UInventoryQuickAddSlot* QuickAddWidget = CreateWidget<UInventoryQuickAddSlot>(this, InventoryQuickAddWidgetClass))
 		{
-			QuickAddWidget->SetSize(TargetInventoryComponent->GetSize());
+			QuickAddWidget->SetupMenu(TargetInventoryComponent);
 			
 			FVector2D WidgetPos = GetCachedGeometry().GetAbsolutePosition();
 			float OffsetX = 240.f;
-			float OffsetY = 100.f;
+			float OffsetY = 30.f;
 			QuickAddWidget->SetPositionInViewport(FVector2D(WidgetPos.X - QuickAddWidget->GetVerticalBox()->GetDesiredSize().X / 2 - OffsetX,
 			 										WidgetPos.Y - QuickAddWidget->GetVerticalBox()->GetDesiredSize().Y / 2 - OffsetY));
 			
 			QuickAddWidget->OnQuickActionPressedEvent.AddDynamic(this, &UInventoryAction::OnQuickActionPressed);
-			QuickAddWidget->AddToViewport();
 			InventoryQuickAddSlot = QuickAddWidget;
+			QuickAddWidget->AddToViewport();
 		}
 	}
 	else
 	{
+		if (UItemInstance* ItemTransfered = InventoryComponent->GetItemAtSlot(SlotIndex))
+		{
+			InventoryComponent->TransferItem(TargetInventoryComponent, ItemTransfered);
+		}
 		RemoveFromParent();
 	}
 }
@@ -81,8 +85,8 @@ void UInventoryAction::OnRemovePressed()
 		InventorySlider->SetupSlider(Item->GetStackNumber());
 		InventorySlider->OnSliderValidated.AddDynamic(this, &UInventoryAction::OnRemoveAmountSelected);
 		InventorySlider->AddToViewport();
-		RemoveFromParent();
 	}
+	RemoveFromParent();
 }
 
 void UInventoryAction::OnRemoveAmountSelected(int Amount)
@@ -97,7 +101,9 @@ void UInventoryAction::OnQuickActionPressed()
 {
 	if (UItemInstance* ItemTransfered = InventoryComponent->GetItemAtSlot(SlotIndex))
 	{
-		InventoryComponent->TransferItem(TargetInventoryComponent, ItemTransfered, TargetInventoryComponent->GetEmptySlot().GetValue());
-		InventoryQuickAddSlot->RemoveFromParent();
+		int TextIndex = FCString::Atoi(*InventoryQuickAddSlot->GetInventoryQuickAddButton()->GetQuickAddText()->GetText().ToString());
+		InventoryComponent->TransferItemAt(TargetInventoryComponent, ItemTransfered, TextIndex - 1);
 	}
+	InventoryQuickAddSlot->RemoveFromParent();
+	RemoveFromParent();
 }

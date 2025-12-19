@@ -15,13 +15,31 @@ void UInventoryQuickAddSlot::NativeTick(const FGeometry& MyGeometry, float InDel
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
-void UInventoryQuickAddSlot::SetSize(int Size)
+void UInventoryQuickAddSlot::SetupMenu(UInventoryComponent* Inventory)
 {
+	if (!Inventory)
+		return;
+	
+	TargetInventory = Inventory;
 	VerticalBox->ClearChildren();
 	
-	for (int i = 0; i < Size; ++i)
+	for (int i = 0; i < Inventory->GetSize(); ++i)
 	{
-		UInventoryQuickAddButton* QuickAddButton = CreateWidget<UInventoryQuickAddButton>(this, QuickAddButtonClass);
+		QuickAddButton = CreateWidget<UInventoryQuickAddButton>(this, QuickAddButtonClass);
+	
+		QuickAddButton->SetVisibility(ESlateVisibility::Collapsed);
+		if (UItemInstance* Item = Inventory->GetItemAtSlot(i))
+		{
+			if (Inventory->GetStackableItemSlot(Item->GetDataAsset()))
+			{
+				QuickAddButton->SetVisibility(ESlateVisibility::Visible);
+			}
+		}
+		else if (Inventory->IsSlotEmpty(i))
+		{
+			QuickAddButton->SetVisibility(ESlateVisibility::Visible);
+		}
+		
 		QuickAddButton->GetQuickAddButton()->OnClicked.AddDynamic(this, &UInventoryQuickAddSlot::OnClicked);
 		QuickAddButton->SetQuickAddText(FText::FromString(FString::FromInt(i+1)));
 		VerticalBox->AddChildToVerticalBox(QuickAddButton);

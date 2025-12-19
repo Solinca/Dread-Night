@@ -136,7 +136,7 @@ void UInventoryComponent::Clear()
 	OnItemCleared.Broadcast();
 }
 
-void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item, int SlotIndex)
+void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item)
 {
 	//if item has the same type, we try to stack them
 	//if there is rest, we add it to an empty slot
@@ -179,6 +179,46 @@ void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UIt
 	
 	OnItemRemoved.Broadcast(StartSlot);
 	TargetInventory->OnItemAdded.Broadcast(Item, EmptySlotIndex);
+}
+
+void UInventoryComponent::TransferItemAt(UInventoryComponent* TargetInventory, UItemInstance* Item, int IndexSlot)
+{
+	if (!TargetInventory || !Item)
+		return;
+	
+	int StartSlot = GetItemInstanceSlot(Item).GetValue();
+	
+	if (!TargetInventory->Items[IndexSlot])
+	{
+		TargetInventory->Items[IndexSlot] = Item;
+		Items[StartSlot] = nullptr;
+		OnItemRemoved.Broadcast(StartSlot);
+		TargetInventory->OnItemAdded.Broadcast(Item, IndexSlot);
+		return;
+	}
+	
+	if (TargetInventory->Contains(Item->GetDataAsset(),1))
+	{
+		for (int i = 0; i < TargetInventory->Items.Num(); ++i)
+		{
+			UItemInstance* TargetItem = TargetInventory->GetItemAtSlot(i);
+		
+			if (!TargetItem || !TargetItem->CanBeStackedWith(Item, UItemInstance::EStackMethod::Partially))
+				continue;
+		
+			if (TargetItem->TryStackWith(Item))
+			{
+				TargetInventory->OnItemModified.Broadcast(TargetItem, i);
+			
+				if (Item->IsEmpty())
+				{
+					Items[StartSlot] = nullptr;
+					OnItemRemoved.Broadcast(StartSlot);
+					return;
+				}
+			}
+		}	
+	}
 }
 
 void UInventoryComponent::SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex)

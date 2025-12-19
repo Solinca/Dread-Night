@@ -33,7 +33,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UInventorySlider> InventorySlider;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UInventoryQuickAddSlot> InventoryQuikAddWidgetClass;
+	TSubclassOf<UInventoryQuickAddSlot> InventoryQuickAddWidgetClass;
 	UPROPERTY()
 	TObjectPtr<UInventoryQuickAddSlot> InventoryQuickAddSlot;
 	
