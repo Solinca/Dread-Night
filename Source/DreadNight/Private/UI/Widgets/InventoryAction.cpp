@@ -113,7 +113,7 @@ void UInventoryAction::OnQuickActionPressed(int Index)
 {
 	if (UItemInstance* ItemTransfered = InventoryComponent->GetItemAtSlot(SlotIndex))
 	{
-		InventoryComponent->TransferItemAt(TargetInventoryComponent, ItemTransfered, Index);
+		InventoryComponent->TransferItemAt(TargetInventoryComponent, ItemTransfered, Index-1);
 	}
 	InventoryQuickAddSlot->RemoveFromParent();
 	RemoveFromParent();

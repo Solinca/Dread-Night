@@ -9,7 +9,7 @@ void UInventoryQuickAddButton::NativeConstruct()
 void UInventoryQuickAddButton::SetupButtonSlot(int Index)
 {
 	SlotIndex = Index;
-	QuickAddText->SetText(FText::AsNumber(SlotIndex + 1));
+	QuickAddText->SetText(FText::AsNumber(SlotIndex));
 }
 
 void UInventoryQuickAddButton::OnButtonClicked()

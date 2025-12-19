@@ -27,7 +27,7 @@ void UInventoryQuickAddSlot::SetupMenu(UInventoryComponent* Inventory, UInventor
 		{
 			NewQuickAddButton->SetVisibility(ESlateVisibility::Visible);
 		}
-		NewQuickAddButton->SetupButtonSlot(i);
+		NewQuickAddButton->SetupButtonSlot(i + 1);
 		NewQuickAddButton->OnQuickAddButtonClicked.AddDynamic(this, &UInventoryQuickAddSlot::OnClicked);
 		VerticalBox->AddChildToVerticalBox(NewQuickAddButton);
 	}

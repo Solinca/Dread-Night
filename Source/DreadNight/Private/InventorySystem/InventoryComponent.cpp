@@ -187,7 +187,6 @@ void UInventoryComponent::TransferItemAt(UInventoryComponent* TargetInventory, U
 		return;
 	
 	int StartSlot = GetItemInstanceSlot(Item).GetValue();
-	
 	if (!TargetInventory->Items[IndexSlot])
 	{
 		TargetInventory->Items[IndexSlot] = Item;

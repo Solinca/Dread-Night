@@ -449,8 +449,21 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 	if (Index == -1)
 		Index = 0;
 
+	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::FromInt(Index));
+}
+
+void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
+{
+	int InventoryLimit = MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize();
+	float Index = Value.Get<float>();
 	
-	MyPlayer->GetHotbarInventoryComponent()->UseItemAt(Index);
+	CurrentHotbarIndex = (CurrentHotbarIndex + static_cast<int>(Index) + InventoryLimit) % InventoryLimit;
+	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, FString::FromInt(CurrentHotbarIndex));
+}
+
+void ACustomPlayerController::UseItem(const FInputActionValue& Value)
+{
+	MyPlayer->GetHotbarInventoryComponent()->UseItemAt(CurrentHotbarIndex);
 }
 
 void ACustomPlayerController::SaveGame()
