@@ -16,6 +16,8 @@ class DREADNIGHT_API UMainMenuWidget : public UUserWidget
 
 private:
 	FTimerHandle SwitchLevel;
+
+	void ChangeLevel();
 	
 protected:
 	virtual void NativeConstruct() override;

@@ -107,7 +107,10 @@ private:
 	
 	UPROPERTY(Transient)
 	TObjectPtr<APlayerCharacter> MyPlayer = nullptr;
+
 	FCollisionQueryParams ObjectPlacementQueryParams;
+
+	FTimerHandle SwitchLevel;
 
 #if WITH_EDITOR
 	UFUNCTION(BlueprintInternalUseOnly)

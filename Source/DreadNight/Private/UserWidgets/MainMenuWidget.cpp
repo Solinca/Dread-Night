@@ -24,12 +24,7 @@ void UMainMenuWidget::OnContinueClicked()
 		return;
 	}
 
-	UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraFade(0, 1, 1, FColor::Black, true, true);
-
-	GetWorld()->GetTimerManager().SetTimer(SwitchLevel, [this]
-	{
-		UGameplayStatics::OpenLevel(this, TEXT("BaseLevel"));
-	}, 1, false);
+	ChangeLevel();
 }
 
 void UMainMenuWidget::OnNewGameClicked()
@@ -44,7 +39,20 @@ void UMainMenuWidget::OnNewGameClicked()
 		GameInstance->NewGame();
 	}
 
-	UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->StartCameraFade(0, 1, 1, FColor::Black, true, true);
+	ChangeLevel();
+}
+
+void UMainMenuWidget::ChangeLevel()
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+	PC->SetShowMouseCursor(false);
+
+	PC->SetInputMode(FInputModeGameOnly());
+
+	PC->SetIgnoreLookInput(true);
+
+	PC->PlayerCameraManager->StartCameraFade(0, 1, 1, FColor::Black, true, true);
 
 	GetWorld()->GetTimerManager().SetTimer(SwitchLevel, [this]
 	{
