@@ -29,6 +29,8 @@ protected:
 
 	int Seed;
 	bool bIsNewGame = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game State")
+	bool bIsFirstLaunch = true;
 public:
 
 	UFUNCTION(BlueprintCallable)
