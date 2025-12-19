@@ -15,11 +15,17 @@ void UInventoryQuickAddSlot::SetupMenu(UInventoryComponent* Inventory, UInventor
 		NewQuickAddButton->SetVisibility(ESlateVisibility::Collapsed);
 		if (UItemInstance* Item = TargetInventory->GetItemAtSlot(i))
 		{
-			if (Inventory->GetItemAtSlot(i)->GetDataAsset()->Type == Item->GetDataAsset()->Type)
+			UItemInstance* LocalItem = Inventory->GetItemAtSlot(i);
+			UItemDataAsset* TargetData = Item->GetDataAsset();
+
+			if (TargetData && LocalItem && LocalItem->GetDataAsset())
 			{
-				if (TargetInventory->GetStackableItemSlot(Item->GetDataAsset()))
+				if (LocalItem->GetDataAsset()->Type == TargetData->Type)
 				{
-					NewQuickAddButton->SetVisibility(ESlateVisibility::Visible);
+					if (TargetInventory->GetStackableItemSlot(TargetData))
+					{
+						NewQuickAddButton->SetVisibility(ESlateVisibility::Visible);
+					}
 				}
 			}
 		}

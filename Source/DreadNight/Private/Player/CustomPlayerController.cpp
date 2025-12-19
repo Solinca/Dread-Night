@@ -444,12 +444,18 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 
 	if (Index >= MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize())
 		return;
-
 	
 	if (Index == -1)
 		Index = 0;
-
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Blue, FString::FromInt(Index));
+	
+	CurrentHotbarIndex = Index;
+	if (UItemInstance* BuildingItem = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex))
+	{
+		if (IUsableItem* UsableItem = Cast<IUsableItem>(BuildingItem))
+		{
+			MyPlayer->GetHotbarInventoryComponent()->UseItemAt(CurrentHotbarIndex);
+		}
+	}
 }
 
 void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
@@ -458,7 +464,13 @@ void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
 	float Index = Value.Get<float>();
 	
 	CurrentHotbarIndex = (CurrentHotbarIndex + static_cast<int>(Index) + InventoryLimit) % InventoryLimit;
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, FString::FromInt(CurrentHotbarIndex));
+	if (UItemInstance* BuildingItem = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex))
+	{
+		if (IUsableItem* UsableItem = Cast<IUsableItem>(BuildingItem))
+		{
+			MyPlayer->GetHotbarInventoryComponent()->UseItemAt(CurrentHotbarIndex);
+		}
+	}
 }
 
 void ACustomPlayerController::UseItem(const FInputActionValue& Value)

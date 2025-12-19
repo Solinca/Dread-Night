@@ -127,7 +127,14 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 		InventoryAction->GetUseButton()->SetVisibility(ESlateVisibility::Visible);
 		if (!ItemData->GetDataAsset()->Type.MatchesTag(GT_Item_Armor))
 		{
-			InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Visible);
+			if (BindTargetInventoryComponent.GetName() == "HotBarInventoryComponent" && !BindTargetInventoryComponent->IsFull())
+			{
+				InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Visible);
+			}
+			else
+			{
+				InventoryAction->GetTransferButton()->SetVisibility(ESlateVisibility::Collapsed);
+			}
 		}
 		else
 		{
