@@ -25,7 +25,6 @@ void UInventory::SetSize(int Size)
 	{
 		UInventorySlot* TempSlot = CreateWidget<UInventorySlot>(this, InventorySlotClass);
 		
-		
 		TempSlot->SetupSlot(BindInventoryComponent,BindTargetInventoryComponent, i);
 		TempSlot->SetImageColor(EmptyInventorySlot);
 		
@@ -49,7 +48,6 @@ void UInventory::OnItemAdded(UItemInstance* Item, int SlotIndex)
 	{
 		TempSlot->SetItemImage(Item->GetDataAsset()->ItemIcon);
 		TempSlot->SetStackText(Item->GetStackNumber());
-
 		TempSlot->SetImageColor(UsedInventorySlot);		
 	}
 }
@@ -124,11 +122,19 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 		InventoryAction->GetUseText()->SetText(FText::FromName(UsableItem->GetActionName()));
 		
 		ESlateVisibility TransferButtonVisibility = ESlateVisibility::Collapsed;
-		if (!ItemData->GetDataAsset()->Type.MatchesTag(GT_Item_Armor) && 
-			(BindTargetInventoryComponent.GetName() == "HotBarInventoryComponent" && !BindTargetInventoryComponent->IsFull()))
+		if (!ItemData->GetDataAsset()->Type.MatchesTag(GT_Item_Armor) && !BindTargetInventoryComponent->IsFull())
 		{
 			TransferButtonVisibility = ESlateVisibility::Visible;
 		}
+		
+		ESlateVisibility UseButtonVisibility = ESlateVisibility::Collapsed;
+		if (ItemData->GetDataAsset()->Type.MatchesTag(GT_Item_Armor) && 
+			BindInventoryComponent->GetName() == "InventoryComponent")
+		{
+			UseButtonVisibility = ESlateVisibility::Visible;
+		}
+		
+		InventoryAction->GetUseButton()->SetVisibility(UseButtonVisibility);
 		InventoryAction->GetTransferButton()->SetVisibility(TransferButtonVisibility);
 	}
 	else

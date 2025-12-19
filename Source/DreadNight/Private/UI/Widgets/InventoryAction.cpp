@@ -52,9 +52,9 @@ void UInventoryAction::OnTransferPressed()
 		return;
 	}
 	
-	if (TargetInventoryComponent->GetName() == "HotBarInventoryComponent")
+	UInventoryQuickAddSlot* QuickAddWidget = CreateWidget<UInventoryQuickAddSlot>(this, InventoryQuickAddWidgetClass);
+	if (TargetInventoryComponent->GetName() == "HotBarInventoryComponent" && QuickAddWidget)
 	{
-		if (UInventoryQuickAddSlot* QuickAddWidget = CreateWidget<UInventoryQuickAddSlot>(this, InventoryQuickAddWidgetClass))
 		{
 			QuickAddWidget->SetupMenu(TargetInventoryComponent);
 			
