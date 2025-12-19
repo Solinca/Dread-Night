@@ -4,6 +4,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Textblock.h"
 #include "Components/Button.h"
+#include "Components/Image.h"
 #include "MainMenuWidget.generated.h"
 
 class UOptionsWidget;
@@ -12,6 +13,9 @@ UCLASS()
 class DREADNIGHT_API UMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+private:
+	FTimerHandle SwitchLevel;
 	
 protected:
 	virtual void NativeConstruct() override;
