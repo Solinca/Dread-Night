@@ -4,6 +4,9 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerHud.generated.h"
 
+class UItemNotification;
+class UItemInstance;
+class UVerticalBox;
 class UCompass;
 class UTextBlock;
 class UHorizontalBox;
@@ -46,6 +49,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCompass> PlayerCompass;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UVerticalBox> NotificationContainer;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateHealthBar(const float CurrentValue, const float MaxValue);
@@ -70,6 +76,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void UpdateInteractionText(AActor* NewInteractable);
+	
+	UFUNCTION(BlueprintCallable)
+	void AddItemNotification(const UItemInstance* Data, const int Quantity, const TSubclassOf<UItemNotification> WidgetToInstantiate);
 
 protected:
 	virtual void NativeConstruct() override;

@@ -313,9 +313,11 @@ private:
 	void UpdateBuildingAfterSwap(int Index);
 
 public:
-	
 	void CreateBuilding(TSubclassOf<ABuilding> BuildingClass);
 	
 	UFUNCTION()
 	bool IsPlacingBuilding() const { return CreatedBuilding != nullptr; }
+
+	UFUNCTION(BlueprintCallable)
+	void AddItemNotificationToViewport(UItemInstance* Data, int32 Quantity);
 };
