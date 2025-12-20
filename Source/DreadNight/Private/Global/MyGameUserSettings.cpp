@@ -4,9 +4,9 @@ UMyGameUserSettings::UMyGameUserSettings(const FObjectInitializer& ObjectInitial
 {
 	PlayerCameraSensitivity = 75.f;
 
-	MusicVolume = 100.f;
+	MusicVolume = 50.f;
 
-	SFXVolume = 100.f;
+	SFXVolume = 50.f;
 }
 
 void UMyGameUserSettings::SetPlayerCameraSensitivity(float value)
