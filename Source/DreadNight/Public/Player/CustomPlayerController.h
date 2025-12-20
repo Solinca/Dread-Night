@@ -178,6 +178,12 @@ private:
 	void SelectedHotbar(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintCallable)
+	void ScrollHotbar(const FInputActionValue& Value);
+	
+	UFUNCTION(BlueprintCallable)
+	void UseItem(const FInputActionValue& Value);
+	
+	UFUNCTION(BlueprintCallable)
 	void SaveGame();
 	
 	UFUNCTION(BlueprintCallable)
@@ -203,6 +209,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float ObjectPlacementRange = 200.f;
+	
+	UPROPERTY(EditAnywhere)
+	int CurrentHotbarIndex = 0;
 
 	// Function to add a Menu to the menu list, so we can leave it with escape
 	template<typename T>
@@ -297,7 +306,16 @@ private:
 	UFUNCTION()
 	void ChangeArmorUI(UArmorDataAsset* NewArmor);
 	
+	UFUNCTION()
+	void CancelBuildingPlacement();
+	
+	UFUNCTION()
+	void UpdateBuildingAfterSwap(int Index);
+
 public:
 	
 	void CreateBuilding(TSubclassOf<ABuilding> BuildingClass);
+	
+	UFUNCTION()
+	bool IsPlacingBuilding() const { return CreatedBuilding != nullptr; }
 };

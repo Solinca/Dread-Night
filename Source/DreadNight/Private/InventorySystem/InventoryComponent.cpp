@@ -136,7 +136,7 @@ void UInventoryComponent::Clear()
 	OnItemCleared.Broadcast();
 }
 
-void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item, int SlotIndex)
+void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item)
 {
 	//if item has the same type, we try to stack them
 	//if there is rest, we add it to an empty slot
@@ -181,9 +181,60 @@ void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UIt
 	TargetInventory->OnItemAdded.Broadcast(Item, EmptySlotIndex);
 }
 
-void UInventoryComponent::SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex)
+void UInventoryComponent::TransferItemAt(UInventoryComponent* TargetInventory, UItemInstance* Item, int IndexSlot)
 {
+	if (!TargetInventory || !Item)
+		return;
 	
+	int StartSlot = GetItemInstanceSlot(Item).GetValue();
+	if (!TargetInventory->Items[IndexSlot])
+	{
+		TargetInventory->Items[IndexSlot] = Item;
+		Items[StartSlot] = nullptr;
+		OnItemRemoved.Broadcast(StartSlot);
+		TargetInventory->OnItemAdded.Broadcast(Item, IndexSlot);
+		return;
+	}
+	
+	if (!TargetInventory->Contains(Item->GetDataAsset(),1))
+		return;
+	
+	for (int i = 0; i < TargetInventory->Items.Num(); ++i)
+	{
+		UItemInstance* TargetItem = TargetInventory->GetItemAtSlot(i);
+		
+		if (!TargetItem || !TargetItem->CanBeStackedWith(Item, UItemInstance::EStackMethod::Partially))
+			continue;
+		if (!TargetItem->TryStackWith(Item))
+			continue;
+		
+		TargetInventory->OnItemModified.Broadcast(TargetItem, i);
+			
+		if (Item->IsEmpty())
+		{
+			Items[StartSlot] = nullptr;
+			OnItemRemoved.Broadcast(StartSlot);
+			return;
+		}
+	}
+}
+
+void UInventoryComponent::SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int TargetSlotIndex)
+{
+	if (!TargetInventory || !FromItem || !ToItem)
+		return;
+	
+	int FromSlotIndex = GetItemInstanceSlot(FromItem).GetValue();
+	
+	TargetInventory->Items[TargetSlotIndex] = FromItem;
+	Items[FromSlotIndex] = ToItem;
+	
+	OnItemRemoved.Broadcast(FromSlotIndex);
+	OnItemAdded.Broadcast(ToItem, FromSlotIndex);
+	OnHotbarItemChanged.Broadcast(FromSlotIndex);
+	TargetInventory->OnItemRemoved.Broadcast(TargetSlotIndex);
+	TargetInventory->OnItemAdded.Broadcast(FromItem, TargetSlotIndex);
+	TargetInventory->OnHotbarItemChanged.Broadcast(TargetSlotIndex);
 }
 
 TOptional<int> UInventoryComponent::GetEmptySlot() const
@@ -252,7 +303,7 @@ TOptional<int> UInventoryComponent::GetStackableItemSlot(UItemDataAsset* Item) c
 	
 	for (int i = 0; i < Items.Num(); ++i)
 	{
-		if (Items[i] && Items[i]->GetDataAsset() == Item)
+		if (Items[i] && Items[i]->GetDataAsset()->Type == Item->Type)
 		{
 			if (Items[i]->GetStackNumber() < Items[i]->GetDataAsset()->StackLimit)
 			{

@@ -43,6 +43,7 @@ void UInventorySlot::NativeOnMouseEnter(const FGeometry& MyGeometry, const FPoin
 void UInventorySlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	IsMouseOver = false;
+	InfoAction();
 }
 
 void UInventorySlot::SetItemImage(UTexture2D* Texture)

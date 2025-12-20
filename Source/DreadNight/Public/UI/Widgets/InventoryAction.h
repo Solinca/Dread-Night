@@ -6,6 +6,7 @@
 #include "Components/Textblock.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "UI/Widgets/InventorySlider.h"
+#include "UI/Widgets/InventoryQuickAddSlot.h"
 #include "InventoryAction.generated.h"
 
 UCLASS()
@@ -31,12 +32,17 @@ protected:
 	TSubclassOf<UInventorySlider> InventorySliderWidgetClass;
 	UPROPERTY()
 	TObjectPtr<UInventorySlider> InventorySlider;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UInventoryQuickAddSlot> InventoryQuickAddWidgetClass;
+	UPROPERTY()
+	TObjectPtr<UInventoryQuickAddSlot> InventoryQuickAddSlot;
 	
 	int SlotIndex;
 public:
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeDestruct() override;
 	
 	UFUNCTION(BlueprintCallable)
 	void SetupAction(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index);
@@ -49,15 +55,17 @@ public:
 	void OnRemovePressed();
 	UFUNCTION()
 	void OnRemoveAmountSelected(int Amount);
+	UFUNCTION()
+	void OnQuickActionPressed(int Index);
 	
 	int GetSlotIndex() const { return SlotIndex; }
 	void SetSlotIndex(int Index) { SlotIndex = Index; }
-	TObjectPtr<UButton> GetUseButton() const { return UseButton; }
-	TObjectPtr<UButton> GetTransferButton() const { return TransferButton; }
-	TObjectKey<UButton> GetRemoveButton() const { return RemoveButton; }
-	TObjectPtr<UTextBlock> GetUseText() const { return UseText; }
-	TObjectPtr<UTextBlock> GetTransferText() const { return TransferText; }
-	TObjectPtr<UTextBlock> GetRemoveText() const { return RemoveText; }
+	UButton* GetUseButton() const { return UseButton; }
+	UButton* GetTransferButton() const { return TransferButton; }
+	UButton* GetRemoveButton() const { return RemoveButton; }
+	UTextBlock* GetUseText() const { return UseText; }
+	UTextBlock* GetTransferText() const { return TransferText; }
+	UTextBlock* GetRemoveText() const { return RemoveText; }
 	
 	TObjectPtr<UInventoryComponent> InventoryComponent;
 	TObjectPtr<UInventoryComponent> TargetInventoryComponent;

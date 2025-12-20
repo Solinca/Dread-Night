@@ -20,6 +20,7 @@
 #include "UI/Widgets/Glossary.h"
 #include "UI/Widgets/HotBar.h"
 #include "Global/MyGameUserSettings.h"
+#include "Items/Object/ItemInstance_Building.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -332,12 +333,12 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 		HotBar->SetArmorImagesVisibility(ESlateVisibility::Visible);
 	}
 	
-	FVector2D WindowSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
-	float WidgetOffsetX = 35.f;
-	float WidgetOffsetY = 75.f;
-	InventoryWidget->SetDesiredSizeInViewport(FVector2D(600,600));
-	InventoryWidget->SetPositionInViewport(FVector2D(WindowSize.X / 2 - (InventoryWidget->GetInventoryWrapBox()->GetWrapSize() / 2) + WidgetOffsetX,
-											WindowSize.Y / 2 - (InventoryWidget->GetInventoryWrapBox()->GetWrapSize() / 2 ) + WidgetOffsetY));
+	FVector2D WidgetSize = InventoryWidget->GetDesiredSize();
+	FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
+	float OffsetX = ViewportSize.X * 0.016f;
+	float OffsetY = ViewportSize.Y * 0.2f;
+
+	InventoryWidget->SetPositionInViewport(FVector2D((ViewportSize.X - WidgetSize.X) / 2 + OffsetX, (ViewportSize.Y - WidgetSize.Y) / 2 - OffsetY), false);
 	SetShowMouseCursor(true);
 
 	PushNewMenu(InventoryWidget, false, [this]
@@ -444,13 +445,51 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 
 	if (Index >= MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize())
 		return;
-
 	
 	if (Index == -1)
 		Index = 0;
-
 	
-	MyPlayer->GetHotbarInventoryComponent()->UseItemAt(Index);
+	CurrentHotbarIndex = Index;
+	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
+	if (UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item))
+	{
+		UpdateBuildingAfterSwap(CurrentHotbarIndex);
+		BuildingItem->Use(MyPlayer);
+	}
+	else
+	{
+		CancelBuildingPlacement();
+	}
+
+}
+
+void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
+{
+	int InventoryLimit = MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize();
+	float Index = Value.Get<float>();
+	
+	CurrentHotbarIndex = (CurrentHotbarIndex + static_cast<int>(Index) + InventoryLimit) % InventoryLimit;
+	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
+	if (UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item))
+	{
+		UpdateBuildingAfterSwap(CurrentHotbarIndex);
+		BuildingItem->Use(MyPlayer);
+	}
+	else
+	{
+		CancelBuildingPlacement();
+	}
+
+}
+
+void ACustomPlayerController::UseItem(const FInputActionValue& Value)
+{
+	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
+	IUsableItem* UsableItem = Cast<IUsableItem>(Item);
+	if (Item && UsableItem)
+	{
+		MyPlayer->GetHotbarInventoryComponent()->UseItemAt(CurrentHotbarIndex);
+	}
 }
 
 void ACustomPlayerController::SaveGame()
@@ -633,6 +672,7 @@ void ACustomPlayerController::AddPlayerUIToViewport()
 		HotbarInventoryWidget->BindToInventory(MyPlayer->GetHotbarInventoryComponent());
 		HotbarInventoryWidget->BindTargetInventory(MyPlayer->GetInventoryComponent());
 		HotbarInventoryWidget->AddToViewport();
+		MyPlayer->GetHotbarInventoryComponent()->OnHotbarItemChanged.AddDynamic(this, &ACustomPlayerController::UpdateBuildingAfterSwap);
 	}
 
 	HUDWidget = CreateWidget<UPlayerHud>(this, PlayerData->PlayerHudClass);
@@ -660,6 +700,9 @@ void ACustomPlayerController::ChangeArmorUI(UArmorDataAsset* NewArmor)
 
 void ACustomPlayerController::CreateBuilding(TSubclassOf<ABuilding> BuildingClass)
 {
+	if (CreatedBuilding)
+		return;
+	
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
@@ -671,4 +714,27 @@ void ACustomPlayerController::CreateBuilding(TSubclassOf<ABuilding> BuildingClas
 	);
 
 	ObjectPlacementQueryParams.AddIgnoredActor(CreatedBuilding);
+}
+
+void ACustomPlayerController::CancelBuildingPlacement()
+{
+	if (CreatedBuilding)
+	{
+		CreatedBuilding->DestroyBuilding();
+		CreatedBuilding = nullptr;
+	}
+}
+
+void ACustomPlayerController::UpdateBuildingAfterSwap(int Index)
+{
+	if (Index != CurrentHotbarIndex)
+		return;
+	
+	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
+	UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item);
+	if (Item && BuildingItem)
+	{
+		CancelBuildingPlacement();
+		BuildingItem->Use(MyPlayer);
+	}
 }

@@ -15,10 +15,13 @@ void UItemInstance_Building::Use(AActor* Player)
 	{
 		if (ACustomPlayerController* Controller = Cast<ACustomPlayerController>(Character->GetController()))
 		{
-			Controller->CreateBuilding(GetDataAsset()->BuildingClass);
+			if (!Controller->IsPlacingBuilding())
+			{
+				Controller->CreateBuilding(GetDataAsset()->BuildingClass);
+				StackNumber--;
+			}
 		}
 	}
-	StackNumber--;
 }
 
 UBuildingDataAsset* UItemInstance_Building::GetDataAsset()

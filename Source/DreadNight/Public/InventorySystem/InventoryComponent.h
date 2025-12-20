@@ -9,6 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemAddedEventSignature, class U
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemovedEventSignature, int, ItemSlot);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemClearedEventSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemModifiedEventSignature, class UItemInstance*, ItemInstance, int, ItemSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHotbarItemChanged, int, SlotIndex);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DREADNIGHT_API UInventoryComponent : public UActorComponent
@@ -41,8 +42,9 @@ public:
 	void UseItemAt(int SlotIndex);
 	void Clear();
 	
-	void TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item, int SlotIndex);
-	void SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int SlotIndex);
+	void TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item);
+	void TransferItemAt(UInventoryComponent* TargetInventory, UItemInstance* Item, int IndexSlot);
+	void SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int TargetSlotIndex);
 	
 	int GetSize() const { return Size; }
 	void SetSize(int NewSize) { Size = NewSize; }
@@ -66,4 +68,5 @@ public:
 	FOnItemRemovedEventSignature OnItemRemoved;
 	FOnItemModifiedEventSignature OnItemModified;
 	FOnItemClearedEventSignature OnItemCleared;
+	FOnHotbarItemChanged OnHotbarItemChanged;
 };

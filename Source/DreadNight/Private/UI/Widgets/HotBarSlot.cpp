@@ -1,11 +1,9 @@
 #include "UI/Widgets/HotBarSlot.h"
-
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Items/Data/ItemDataAsset.h"
 #include "Items/Object/ItemInstance.h"
-
 
 void UHotBarSlot::NativeConstruct()
 {

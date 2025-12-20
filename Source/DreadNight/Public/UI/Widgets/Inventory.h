@@ -14,6 +14,11 @@ UCLASS()
 class DREADNIGHT_API UInventory : public UUserWidget
 {
 	GENERATED_BODY()
+private:
+	float OffsetY = 0.0f;
+	float OffsetX = 0.0f;
+	FVector2D Offset = FVector2D(0.0f, 0.0f);
+	inline static TWeakObjectPtr<UInventoryAction> GlobalInventoryAction;
 protected:
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UWrapBox> InventoryWrapBox;
@@ -70,6 +75,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveItemAction();
 	
-	const TObjectPtr<UWrapBox>& GetInventoryWrapBox() const { return InventoryWrapBox; }
-	TObjectPtr<UInventoryInfo> GetInventoryInfoWidget() const { return InventoryInfoWidget; }
+	UWrapBox* GetInventoryWrapBox() const { return InventoryWrapBox; }
+	UInventoryInfo* GetInventoryInfoWidget() const { return InventoryInfoWidget; }
 };
