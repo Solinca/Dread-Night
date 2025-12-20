@@ -113,4 +113,6 @@ public:
 	int GetDayCounter() const { return DayCounter; }
 
 	void RegisterLightSource(ULightComponent* Light, UNiagaraComponent* VFX);
+
+	void UnRegisterLightSource(ULightComponent* Light, UNiagaraComponent* VFX);
 };

@@ -22,3 +22,10 @@ void ATorch::BeginPlay()
 
 	GetWorld()->GetSubsystem<UDayCycleSubSystem>()->RegisterLightSource(Light, VFX);
 }
+
+void ATorch::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorld()->GetSubsystem<UDayCycleSubSystem>()->UnRegisterLightSource(Light, VFX);
+}
