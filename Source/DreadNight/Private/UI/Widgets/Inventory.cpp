@@ -97,6 +97,9 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	if (!BindInventoryComponent->GetItemAtSlot(SlotIndex))
 		return;
 	
+	if (GlobalInventoryAction.IsValid() && GlobalInventoryAction != InventoryAction)
+		GlobalInventoryAction->RemoveFromParent();
+	
 	if (InventoryAction)
 		InventoryAction->RemoveFromParent();
 	
@@ -119,6 +122,7 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	InventoryAction->SetupAction(BindInventoryComponent, BindTargetInventoryComponent, SlotIndex);
 	InventoryAction->AddToViewport();
 	InventoryAction->SetPositionInViewport(MousePos + Offset, false);
+	GlobalInventoryAction = InventoryAction;
 	
 	UItemInstance* ItemData = BindInventoryComponent->GetItemAtSlot(SlotIndex);
 	if (IUsableItem* UsableItem = Cast<IUsableItem>(ItemData))
