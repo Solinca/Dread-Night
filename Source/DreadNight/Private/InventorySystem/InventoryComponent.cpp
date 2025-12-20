@@ -231,8 +231,10 @@ void UInventoryComponent::SwapItem(UInventoryComponent* TargetInventory, UItemIn
 	
 	OnItemRemoved.Broadcast(FromSlotIndex);
 	OnItemAdded.Broadcast(ToItem, FromSlotIndex);
+	OnHotbarItemChanged.Broadcast(FromSlotIndex);
 	TargetInventory->OnItemRemoved.Broadcast(TargetSlotIndex);
 	TargetInventory->OnItemAdded.Broadcast(FromItem, TargetSlotIndex);
+	TargetInventory->OnHotbarItemChanged.Broadcast(TargetSlotIndex);
 }
 
 TOptional<int> UInventoryComponent::GetEmptySlot() const
