@@ -20,7 +20,9 @@ class DREADNIGHT_API UOptionsWidget : public UUserWidget
 	
 private:
 	TMap<FString, EWindowMode::Type> WindowModeMap;
+
 	TMap<FString, FIntPoint> ResolutionMap;
+
 	TMap<FString, int> GraphicsMap;
 
 	UPROPERTY(Transient)
@@ -47,6 +49,30 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> CameraSensitivityValue = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	USlider* MusicVolume = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> MusicVolumeValue = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	USlider* SFXVolume = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> SFXVolumeValue = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sounds")
+	TObjectPtr<USoundMix> MusicSoundMix = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sounds")
+	TObjectPtr<USoundClass> MusicSoundClass = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sounds")
+	TObjectPtr<USoundMix> SFXSoundMix = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sounds")
+	TObjectPtr<USoundClass> SFXSoundClass = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* ButtonReturn = nullptr;
@@ -103,6 +129,18 @@ protected:
 
 	UFUNCTION()
 	void OnCameraSensitivityCaptureEnd();
+
+	UFUNCTION()
+	void OnMusicVolumeChanged(float value);
+
+	UFUNCTION()
+	void OnMusicVolumeCaptureEnd();
+
+	UFUNCTION()
+	void OnSFXVolumeChanged(float value);
+
+	UFUNCTION()
+	void OnSFXVolumeCaptureEnd();
 
 	UFUNCTION()
 	void OnReturnClicked();
