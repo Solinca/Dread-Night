@@ -1,6 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
@@ -10,14 +8,31 @@ class UDN_SaveGame;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPCGEndGenerationSignature);
 
-/**
- * 
- */
 UCLASS()
 class DREADNIGHT_API UMyGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
+
+private:
+	int Seed;
+
+	bool bIsNewGame = false;
+
 protected:
+	virtual void Init() override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sounds")
+	TObjectPtr<USoundMix> MusicSoundMix = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sounds")
+	TObjectPtr<USoundClass> MusicSoundClass = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sounds")
+	TObjectPtr<USoundMix> SFXSoundMix = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sounds")
+	TObjectPtr<USoundClass> SFXSoundClass = nullptr;
+
 	UPROPERTY(EditDefaultsOnly)
 	FName SaveSlotName;
 	
@@ -27,12 +42,10 @@ protected:
 	UPROPERTY(Transient)
 	UDN_SaveGame* SaveGame;
 
-	int Seed;
-	bool bIsNewGame = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game State")
 	bool bIsFirstLaunch = true;
-public:
 
+public:
 	UFUNCTION(BlueprintCallable)
 	void NewGame();
 

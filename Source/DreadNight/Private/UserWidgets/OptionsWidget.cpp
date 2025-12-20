@@ -1,7 +1,8 @@
 #include "UserWidgets/OptionsWidget.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "UserWidgets/MainMenuWidget.h"
 #include "Global/MyGameUserSettings.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "UserWidgets/MainMenuWidget.h"
 
 void UOptionsWidget::NativeConstruct()
 {
@@ -14,7 +15,9 @@ void UOptionsWidget::NativeConstruct()
 	};
 
 	TArray<FIntPoint> Array;
+
 	UKismetSystemLibrary::GetSupportedFullscreenResolutions(Array);
+	
 	for (auto& i : Array)
 	{
 		ResolutionMap.Add(FString::Printf(TEXT("%dx%d"), i.X, i.Y), i);
@@ -31,8 +34,6 @@ void UOptionsWidget::NativeConstruct()
 	if (ButtonReturn) ButtonReturn->OnClicked.AddDynamic(this, &UOptionsWidget::OnReturnClicked);
 
 	MySettings = Cast<UMyGameUserSettings>(GEngine->GetGameUserSettings());
-
-	MySettings->LoadSettings();
 
 	if (ComboBoxWindowMode)
 	{
@@ -70,6 +71,7 @@ void UOptionsWidget::NativeConstruct()
 	if (CheckBoxVSync)
 	{
 		CheckBoxVSync->SetIsChecked(MySettings->bUseVSync);
+		
 		CheckBoxVSync->OnCheckStateChanged.AddDynamic(this, &UOptionsWidget::OnCheckboxVSyncChanged);
 	}
 
@@ -86,6 +88,34 @@ void UOptionsWidget::NativeConstruct()
 			CameraSensitivityValue->SetText(FText::FromString(FString::FromInt(MySettings->GetPlayerCameraSensitivity())));
 		}
 	}
+
+	if (MusicVolume)
+	{
+		MusicVolume->SetValue(MySettings->GetMusicVolume());
+
+		MusicVolume->OnValueChanged.AddDynamic(this, &UOptionsWidget::OnMusicVolumeChanged);
+
+		MusicVolume->OnMouseCaptureEnd.AddDynamic(this, &UOptionsWidget::OnMusicVolumeCaptureEnd);
+
+		if (MusicVolumeValue)
+		{
+			MusicVolumeValue->SetText(FText::FromString(FString::FromInt(MySettings->GetMusicVolume())));
+		}
+	}
+
+	if (SFXVolume)
+	{
+		SFXVolume->SetValue(MySettings->GetSFXVolume());
+
+		SFXVolume->OnValueChanged.AddDynamic(this, &UOptionsWidget::OnSFXVolumeChanged);
+
+		SFXVolume->OnMouseCaptureEnd.AddDynamic(this, &UOptionsWidget::OnSFXVolumeCaptureEnd);
+
+		if (SFXVolumeValue)
+		{
+			SFXVolumeValue->SetText(FText::FromString(FString::FromInt(MySettings->GetSFXVolume())));
+		}
+	}
 }
 
 void UOptionsWidget::OnWindowModeChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
@@ -97,36 +127,51 @@ void UOptionsWidget::OnWindowModeChanged(FString SelectedItem, ESelectInfo::Type
 	if (MySettings->GetFullscreenMode() == EWindowMode::WindowedFullscreen)
 	{
 		const FString NewResolution = ComboBoxResolution->GetOptionAtIndex(ResolutionMap.Num() - 1);
+		
 		ComboBoxResolution->SetSelectedIndex(ResolutionMap.Num() - 1);
+		
 		MySettings->SetScreenResolution(ResolutionMap[NewResolution]);
 	}
 	
 	MySettings->ApplySettings(false);
+	
 	MySettings->SaveSettings();
 }
 
 void UOptionsWidget::OnResolutionChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
 {
-	if (!ResolutionMap.Contains(SelectedItem)) return;
+	if (!ResolutionMap.Contains(SelectedItem))
+	{
+		return;
+	}
 
 	MySettings->SetScreenResolution(ResolutionMap[SelectedItem]);
+	
 	MySettings->ApplySettings(false);
+	
 	MySettings->SaveSettings();
 }
 
 void UOptionsWidget::OnGraphicsChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
 {
-	if (!GraphicsMap.Contains(SelectedItem)) return;
+	if (!GraphicsMap.Contains(SelectedItem))
+	{
+		return;
+	}
 
 	MySettings->SetOverallScalabilityLevel(GraphicsMap[SelectedItem]);
+	
 	MySettings->ApplySettings(false);
+	
 	MySettings->SaveSettings();
 }
 
 void UOptionsWidget::OnCheckboxVSyncChanged(bool bIsChecked)
 {
 	MySettings->bUseVSync = bIsChecked;
+	
 	MySettings->ApplySettings(false);
+	
 	MySettings->SaveSettings();
 }
 
@@ -142,16 +187,49 @@ void UOptionsWidget::OnCameraSensitivityCaptureEnd()
 	MySettings->SaveSettings();
 }
 
+void UOptionsWidget::OnMusicVolumeChanged(float value)
+{
+	MusicVolumeValue->SetText(FText::FromString(FString::FromInt(value)));
+
+	UGameplayStatics::SetSoundMixClassOverride(GetWorld(), MusicSoundMix, MusicSoundClass, MySettings->GetMusicVolume() / 100, 1, 0);
+
+	MySettings->SetMusicVolume(value);
+}
+
+void UOptionsWidget::OnMusicVolumeCaptureEnd()
+{
+	MySettings->SaveSettings();
+}
+
+void UOptionsWidget::OnSFXVolumeChanged(float value)
+{
+	SFXVolumeValue->SetText(FText::FromString(FString::FromInt(value)));
+
+	UGameplayStatics::SetSoundMixClassOverride(GetWorld(), SFXSoundMix, SFXSoundClass, MySettings->GetSFXVolume() / 100, 1, 0);
+
+	MySettings->SetSFXVolume(value);
+}
+
+void UOptionsWidget::OnSFXVolumeCaptureEnd()
+{
+	MySettings->SaveSettings();
+}
+
 void UOptionsWidget::OnReturnClicked()
 {
 	OnReturn.Broadcast();
 
-	if (!MainMenuWidgetClass) return;
+	if (!MainMenuWidgetClass)
+	{
+		return;
+	}
 
 	if (UMainMenuWidget* MMW = CreateWidget<UMainMenuWidget>(GetWorld(), MainMenuWidgetClass))
 	{
 		MMW->AddToViewport();
+		
 		MainMenuWidgetClass = nullptr;
+		
 		RemoveFromParent();
 	}
 }

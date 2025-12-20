@@ -18,6 +18,24 @@ public:
 	UFUNCTION(Category = Settings)
 	void SetPlayerCameraSensitivity(float value);
 
+	UFUNCTION(Category = Settings)
+	float GetMusicVolume() const { return MusicVolume; };
+
+	UFUNCTION(Category = Settings)
+	void SetMusicVolume(float value);
+
+	UFUNCTION(Category = Settings)
+	float GetSFXVolume() const { return SFXVolume; };
+
+	UFUNCTION(Category = Settings)
+	void SetSFXVolume(float value);
+
 	UPROPERTY(GlobalConfig)
 	float PlayerCameraSensitivity;
+
+	UPROPERTY(GlobalConfig)
+	float MusicVolume;
+
+	UPROPERTY(GlobalConfig)
+	float SFXVolume;
 };
