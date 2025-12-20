@@ -107,13 +107,18 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	if (!ClickedSlot)
 		return;
 	
+	const FVector2d MousePos = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
+	const FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
+	OffsetX = ViewportSize.X * 0.06f;
+	OffsetY = ViewportSize.Y * 0.05f;
+	Offset = FVector2D(OffsetX, OffsetY);
+
+	Offset.Y = (MousePos.Y >= ViewportSize.Y / 1.5f ? -OffsetY : OffsetY);
+	
 	InventoryAction = CreateWidget<UInventoryAction>(this, InventoryActionClass);
 	InventoryAction->SetupAction(BindInventoryComponent, BindTargetInventoryComponent, SlotIndex);
-	
-	FVector2d MousePos;
-	GetOwningPlayer()->GetMousePosition(MousePos.X, MousePos.Y);
-	InventoryAction->SetRenderTranslation(MousePos);
 	InventoryAction->AddToViewport();
+	InventoryAction->SetPositionInViewport(MousePos + Offset, false);
 	
 	UItemInstance* ItemData = BindInventoryComponent->GetItemAtSlot(SlotIndex);
 	if (IUsableItem* UsableItem = Cast<IUsableItem>(ItemData))
@@ -162,11 +167,17 @@ void UInventory::OnItemInfoCreated(int SlotIndex)
 	if (InventoryInfoWidget)
 		InventoryInfoWidget->RemoveFromParent();
 	
-	FVector2d MousePos = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
+	const FVector2d MousePos = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
+	const FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
+	OffsetX = ViewportSize.X * 0.06f;
+	OffsetY = ViewportSize.Y * 0.05f;
+	Offset = FVector2D(OffsetX, OffsetY);
+
+	Offset.Y = (MousePos.Y >= ViewportSize.Y / 1.5f ? -OffsetY : OffsetY);
+
 	InventoryInfoWidget = CreateWidget<UInventoryInfo>(this, ItemInfoWidgetClass);
-	InventoryInfoWidget->SetRenderTranslation(MousePos);
 	InventoryInfoWidget->AddToViewport();
-	InventoryInfoWidget->SetDesiredSizeInViewport(FVector2D(100, 60));
+	InventoryInfoWidget->SetPositionInViewport(MousePos + Offset, false);
 	
 	InventoryInfoWidget->GetItemInfoButton()->SetVisibility(ESlateVisibility::Hidden);
 	if (UItemInstance* ItemData = BindInventoryComponent->GetItemAtSlot(SlotIndex))

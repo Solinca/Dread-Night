@@ -1,4 +1,5 @@
 #include "UI/Widgets/InventoryAction.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "Items/Data/ItemDataAsset.h"
 
 void UInventoryAction::NativePreConstruct()
@@ -57,16 +58,16 @@ void UInventoryAction::OnTransferPressed()
 	if (TargetInventoryComponent->GetName() == "HotBarInventoryComponent" && QuickAddWidget)
 	{
 		QuickAddWidget->SetupMenu(TargetInventoryComponent);
-			
-		FVector2D WidgetPos = GetCachedGeometry().GetAbsolutePosition();
-		float OffsetX = 240.f;
-		float OffsetY = 30.f;
-		QuickAddWidget->SetPositionInViewport(FVector2D(WidgetPos.X - QuickAddWidget->GetVerticalBox()->GetDesiredSize().X / 2 - OffsetX,
-												 WidgetPos.Y - QuickAddWidget->GetVerticalBox()->GetDesiredSize().Y / 2 - OffsetY));
-			
+		
+		const FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
+		float OffsetX = ViewportSize.X * 0.135f;
+		float OffsetY = -50.f;
+		FVector2D Offset = FVector2D(OffsetX, OffsetY);
+		
 		QuickAddWidget->OnQuickActionPressedEvent.AddDynamic(this, &UInventoryAction::OnQuickActionPressed);
 		InventoryQuickAddSlot = QuickAddWidget;
 		QuickAddWidget->AddToViewport();
+		QuickAddWidget->SetPositionInViewport(GetCachedGeometry().GetAbsolutePosition() + FVector2D(GetDesiredSize().X, 0.f) + Offset, false);
 		return;
 	}
 	
