@@ -54,6 +54,9 @@ void UInventoryAction::OnTransferPressed()
 		return;
 	}
 	
+	if (InventoryQuickAddSlot)
+		InventoryQuickAddSlot->RemoveFromParent();
+	
 	UInventoryQuickAddSlot* QuickAddWidget = CreateWidget<UInventoryQuickAddSlot>(this, InventoryQuickAddWidgetClass);
 	if (TargetInventoryComponent->GetName() == "HotBarInventoryComponent" && QuickAddWidget)
 	{
