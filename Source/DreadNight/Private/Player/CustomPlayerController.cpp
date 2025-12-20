@@ -48,6 +48,8 @@ void ACustomPlayerController::BeginPlay()
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
 	
 	MyPlayer->GetArmorComponent()->OnArmorEquipped.AddDynamic(this, &ThisClass::ChangeArmorUI);
+
+	MyPlayer->GetInventoryComponent()->OnItemAddedToInventory.AddDynamic(this, &ThisClass::AddItemNotificationToViewport);
 	
 	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
 
@@ -738,3 +740,9 @@ void ACustomPlayerController::UpdateBuildingAfterSwap(int Index)
 		BuildingItem->Use(MyPlayer);
 	}
 }
+
+void ACustomPlayerController::AddItemNotificationToViewport(UItemInstance* Data, int32 Quantity)
+{
+	HUDWidget->AddItemNotification(Data, Quantity, PlayerData->ItemNotificationClass);
+}
+

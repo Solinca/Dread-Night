@@ -2,8 +2,10 @@
 
 #include "Components/HorizontalBox.h"
 #include "Components/TextBlock.h"
+#include "Components/VerticalBox.h"
 #include "InteractableSystem/Interfaces/Interactable.h"
 #include "InteractableSystem/Subsystems/InteractableSubsystem.h"
+#include "UI/PopUp/ItemNotification.h"
 #include "UI/Widgets/RadialProgressBarImage.h"
 #include "UI/Widgets/SmartProgressBar.h"
 
@@ -80,4 +82,14 @@ void UPlayerHud::UpdateInteractionText(AActor* NewInteractable)
 	}
 	
 	InformationTextHorizontalBox->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UPlayerHud::AddItemNotification(const UItemInstance* Data, const int Quantity, const TSubclassOf<UItemNotification> WidgetToInstantiate)
+{
+	if (UItemNotification* NewItemNotification = CreateWidget<UItemNotification>(this, WidgetToInstantiate))
+	{
+		NotificationContainer->InsertChildAt(0, NewItemNotification);
+        
+		NewItemNotification->InitNotification(Data, Quantity);
+	}
 }

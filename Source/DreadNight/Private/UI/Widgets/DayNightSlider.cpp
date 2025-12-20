@@ -2,6 +2,7 @@
 
 #include "Components/Slider.h"
 #include "Global/BaseLevelWorldSettings.h"
+#include "Kismet/GameplayStatics.h"
 #include "Subsystems/World/DayCycleSubSystem.h"
 
 
@@ -34,7 +35,7 @@ void UDayNightSlider::StartDayCycle()
 
 void UDayNightSlider::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
-	if (!bIsDayCycle)
+	if (!bIsDayCycle || UGameplayStatics::IsGamePaused(this))
 	{
 		return;
 	}

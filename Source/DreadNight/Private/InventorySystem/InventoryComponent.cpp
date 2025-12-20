@@ -20,6 +20,8 @@ void UInventoryComponent::AddItem(UItemInstance* Item)
 	if (!Item || IsFull())
 		return;
 	
+	OnItemAddedToInventory.Broadcast(Item, Item->GetStackNumber());
+	
 	if (Contains(Item->GetDataAsset(), 1))
 	{
 		for (int i = 0; i < Items.Num(); ++i)

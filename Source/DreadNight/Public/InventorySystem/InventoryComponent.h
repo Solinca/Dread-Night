@@ -69,4 +69,5 @@ public:
 	FOnItemModifiedEventSignature OnItemModified;
 	FOnItemClearedEventSignature OnItemCleared;
 	FOnHotbarItemChanged OnHotbarItemChanged;
+	FOnItemAddedEventSignature OnItemAddedToInventory;
 };
