@@ -276,6 +276,13 @@ void UDayCycleSubSystem::RegisterLightSource(ULightComponent* Light, UNiagaraCom
 	}
 }
 
+void UDayCycleSubSystem::UnRegisterLightSource(ULightComponent* Light, UNiagaraComponent* VFX = nullptr)
+{
+	LightList.Remove(Light);
+
+	VFXList.Remove(VFX);
+}
+
 void UDayCycleSubSystem::ProcessEveryLightSource()
 {
 	if (hasDuskStarted)
