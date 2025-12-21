@@ -1,57 +1,37 @@
 ﻿#include "Actors/Traps/Trap.h"
+#include "Components/BoxComponent.h"
+#include "Items/Data/BuildingDataAsset.h"
 
 ATrap::ATrap()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	TrapCollisionComponent = CreateDefaultSubobject<UBoxComponent>("Trap Collision Component");
+	RootComponent = CreateDefaultSubobject<USceneComponent>("Root Component");
 
-	TrapCollisionComponent->SetupAttachment(RootComponent);
+	TrapCollisionBox = CreateDefaultSubobject<UBoxComponent>("Trap Collision Component");
+	
+	TrapCollisionBox->SetupAttachment(RootComponent);
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+
+	Mesh->SetupAttachment(RootComponent);
 }
 
 void ATrap::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TrapCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ATrap::OnBeginOverlap);
-}
-
-void ATrap::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-
-	GetWorldTimerManager().ClearAllTimersForObject(this);
-}
-
-void ATrap::PlaceBuilding()
-{
-	if (bIsPlaced || !CheckValidPlacement())
-	{
-		return;
-	}
-
-	bIsPlaced = true;
-
-	TrapCollisionComponent->SetCollisionProfileName("Trap");
+	TrapCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ATrap::OnBeginOverlap);
 }
 
 void ATrap::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!bIsPlaced)
-	{
-		return;
-	}
-
-	ABaseAICharacter* BaseAICharacter{ Cast<ABaseAICharacter>(OtherActor) };
+	ABaseAICharacter* BaseAICharacter = Cast<ABaseAICharacter>(OtherActor);
 
 	if (!TimerHandle_LifeSpanExpired.IsValid() && BaseAICharacter)
 	{
 		SetLifeSpan(TrapData->TrapLifeSpan);
 
-		FTimerHandle TickTimerHandle;
-
-		GetWorldTimerManager().SetTimer(TickTimerHandle, this, &ATrap::OnTrapTick, PrimaryActorTick.TickInterval, true);
-
-		bIsActive = true;
+		ActivateTrap();
 	}
 }

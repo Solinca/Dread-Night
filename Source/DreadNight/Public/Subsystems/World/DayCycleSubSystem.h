@@ -105,12 +105,15 @@ protected:
 
 public:
 	FOnNightStartSignature OnNightStart;
+
 	FOnNightStartSignature OnDawnStart;
 
 	static ThisClass* Get(UObject* WorldContext);
 
 	UFUNCTION(BlueprintCallable, Category = "DayCycle")
 	int GetDayCounter() const { return DayCounter; }
+
+	bool IsDay() { return hasDawnEnded && !hasDuskStarted; };
 
 	void RegisterLightSource(ULightComponent* Light, UNiagaraComponent* VFX);
 

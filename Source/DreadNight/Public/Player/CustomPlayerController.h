@@ -9,6 +9,7 @@
 #include "PlayerCharacter.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/SlateWrapperTypes.h"
+#include "Items/Data/BuildingDataAsset.h"
 #include "CustomPlayerController.generated.h"
 
 class UPlayerHud;
@@ -70,6 +71,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UPlayerDataAsset> PlayerData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building Preview")
+	TSubclassOf<ABuilding> BuildingPreviewClass;
 
 private:
 	UPROPERTY(Transient)
@@ -199,10 +203,7 @@ private:
 	void RotateObject(const FInputActionValue& Value);
 
 	UPROPERTY()
-	TArray<AActor*> CreatedBuildings;
-	
-	UPROPERTY()
-	ABuilding* CreatedBuilding = nullptr;
+	ABuilding* BuildingPreview = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	float BuildingRotationSpeed;
@@ -313,10 +314,10 @@ private:
 	void UpdateBuildingAfterSwap(int Index);
 
 public:
-	void CreateBuilding(TSubclassOf<ABuilding> BuildingClass);
+	void CreateBuilding(UBuildingDataAsset* BuildingData);
 	
 	UFUNCTION()
-	bool IsPlacingBuilding() const { return CreatedBuilding != nullptr; }
+	bool IsPlacingBuilding() const { return BuildingPreview != nullptr; }
 
 	UFUNCTION(BlueprintCallable)
 	void AddItemNotificationToViewport(UItemInstance* Data, int32 Quantity);

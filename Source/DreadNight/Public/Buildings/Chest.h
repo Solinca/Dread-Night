@@ -7,15 +7,16 @@
 #include "Chest.generated.h"
 
 UCLASS()
-class DREADNIGHT_API AChest : public ABuilding, public IInteractable
+class DREADNIGHT_API AChest : public AActor, public IInteractable
 {
 	GENERATED_BODY()
+
 protected:
+	AChest();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UInventoryComponent> InventoryComponent = nullptr;
-	
-	AChest();
-	
-	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UStaticMeshComponent> Mesh = nullptr;
 };

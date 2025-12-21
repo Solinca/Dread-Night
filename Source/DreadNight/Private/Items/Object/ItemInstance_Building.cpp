@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Items/Object/ItemInstance_Building.h"
 #include "Player/CustomPlayerController.h"
 
@@ -17,7 +14,7 @@ void UItemInstance_Building::Use(AActor* Player)
 		{
 			if (!Controller->IsPlacingBuilding())
 			{
-				Controller->CreateBuilding(GetDataAsset()->BuildingClass);
+				Controller->CreateBuilding(GetDataAsset());
 				StackNumber--;
 			}
 		}

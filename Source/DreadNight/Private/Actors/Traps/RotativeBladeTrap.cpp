@@ -1,49 +1,33 @@
 #include "Actors/Traps/RotativeBladeTrap.h"
+#include "Items/Data/BuildingDataAsset.h"
+#include "GameFramework/RotatingMovementComponent.h"
 
 ARotativeBladeTrap::ARotativeBladeTrap()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	RotatingComponent = CreateDefaultSubobject<URotatingMovementComponent>("RotatingComponent");
-
-	RotatingComponent->Deactivate();
 }
 
 void ARotativeBladeTrap::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MeshComp->SetStaticMesh(TrapData->StaticMesh);
+	Mesh->OnComponentBeginOverlap.AddDynamic(this, &ARotativeBladeTrap::OnBladeBeginOverlap);
 
-	MeshComp->SetCollisionProfileName("Trap");
-
-	RotatingComponent->RotationRate = FRotator(0.f, TrapData->RotationSpeed, 0.f);
-
-	MeshComp->OnComponentBeginOverlap.AddDynamic(this, &ARotativeBladeTrap::OnBladeBeginOverlap);
+	RotatingComponent->Deactivate();
 }
 
-void ARotativeBladeTrap::Tick(float DeltaTime)
+void ARotativeBladeTrap::ActivateTrap()
 {
-	Super::Tick(DeltaTime);
+	RotatingComponent->RotationRate = FRotator(0.f, TrapData->RotationSpeed, 0.f);
 
-	if (bIsActive)
-	{
-		RotatingComponent->Activate();
-	}
-	else 
-	{
-		RotatingComponent->Deactivate();
-	}
+	RotatingComponent->Activate();
 }
 
 void ARotativeBladeTrap::OnBladeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!bIsPlaced)
-	{
-		return;
-	}
-
-	if (ABaseAICharacter * BaseAICharacter{ Cast<ABaseAICharacter>(OtherActor) })
+	if (ABaseAICharacter * BaseAICharacter = Cast<ABaseAICharacter>(OtherActor))
 	{
 		BaseAICharacter->TryApplyDamage(TrapData->TrapDamage, this);
 	}

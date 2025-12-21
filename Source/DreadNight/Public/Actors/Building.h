@@ -10,28 +10,33 @@ class UMaterialInstance;
 UCLASS()
 class DREADNIGHT_API ABuilding : public AActor
 {
-
 	GENERATED_BODY()
 
+private:
+	FHitResult Hit;
+
+	FTimerHandle TickTimerHandle;
+
+	TObjectPtr<class UBuildingDataAsset> BuildingDataAsset = nullptr;
+
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component")
+	TObjectPtr<UStaticMeshComponent> MeshComp;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	UStaticMeshComponent* MeshComp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Material")
+	TObjectPtr<UMaterialInstance> MatPlacementRed;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	UMaterialInstance* MatPlacementRed;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	UMaterialInstance* MatPlacementGreen;
-
-	bool bIsPlaced = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Material")
+	TObjectPtr<UMaterialInstance> MatPlacementGreen;
 
 public:
-
 	ABuilding();
+
 	bool CheckValidPlacement();
+
 	bool CheckIsOnGround();
-	virtual void BeginPlay();
+
 	virtual void PlaceBuilding();
-	virtual void DestroyBuilding();
+
+	void SetDataAsset(UBuildingDataAsset* DataAsset);
 };
