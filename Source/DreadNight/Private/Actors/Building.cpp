@@ -1,30 +1,12 @@
 #include "Actors/Building.h"
 #include "Components/StaticMeshComponent.h"
+#include "Items/Data/BuildingDataAsset.h"
 
 ABuilding::ABuilding()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	RootComponent = CreateDefaultSubobject<USceneComponent>("Root Component");
-	
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	MeshComp->SetupAttachment(RootComponent);
-}
-
-void ABuilding::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (bNetStartup)
-	{
-		bIsPlaced = true;
-	}
-	else
-	{
-		MeshComp->SetGenerateOverlapEvents(true);
-		MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		MeshComp->SetCollisionResponseToAllChannels(ECR_Overlap);
-	}
 }
 
 bool ABuilding::CheckValidPlacement()
@@ -35,41 +17,35 @@ bool ABuilding::CheckValidPlacement()
 
 	bool bIsValid = (OverlapingActors.Num() == 0 && CheckIsOnGround());
 
-	MeshComp->SetOverlayMaterial(bIsValid ? MatPlacementGreen : MatPlacementRed);
+	for (int i = 0; i < MeshComp->GetNumMaterials(); i++)
+	{
+		MeshComp->SetMaterial(i, bIsValid ? MatPlacementGreen : MatPlacementRed);
+	}
 
 	return bIsValid;
 }
 
 bool ABuilding::CheckIsOnGround()
 {
-	FHitResult Hit;
-
-	return GetWorld()->LineTraceSingleByChannel(
-		Hit,
-		GetActorLocation(),
-		GetActorLocation() - FVector(0, 0, 100.f),
-		ECC_Visibility
-	);
+	return GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), GetActorLocation() - FVector(0, 0, BuildingDataAsset->MaxDistanceFromGround), ECC_Visibility);
 }
 
 void ABuilding::PlaceBuilding()
 {
-	if (bIsPlaced || !CheckValidPlacement())
-	{
-		return;
-	}
+	GetWorld()->SpawnActor<AActor>(BuildingDataAsset->BuildingToSpawn, GetActorLocation(), FRotator(0, 0, 0));
 
-	bIsPlaced = true;
-
-	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	MeshComp->SetCollisionResponseToAllChannels(ECR_Block);
-	MeshComp->SetOverlayMaterial(nullptr);
+	Destroy();
 }
 
-void ABuilding::DestroyBuilding()
+void ABuilding::SetDataAsset(UBuildingDataAsset* DataAsset)
 {
-	if (!bNetStartup)
-	{
-		Destroy();
-	}
+	BuildingDataAsset = DataAsset;
+
+	MeshComp->SetStaticMesh(BuildingDataAsset->BuildingPreviewMesh);
+
+	SetActorRotation(BuildingDataAsset->BuildingPreviewRotation);
+
+	SetActorScale3D(BuildingDataAsset->BuildingPreviewScale);
+
+	CheckValidPlacement();
 }

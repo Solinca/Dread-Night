@@ -3,23 +3,21 @@
 
 ABuildingStation::ABuildingStation()
 {
-	InteractableComp = CreateDefaultSubobject<UInteractableComponent>(TEXT("Interactable Comp"));
-	CraftingComponent = CreateDefaultSubobject<UCraftingComponent>(TEXT("Crafting Component"));
-}
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 
-void ABuildingStation::OnInteract_Implementation(AActor* Caller)
-{
+	InteractableComp = CreateDefaultSubobject<UInteractableComponent>(TEXT("Interactable Comp"));
 	
+	CraftingComponent = CreateDefaultSubobject<UCraftingComponent>(TEXT("Crafting Component"));
 }
 
 void ABuildingStation::OnFocusGained_Implementation()
 {
-	MeshComp->SetOverlayMaterial(InteractableComp->GetOutlineMaterial());
+	Mesh->SetOverlayMaterial(InteractableComp->GetOutlineMaterial());
 }
 
 void ABuildingStation::OnFocusLost_Implementation()
 {
-	MeshComp->SetOverlayMaterial(nullptr);
+	Mesh->SetOverlayMaterial(nullptr);
 }
 
 FText ABuildingStation::GetInteractionPromptText_Implementation()

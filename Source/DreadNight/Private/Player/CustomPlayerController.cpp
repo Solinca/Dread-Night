@@ -219,7 +219,7 @@ void ACustomPlayerController::UpdateCrouching(float deltatime)
 
 void ACustomPlayerController::UpdateObjectPlacement()
 {
-	if (CreatedBuilding)
+	if (BuildingPreview)
 	{
 		FHitResult Hit;
 
@@ -231,14 +231,14 @@ void ACustomPlayerController::UpdateObjectPlacement()
 			ObjectPlacementQueryParams) &&
 			!Hit.GetActor()->IsA(ACharacter::StaticClass()))
 		{
-			CreatedBuilding->SetActorLocation(Hit.ImpactPoint);
+			BuildingPreview->SetActorLocation(Hit.ImpactPoint);
 		}
 		else
 		{
-			CreatedBuilding->SetActorLocation(PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange));
+			BuildingPreview->SetActorLocation(PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange));
 		}
 
-		CreatedBuilding->CheckValidPlacement();
+		BuildingPreview->CheckValidPlacement();
 	}
 }
 
@@ -262,7 +262,7 @@ void ACustomPlayerController::Attack(const FInputActionValue& Value)
 	UBowCombatComponent* BowCombatComponent = MyPlayer->GetBowCombatComponent();
 
 	bool AttackExecuted = false;
-	if (!CreatedBuilding)
+	if (!BuildingPreview)
 	{
 		if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Sword"))
 		{
@@ -312,8 +312,10 @@ void ACustomPlayerController::Interact(const FInputActionValue& Value)
 		if (ABuildingStation* Crafting = Cast<ABuildingStation>(Subsystem->GetLastFocusedActor()))
 		{
 			GlossaryWidget = CreateWidget<UGlossary>(this, Crafting->GetCraftingComponent()->GetWidget());
+			
 			PushNewMenu(GlossaryWidget, false);
 		}
+
 		if (AChest* Chest = Cast<AChest>(Subsystem->GetLastFocusedActor()))
 		{
 			DisplayOtherInventory(Chest->GetComponentByClass<UInventoryComponent>());
@@ -526,26 +528,23 @@ void ACustomPlayerController::GoBackToMenu()
 
 void ACustomPlayerController::PlaceObject(const FInputActionValue& Value)
 {
-	if (CreatedBuilding)
+	if (BuildingPreview && BuildingPreview->CheckValidPlacement())
 	{
-		if (CreatedBuilding->CheckValidPlacement())
-		{
-			CreatedBuilding->PlaceBuilding();
-			CreatedBuildings.Add(CreatedBuilding);
-			CreatedBuilding = nullptr;
-		}
+		BuildingPreview->PlaceBuilding();
+
+		BuildingPreview = nullptr;
 	}
 }
 
 void ACustomPlayerController::RotateObject(const FInputActionValue& Value)
 {
-	if (!CreatedBuilding) return;
+	if (!BuildingPreview) return;
 
 	float Axis = Value.Get<float>();
 
 	if (Axis != 0.f)
 	{
-		CreatedBuilding->AddActorLocalRotation(
+		BuildingPreview->AddActorLocalRotation(
 			FRotator(0.f,
 				Axis * BuildingRotationSpeed * GetWorld()->GetDeltaSeconds(),
 				0.f)
@@ -700,30 +699,33 @@ void ACustomPlayerController::ChangeArmorUI(UArmorDataAsset* NewArmor)
 	}
 }
 
-void ACustomPlayerController::CreateBuilding(TSubclassOf<ABuilding> BuildingClass)
+void ACustomPlayerController::CreateBuilding(UBuildingDataAsset* BuildingData)
 {
-	if (CreatedBuilding)
+	if (BuildingPreview)
 		return;
 	
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	CreatedBuilding = GetWorld()->SpawnActor<ABuilding>(
-		BuildingClass,
+	BuildingPreview = GetWorld()->SpawnActor<ABuilding>(
+		BuildingPreviewClass,
 		PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange),
 		FRotator::ZeroRotator,
 		SpawnParams
 	);
 
-	ObjectPlacementQueryParams.AddIgnoredActor(CreatedBuilding);
+	BuildingPreview->SetDataAsset(BuildingData);
+
+	ObjectPlacementQueryParams.AddIgnoredActor(BuildingPreview);
 }
 
 void ACustomPlayerController::CancelBuildingPlacement()
 {
-	if (CreatedBuilding)
+	if (BuildingPreview)
 	{
-		CreatedBuilding->DestroyBuilding();
-		CreatedBuilding = nullptr;
+		BuildingPreview->Destroy();
+
+		BuildingPreview = nullptr;
 	}
 }
 

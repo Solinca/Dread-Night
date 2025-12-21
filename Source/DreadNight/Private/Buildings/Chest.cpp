@@ -3,11 +3,8 @@
 AChest::AChest()
 {
 	PrimaryActorTick.bCanEverTick = false;
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>("Inventory");
-}
-
-void AChest::BeginPlay()
-{
-	Super::BeginPlay();
 }

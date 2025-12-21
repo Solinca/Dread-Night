@@ -5,7 +5,7 @@
 #include "Torch.generated.h"
 
 UCLASS()
-class DREADNIGHT_API ATorch : public ABuilding
+class DREADNIGHT_API ATorch : public AActor
 {
 	GENERATED_BODY()
 
@@ -17,8 +17,11 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<class UPointLightComponent> Light;
+	TObjectPtr<UStaticMeshComponent> Mesh = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<class UNiagaraComponent> VFX;
+	TObjectPtr<class UPointLightComponent> Light = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<class UNiagaraComponent> VFX = nullptr;
 };
