@@ -16,6 +16,19 @@ void UMyGameInstance::Init()
 		UMyGameUserSettings* MySettings = Cast<UMyGameUserSettings>(GEngine->GetGameUserSettings());
 
 		MySettings->LoadSettings();
+		
+		if (MySettings->GetLastCPUBenchmarkResult() < 0)
+		{
+			MySettings->RunHardwareBenchmark();
+			MySettings->ApplyHardwareBenchmarkResults();
+			
+			MySettings->SetToDefaults();
+            MySettings->ApplyResolutionSettings(false);
+		}
+		else
+		{
+			MySettings->ApplySettings(false);
+		}
 
 		UGameplayStatics::SetSoundMixClassOverride(GetWorld(), MusicSoundMix, MusicSoundClass, MySettings->GetMusicVolume() / 100, 1, 0);
 

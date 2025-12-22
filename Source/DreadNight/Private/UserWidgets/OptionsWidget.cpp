@@ -48,10 +48,17 @@ void UOptionsWidget::NativeConstruct()
 
 	if (ComboBoxResolution)
 	{
+		FIntPoint CurrentRes = MySettings->GetScreenResolution();
+		
+		if (CurrentRes.X <= 0 || CurrentRes.Y <= 0)
+		{
+			CurrentRes = MySettings->GetDesktopResolution();
+		}
+		
 		SetupComboBox<FIntPoint>(
 			ComboBoxResolution,
 			ResolutionMap,
-			MySettings->GetScreenResolution()
+			CurrentRes
 		);
 
 		ComboBoxResolution->OnSelectionChanged.AddDynamic(this, &UOptionsWidget::OnResolutionChanged);
@@ -59,10 +66,18 @@ void UOptionsWidget::NativeConstruct()
 
 	if (ComboBoxGraphics)
 	{
+		int CurrentLevel = MySettings->GetOverallScalabilityLevel();
+    
+		if (CurrentLevel < 0) 
+		{
+			MySettings->SetOverallScalabilityLevel(3);
+			CurrentLevel = 3;
+		}
+		
 		SetupComboBox<int>(
 			ComboBoxGraphics,
 			GraphicsMap,
-			MySettings->GetOverallScalabilityLevel()
+			CurrentLevel
 		);
 
 		ComboBoxGraphics->OnSelectionChanged.AddDynamic(this, &UOptionsWidget::OnGraphicsChanged);
@@ -147,7 +162,7 @@ void UOptionsWidget::OnResolutionChanged(FString SelectedItem, ESelectInfo::Type
 
 	MySettings->SetScreenResolution(ResolutionMap[SelectedItem]);
 	
-	MySettings->ApplySettings(false);
+	MySettings->ApplyResolutionSettings(false);
 	
 	MySettings->SaveSettings();
 }
@@ -161,7 +176,7 @@ void UOptionsWidget::OnGraphicsChanged(FString SelectedItem, ESelectInfo::Type S
 
 	MySettings->SetOverallScalabilityLevel(GraphicsMap[SelectedItem]);
 	
-	MySettings->ApplySettings(false);
+	MySettings->ApplyNonResolutionSettings();
 	
 	MySettings->SaveSettings();
 }
