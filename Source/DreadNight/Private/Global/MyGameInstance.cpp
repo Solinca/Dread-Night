@@ -24,6 +24,10 @@ void UMyGameInstance::Init()
 		UGameplayStatics::SetSoundMixClassOverride(GetWorld(), SFXSoundMix, SFXSoundClass, MySettings->GetSFXVolume() / 100, 1, 0);
 
 		UGameplayStatics::PushSoundMixModifier(GetWorld(), SFXSoundMix);
+
+		MySettings->ValidateSettings();
+
+		MySettings->ApplySettings(false);
 	}, 0.1f, false);
 }
 
