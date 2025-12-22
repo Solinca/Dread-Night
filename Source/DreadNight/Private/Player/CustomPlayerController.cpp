@@ -21,6 +21,7 @@
 #include "UI/Widgets/HotBar.h"
 #include "Global/MyGameUserSettings.h"
 #include "Items/Object/ItemInstance_Building.h"
+#include "Items/Object/ItemInstance_Weapon.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -242,64 +243,20 @@ void ACustomPlayerController::UpdateObjectPlacement()
 	}
 }
 
-void ACustomPlayerController::Aim(const FInputActionValue& Value)
+void ACustomPlayerController::ItemSpecialActionStart(const FInputActionValue& Value)
 {
-	if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
+	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
+
+	if (Item && Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow"))
 	{
 		MyPlayer->GetBowCombatComponent()->SetAiming(true);
 	}
 }
 
-void ACustomPlayerController::StopAim(const FInputActionValue& Value)
+void ACustomPlayerController::ItemSpecialActionStop(const FInputActionValue& Value)
 {
 	MyPlayer->GetBowCombatComponent()->SetAiming(false);
 }
-
-void ACustomPlayerController::Attack(const FInputActionValue& Value)
-{
-	USwordCombatComponent* SwordCombatComponent = MyPlayer->GetSwordCombatComponent();
-	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
-	UBowCombatComponent* BowCombatComponent = MyPlayer->GetBowCombatComponent();
-
-	bool AttackExecuted = false;
-	if (!BuildingPreview)
-	{
-		if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Sword"))
-		{
-			if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
-			{
-				SwordCombatComponent->Attack();
-				StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
-
-				AttackExecuted = true;
-			}
-		}
-		else if (MyPlayer->GetEquippedObjectTag().ToString().Contains("Item.Weapon.Bow"))
-		{
-			if (BowCombatComponent->IsAiming() && BowCombatComponent->CanShoot() && StaminaComponent->GetCurrentStamina() > 0.f)
-			{
-				BowCombatComponent->Shoot();
-				StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
-
-				AttackExecuted = true;
-			}
-		}
-
-		if (AttackExecuted)
-		{
-			StaminaComponent->SetCanRegen(false);
-
-			// START REGEN STAMINA
-			GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
-				[=] {StaminaComponent->SetCanRegen(true); },
-				StaminaComponent->GetRegenCoolDown(), false
-			);
-
-			MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
-		}
-	}
-}
-
 
 void ACustomPlayerController::Interact(const FInputActionValue& Value)
 {
@@ -402,11 +359,6 @@ void ACustomPlayerController::DisplayOtherInventory(UInventoryComponent* OtherIn
 	});
 }
 
-void ACustomPlayerController::DisplayGlossary(const FInputActionValue& Value)
-{
-	GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, "Display Glossary");
-}
-
 void ACustomPlayerController::DisplayMenu(const FInputActionValue& Value)
 {
 	if (!PauseMenuWidget)
@@ -447,52 +399,144 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 {
 	int Index = (int)Value.Get<float>();
 
-	if (Index >= MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize())
-		return;
-	
 	if (Index == -1)
+	{
 		Index = 0;
-	
-	CurrentHotbarIndex = Index;
-	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
-	if (UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item))
-	{
-		UpdateBuildingAfterSwap(CurrentHotbarIndex);
-		BuildingItem->Use(MyPlayer);
-	}
-	else
-	{
-		CancelBuildingPlacement();
 	}
 
+	if (CurrentHotbarIndex == Index || Index >= MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize())
+	{
+		return;
+	}
+
+	RemoveCurrentlyHoldItem();
+	
+	CurrentHotbarIndex = Index;
+
+	ProcessHotbarSlot();
 }
 
 void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
 {
+	RemoveCurrentlyHoldItem();
+
 	int InventoryLimit = MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize();
-	float Index = Value.Get<float>();
 	
-	CurrentHotbarIndex = (CurrentHotbarIndex + static_cast<int>(Index) + InventoryLimit) % InventoryLimit;
+	CurrentHotbarIndex = (CurrentHotbarIndex + (int)Value.Get<float>() + InventoryLimit) % InventoryLimit;
+
+	ProcessHotbarSlot();
+}
+
+void ACustomPlayerController::RemoveCurrentlyHoldItem()
+{
+	CancelBuildingPlacement();
+
+	MyPlayer->UnequipWeapon();
+}
+
+void ACustomPlayerController::ProcessHotbarSlot()
+{
 	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
-	if (UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item))
+
+	if (!Item)
+	{
+		return;
+	}
+	
+	if (UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item); BuildingItem)
 	{
 		UpdateBuildingAfterSwap(CurrentHotbarIndex);
+		
 		BuildingItem->Use(MyPlayer);
-	}
-	else
-	{
-		CancelBuildingPlacement();
+
+		return;
 	}
 
+	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon"))
+	{
+		MyPlayer->EquipWeapon(Cast<UItemInstance_Weapon>(Item));
+	}
+}
+
+void ACustomPlayerController::OnHotbarItemChanged(int Index)
+{
+	if (CurrentHotbarIndex == Index)
+	{
+		RemoveCurrentlyHoldItem();
+
+		ProcessHotbarSlot();
+	}
 }
 
 void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 {
+	if (BuildingPreview && BuildingPreview->CheckValidPlacement())
+	{
+		BuildingPreview->PlaceBuilding();
+
+		BuildingPreview = nullptr;
+
+		ProcessHotbarSlot();
+
+		return;
+	}
+
 	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
-	IUsableItem* UsableItem = Cast<IUsableItem>(Item);
-	if (Item && UsableItem)
+
+	if (!Item)
+	{
+		return;
+	}
+	
+	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Food"))
 	{
 		MyPlayer->GetHotbarInventoryComponent()->UseItemAt(CurrentHotbarIndex);
+
+		return;
+	}
+
+	USwordCombatComponent* SwordCombatComponent = MyPlayer->GetSwordCombatComponent();
+	
+	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
+	
+	UBowCombatComponent* BowCombatComponent = MyPlayer->GetBowCombatComponent();
+
+	bool AttackExecuted = false;
+
+	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Sword"))
+	{
+		if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
+		{
+			SwordCombatComponent->Attack();
+
+			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
+
+			AttackExecuted = true;
+		}
+	}
+	else if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow"))
+	{
+		if (BowCombatComponent->IsAiming() && BowCombatComponent->CanShoot() && StaminaComponent->GetCurrentStamina() > 0.f)
+		{
+			BowCombatComponent->Shoot();
+			
+			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
+
+			AttackExecuted = true;
+		}
+	}
+
+	if (AttackExecuted)
+	{
+		StaminaComponent->SetCanRegen(false);
+
+		// START REGEN STAMINA
+		GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
+			[=] {StaminaComponent->SetCanRegen(true); },
+			StaminaComponent->GetRegenCoolDown(), false
+		);
+
+		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
 	}
 }
 
@@ -524,32 +568,6 @@ void ACustomPlayerController::GoBackToMenu()
 	{
 		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), PlayerData->MainMenuLevel);
 	}, 1, false);
-}
-
-void ACustomPlayerController::PlaceObject(const FInputActionValue& Value)
-{
-	if (BuildingPreview && BuildingPreview->CheckValidPlacement())
-	{
-		BuildingPreview->PlaceBuilding();
-
-		BuildingPreview = nullptr;
-	}
-}
-
-void ACustomPlayerController::RotateObject(const FInputActionValue& Value)
-{
-	if (!BuildingPreview) return;
-
-	float Axis = Value.Get<float>();
-
-	if (Axis != 0.f)
-	{
-		BuildingPreview->AddActorLocalRotation(
-			FRotator(0.f,
-				Axis * BuildingRotationSpeed * GetWorld()->GetDeltaSeconds(),
-				0.f)
-		);
-	}
 }
 
 void ACustomPlayerController::PopLastMenu()
@@ -673,7 +691,7 @@ void ACustomPlayerController::AddPlayerUIToViewport()
 		HotbarInventoryWidget->BindToInventory(MyPlayer->GetHotbarInventoryComponent());
 		HotbarInventoryWidget->BindTargetInventory(MyPlayer->GetInventoryComponent());
 		HotbarInventoryWidget->AddToViewport();
-		MyPlayer->GetHotbarInventoryComponent()->OnHotbarItemChanged.AddDynamic(this, &ACustomPlayerController::UpdateBuildingAfterSwap);
+		MyPlayer->GetHotbarInventoryComponent()->OnHotbarItemChanged.AddDynamic(this, &ACustomPlayerController::OnHotbarItemChanged);
 	}
 
 	HUDWidget = CreateWidget<UPlayerHud>(this, PlayerData->PlayerHudClass);

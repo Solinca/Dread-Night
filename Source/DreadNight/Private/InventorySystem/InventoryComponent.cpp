@@ -71,6 +71,7 @@ void UInventoryComponent::RemoveItemsByType(UItemDataAsset* Item, int Amount)
 			{
 				Items[i] = nullptr;
 				OnItemRemoved.Broadcast(i);
+				OnHotbarItemChanged.Broadcast(i);
 			}
 			
 			return;
@@ -85,6 +86,7 @@ void UInventoryComponent::RemoveItemsAt(int SlotIndex, int Amount)
 	
 	Items[SlotIndex]->TryRemove(Amount);
 	OnItemModified.Broadcast(Items[SlotIndex],SlotIndex);
+	OnHotbarItemChanged.Broadcast(SlotIndex);
 	
 	if (Items[SlotIndex]->IsEmpty())
 	{
@@ -108,6 +110,7 @@ void UInventoryComponent::UseItemByType(UItemDataAsset* Item)
 			{
 				Items[i] = nullptr;
 				OnItemRemoved.Broadcast(i);
+				OnHotbarItemChanged.Broadcast(i);
 			}
 				
 			return;
@@ -123,6 +126,7 @@ void UInventoryComponent::UseItemAt(int SlotIndex)
 	
 	Items[SlotIndex]->TryUse(GetOwner());
 	OnItemModified.Broadcast(Items[SlotIndex],SlotIndex);
+	OnHotbarItemChanged.Broadcast(SlotIndex);
 	
 	if (Items[SlotIndex]->IsEmpty())
 	{
@@ -159,6 +163,7 @@ void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UIt
 			if (TargetItem->TryStackWith(Item))
 			{
 				TargetInventory->OnItemModified.Broadcast(TargetItem, i);
+				OnHotbarItemChanged.Broadcast(i);
 			
 				if (Item->IsEmpty())
 				{
@@ -178,9 +183,11 @@ void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UIt
 	int EmptySlotIndex = EmptySlot.GetValue();
 	TargetInventory->Items[EmptySlotIndex] = Item;
 	Items[StartSlot] = nullptr;
-	
+
 	OnItemRemoved.Broadcast(StartSlot);
+	OnHotbarItemChanged.Broadcast(StartSlot);
 	TargetInventory->OnItemAdded.Broadcast(Item, EmptySlotIndex);
+	TargetInventory->OnHotbarItemChanged.Broadcast(EmptySlotIndex);
 }
 
 void UInventoryComponent::TransferItemAt(UInventoryComponent* TargetInventory, UItemInstance* Item, int IndexSlot)
@@ -194,7 +201,9 @@ void UInventoryComponent::TransferItemAt(UInventoryComponent* TargetInventory, U
 		TargetInventory->Items[IndexSlot] = Item;
 		Items[StartSlot] = nullptr;
 		OnItemRemoved.Broadcast(StartSlot);
+		OnHotbarItemChanged.Broadcast(StartSlot);
 		TargetInventory->OnItemAdded.Broadcast(Item, IndexSlot);
+		TargetInventory->OnHotbarItemChanged.Broadcast(IndexSlot);
 		return;
 	}
 	
@@ -211,6 +220,8 @@ void UInventoryComponent::TransferItemAt(UInventoryComponent* TargetInventory, U
 			continue;
 		
 		TargetInventory->OnItemModified.Broadcast(TargetItem, i);
+		TargetInventory->OnHotbarItemChanged.Broadcast(i);
+		OnHotbarItemChanged.Broadcast(i);
 			
 		if (Item->IsEmpty())
 		{
