@@ -294,12 +294,8 @@ void ACustomPlayerController::DisplayInventory(const FInputActionValue& Value)
 		HotBar->SetArmorImagesVisibility(ESlateVisibility::Visible);
 	}
 	
-	FVector2D WidgetSize = InventoryWidget->GetDesiredSize();
-	FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
-	float OffsetX = ViewportSize.X * 0.016f;
-	float OffsetY = ViewportSize.Y * 0.2f;
-
-	InventoryWidget->SetPositionInViewport(FVector2D((ViewportSize.X - WidgetSize.X) / 2 + OffsetX, (ViewportSize.Y - WidgetSize.Y) / 2 - OffsetY), false);
+	InventoryWidget->SetAnchorsInViewport(FAnchors(0.5f, 0.5f));
+	InventoryWidget->SetAlignmentInViewport(FVector2D(0.5f, 0.5f));
 	SetShowMouseCursor(true);
 
 	PushNewMenu(InventoryWidget, false, [this]
