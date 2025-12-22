@@ -39,4 +39,6 @@ public:
 	virtual void PlaceBuilding();
 
 	void SetDataAsset(UBuildingDataAsset* DataAsset);
+	
+	UStaticMeshComponent* GetMeshComponent() const { return MeshComp; }
 };
