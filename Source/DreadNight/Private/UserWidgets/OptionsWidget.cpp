@@ -48,10 +48,17 @@ void UOptionsWidget::NativeConstruct()
 
 	if (ComboBoxResolution)
 	{
+		FIntPoint CurrentRes = MySettings->GetScreenResolution();
+		
+		if (CurrentRes.X <= 0 || CurrentRes.Y <= 0)
+		{
+			CurrentRes = MySettings->GetDesktopResolution();
+		}
+		
 		SetupComboBox<FIntPoint>(
 			ComboBoxResolution,
 			ResolutionMap,
-			MySettings->GetScreenResolution()
+			CurrentRes
 		);
 
 		ComboBoxResolution->OnSelectionChanged.AddDynamic(this, &UOptionsWidget::OnResolutionChanged);
@@ -155,7 +162,7 @@ void UOptionsWidget::OnResolutionChanged(FString SelectedItem, ESelectInfo::Type
 
 	MySettings->SetScreenResolution(ResolutionMap[SelectedItem]);
 	
-	MySettings->ApplySettings(false);
+	MySettings->ApplyResolutionSettings(false);
 	
 	MySettings->SaveSettings();
 }

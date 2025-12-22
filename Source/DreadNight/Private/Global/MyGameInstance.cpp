@@ -21,6 +21,9 @@ void UMyGameInstance::Init()
 		{
 			MySettings->RunHardwareBenchmark();
 			MySettings->ApplyHardwareBenchmarkResults();
+			
+			MySettings->SetToDefaults();
+            MySettings->ApplyResolutionSettings(false);
 		}
 		else
 		{
