@@ -120,13 +120,20 @@ void UBowCombatComponent::SetComponentMesh(UStaticMeshComponent* Mesh)
 void UBowCombatComponent::SetWeapon(UWeaponDataAsset* Weapon)
 {
 	CurrentWeapon = Weapon;
+
 	if (CurrentStaticMesh)
 	{
+		if (!Weapon)
+		{
+			CurrentStaticMesh->SetStaticMesh(nullptr);
+
+			return;
+		}
+
 		CurrentStaticMesh->SetStaticMesh(Weapon->WeaponMesh);
 
 		APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
 
-		Player->SetEquippedObjectTag(Weapon->Type.GetTagName());
 		CurrentStaticMesh->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Player->GetData()->SecondaryHandSocketName);
 	}
 }

@@ -32,6 +32,9 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	bool GetIsAttacking() { return IsAttacking; }
+
+	UFUNCTION(BlueprintCallable)
+	UWeaponDataAsset* GetCurrentWeapon() { return CurrentWeapon; }
 	
 	void Attack();
 

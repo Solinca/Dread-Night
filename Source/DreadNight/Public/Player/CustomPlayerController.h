@@ -149,13 +149,10 @@ private:
 	void UpdateObjectPlacement();
 
 	UFUNCTION(BlueprintCallable)
-	void Aim(const FInputActionValue& Value);
+	void ItemSpecialActionStart(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintCallable)
-	void StopAim(const FInputActionValue& Value);
-
-	UFUNCTION(BlueprintCallable)
-	void Attack(const FInputActionValue& Value);
+	void ItemSpecialActionStop(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintCallable)
 	void Interact(const FInputActionValue& Value);
@@ -165,9 +162,6 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void DisplayOtherInventory(UInventoryComponent* OtherInventory);
-	
-	UFUNCTION(BlueprintCallable)
-	void DisplayGlossary(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintCallable)
 	void DisplayMenu(const FInputActionValue& Value);
@@ -183,6 +177,13 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void ScrollHotbar(const FInputActionValue& Value);
+
+	void RemoveCurrentlyHoldItem();
+
+	void ProcessHotbarSlot();
+
+	UFUNCTION()
+	void OnHotbarItemChanged(int Index);
 	
 	UFUNCTION(BlueprintCallable)
 	void UseItem(const FInputActionValue& Value);
@@ -196,17 +197,8 @@ private:
 	UFUNCTION()
 	void GoBackToMenu();
 
-	UFUNCTION(BlueprintCallable)
-	void PlaceObject(const FInputActionValue& Value);
-
-	UFUNCTION(BlueprintCallable)
-	void RotateObject(const FInputActionValue& Value);
-
 	UPROPERTY()
 	ABuilding* BuildingPreview = nullptr;
-
-	UPROPERTY(EditAnywhere)
-	float BuildingRotationSpeed;
 
 	UPROPERTY(EditAnywhere)
 	float ObjectPlacementRange = 200.f;

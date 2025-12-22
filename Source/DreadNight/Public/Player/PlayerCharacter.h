@@ -150,6 +150,8 @@ public:
 	UFUNCTION()
 	void EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon);
 
+	void UnequipWeapon();
+
 	UFUNCTION()
 	void EquipArmor(UItemInstance_Armor* itemInstanceArmor);
 
@@ -167,12 +169,6 @@ public:
 
 	UFUNCTION()
 	void SetupBowComponent();
-
-	UFUNCTION()
-	FName GetEquippedObjectTag();
-
-	UFUNCTION()
-	void SetEquippedObjectTag(FName NewTag);
 
 	virtual void OnPreSave() override;
 

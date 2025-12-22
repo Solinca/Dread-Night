@@ -187,10 +187,20 @@ void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 	if (Weapon != nullptr)
 	{
 		if (Weapon->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Sword"))
+		{
 			SwordCombatComponent->SetWeapon(Weapon->GetDataAsset());
+		}
 		else if (Weapon->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow"))
+		{
 			BowCombatComponent->SetWeapon(Weapon->GetDataAsset());
+		}
 	}
+}
+
+void APlayerCharacter::UnequipWeapon()
+{
+	SwordCombatComponent->SetWeapon(nullptr);
+	BowCombatComponent->SetWeapon(nullptr);
 }
 
 void APlayerCharacter::EquipArmor(UItemInstance_Armor* Armor)
@@ -231,16 +241,6 @@ void APlayerCharacter::SetupBowComponent()
 	CurrentWeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->SecondaryHandSocketName);
 
 	BowCombatComponent->SetComponentMesh(CurrentWeaponMesh);
-}
-
-FName APlayerCharacter::GetEquippedObjectTag()
-{
-	return EquippedObjectTag;
-}
-
-void APlayerCharacter::SetEquippedObjectTag(FName NewTag)
-{
-	EquippedObjectTag = NewTag;
 }
 
 void APlayerCharacter::OnPreSave()
