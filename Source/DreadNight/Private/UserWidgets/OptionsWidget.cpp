@@ -59,10 +59,18 @@ void UOptionsWidget::NativeConstruct()
 
 	if (ComboBoxGraphics)
 	{
+		int CurrentLevel = MySettings->GetOverallScalabilityLevel();
+    
+		if (CurrentLevel < 0) 
+		{
+			MySettings->SetOverallScalabilityLevel(3);
+			CurrentLevel = 3;
+		}
+		
 		SetupComboBox<int>(
 			ComboBoxGraphics,
 			GraphicsMap,
-			MySettings->GetOverallScalabilityLevel()
+			CurrentLevel
 		);
 
 		ComboBoxGraphics->OnSelectionChanged.AddDynamic(this, &UOptionsWidget::OnGraphicsChanged);
@@ -161,7 +169,7 @@ void UOptionsWidget::OnGraphicsChanged(FString SelectedItem, ESelectInfo::Type S
 
 	MySettings->SetOverallScalabilityLevel(GraphicsMap[SelectedItem]);
 	
-	MySettings->ApplySettings(false);
+	MySettings->ApplyNonResolutionSettings();
 	
 	MySettings->SaveSettings();
 }
