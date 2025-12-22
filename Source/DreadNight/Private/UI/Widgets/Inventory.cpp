@@ -112,16 +112,16 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 	
 	const FVector2d MousePos = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
 	const FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
-	OffsetX = ViewportSize.X * 0.06f;
-	OffsetY = ViewportSize.Y * 0.05f;
-	Offset = FVector2D(OffsetX, OffsetY);
+	float OffsetX = ViewportSize.X * 0.06f;
+	float OffsetY = ViewportSize.Y * 0.05f;
+	WidgetOffset = FVector2D(OffsetX, OffsetY);
 
-	Offset.Y = (MousePos.Y >= ViewportSize.Y / 1.5f ? -OffsetY : OffsetY);
+	WidgetOffset.Y = (MousePos.Y >= ViewportSize.Y / 1.5f ? -OffsetY : OffsetY);
 	
 	InventoryAction = CreateWidget<UInventoryAction>(this, InventoryActionClass);
 	InventoryAction->SetupAction(BindInventoryComponent, BindTargetInventoryComponent, SlotIndex);
 	InventoryAction->AddToViewport();
-	InventoryAction->SetPositionInViewport(MousePos + Offset, false);
+	InventoryAction->SetPositionInViewport(MousePos + WidgetOffset, false);
 	GlobalInventoryAction = InventoryAction;
 	
 	UItemInstance* ItemData = BindInventoryComponent->GetItemAtSlot(SlotIndex);
@@ -173,15 +173,14 @@ void UInventory::OnItemInfoCreated(int SlotIndex)
 	
 	const FVector2d MousePos = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
 	const FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(GetWorld());
-	OffsetX = ViewportSize.X * 0.06f;
-	OffsetY = ViewportSize.Y * 0.05f;
-	Offset = FVector2D(OffsetX, OffsetY);
-
-	Offset.Y = (MousePos.Y >= ViewportSize.Y / 1.5f ? -OffsetY : OffsetY);
-
+	float FixedOffset = 50.f; 
+	WidgetOffset = FVector2D(FixedOffset, FixedOffset);
+    
+	WidgetOffset.Y = (MousePos.Y >= ViewportSize.Y + FixedOffset ? -FixedOffset : FixedOffset);
+	
 	InventoryInfoWidget = CreateWidget<UInventoryInfo>(this, ItemInfoWidgetClass);
 	InventoryInfoWidget->AddToViewport();
-	InventoryInfoWidget->SetPositionInViewport(MousePos + Offset, false);
+	InventoryInfoWidget->SetPositionInViewport(MousePos + WidgetOffset, false);
 	
 	InventoryInfoWidget->GetItemInfoButton()->SetVisibility(ESlateVisibility::Hidden);
 	if (UItemInstance* ItemData = BindInventoryComponent->GetItemAtSlot(SlotIndex))
