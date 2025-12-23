@@ -300,11 +300,8 @@ private:
 	void ChangeArmorUI(UArmorDataAsset* NewArmor);
 	
 	UFUNCTION()
-	void CancelBuildingPlacement();
+	void StopBuildingPlacement();
 	
-	UFUNCTION()
-	void UpdateBuildingAfterSwap(int Index);
-
 public:
 	void CreateBuilding(UBuildingDataAsset* BuildingData);
 	
