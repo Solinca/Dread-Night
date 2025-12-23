@@ -40,5 +40,6 @@ public:
 
 	void SetDataAsset(UBuildingDataAsset* DataAsset);
 	
+	UBuildingDataAsset* GetDataAsset() const { return BuildingDataAsset; }
 	UStaticMeshComponent* GetMeshComponent() const { return MeshComp; }
 };

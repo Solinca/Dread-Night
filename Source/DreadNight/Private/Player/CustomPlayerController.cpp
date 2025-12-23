@@ -251,7 +251,7 @@ void ACustomPlayerController::UpdateObjectPlacement()
 		ECC_WorldStatic,
 		ObjectPlacementQueryParams))
 	{
-		BuildingPreview->SetActorLocation(FVector(GroundHit.ImpactPoint.X, GroundHit.ImpactPoint.Y, GroundHit.ImpactPoint.Z + BuildingPreview->GetActorLocation().Z - Box.Min.Z));
+		BuildingPreview->SetActorLocation(GroundHit.ImpactPoint + FVector(0.f, 0.f, BuildingPreview->GetDataAsset()->DistanceFromTheGround));
 	}
 	else
 	{
