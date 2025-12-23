@@ -24,7 +24,7 @@ public:
 	FVector BuildingPreviewScale = FVector(1, 1, 1);
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-	float MaxDistanceFromGround = 100.f;
+	float DistanceFromTheGround = 100.f;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 	bool IsTrap = false;

@@ -28,7 +28,7 @@ bool ABuilding::CheckValidPlacement()
 bool ABuilding::CheckIsOnGround()
 {
 	FBox Box = MeshComp->CalcBounds(MeshComp->GetComponentTransform()).GetBox();
-	return GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation() + FVector(0,0, GetActorLocation().Z - Box.Min.Z), GetActorLocation() - FVector(0, 0, BuildingDataAsset->MaxDistanceFromGround + GetActorLocation().Z - Box.Min.Z), ECC_Visibility);
+	return GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation() + FVector(0,0, GetActorLocation().Z - Box.Min.Z), GetActorLocation() - FVector(0, 0, BuildingDataAsset->DistanceFromTheGround + GetActorLocation().Z - Box.Min.Z), ECC_Visibility);
 }
 
 void ABuilding::PlaceBuilding()
