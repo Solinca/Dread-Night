@@ -10,6 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemovedEventSignature, int, I
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemClearedEventSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemModifiedEventSignature, class UItemInstance*, ItemInstance, int, ItemSlot);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHotbarItemChanged, int, SlotIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectedHotbarChangedSignature, int, SlotIndex);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DREADNIGHT_API UInventoryComponent : public UActorComponent
@@ -70,4 +71,5 @@ public:
 	FOnItemClearedEventSignature OnItemCleared;
 	FOnHotbarItemChanged OnHotbarItemChanged;
 	FOnItemAddedEventSignature OnItemAddedToInventory;
+	FOnSelectedHotbarChangedSignature OnSelectedHotbarChanged;
 };

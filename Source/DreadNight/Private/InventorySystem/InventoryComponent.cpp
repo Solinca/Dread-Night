@@ -5,7 +5,6 @@
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	
 }
 
 void UInventoryComponent::BeginPlay()

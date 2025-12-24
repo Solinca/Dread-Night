@@ -51,7 +51,7 @@ void ACustomPlayerController::BeginPlay()
 	MyPlayer->GetArmorComponent()->OnArmorEquipped.AddDynamic(this, &ThisClass::ChangeArmorUI);
 
 	MyPlayer->GetInventoryComponent()->OnItemAddedToInventory.AddDynamic(this, &ThisClass::AddItemNotificationToViewport);
-	
+
 	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
 
 	PlayerCameraManager->ViewPitchMax = PlayerData->ViewPitch.Y;
@@ -427,6 +427,8 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 	
 	CurrentHotbarIndex = Index;
 
+	MyPlayer->GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(CurrentHotbarIndex);
+
 	ProcessHotbarSlot();
 }
 
@@ -437,6 +439,8 @@ void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
 	int InventoryLimit = MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize();
 	
 	CurrentHotbarIndex = (CurrentHotbarIndex + (int)Value.Get<float>() + InventoryLimit) % InventoryLimit;
+
+	MyPlayer->GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(CurrentHotbarIndex);
 
 	ProcessHotbarSlot();
 }
