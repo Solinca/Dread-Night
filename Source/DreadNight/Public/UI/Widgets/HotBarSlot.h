@@ -17,6 +17,9 @@ class DREADNIGHT_API UHotBarSlot : public UInventorySlot
 protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> ShortcutText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> SelectedSlot;
 	
 	UPROPERTY()
 	TObjectPtr<UItemInstance> CurrentItemInstance;
@@ -29,6 +32,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "HotBarSlot")
 	void SetShortcutText(const FText& InText);
+
+	virtual void SetIsSelected(bool IsSelected) override;
 	
 	virtual void SetStackText(int Stack) override;
 	virtual void Reset(const FSlateBrush& Brush) override;

@@ -57,8 +57,13 @@ void UHotBarSlot::UpdateSlot(UItemInstance* InItemInstance, const int32 InQuanti
 		StackText->SetVisibility(ESlateVisibility::Hidden);
 		return;
 	}
-	
+
 	StackText->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UHotBarSlot::SetIsSelected(bool IsSelected)
+{
+	SelectedSlot->SetVisibility(IsSelected ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
 
 void UHotBarSlot::SetShortcutText(const FText& InText)

@@ -19,8 +19,10 @@ class DREADNIGHT_API UInventorySlot : public UUserWidget
 protected:
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UImage> ItemImage;
+
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UTextBlock> StackText;
+
 	UPROPERTY(meta =(BindWidgetOptional))
 	TObjectPtr<UButton> ItemButton;
 
@@ -35,11 +37,7 @@ protected:
 	bool IsMouseOver = false;
 public:
 	UFUNCTION(BlueprintCallable)
-	virtual void NativePreConstruct() override;
-	UFUNCTION(BlueprintCallable)
 	virtual void NativeConstruct() override;
-	UFUNCTION(BlueprintCallable)
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& InMouseEvent) override;
@@ -47,22 +45,31 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SetItemImage(UTexture2D* Texture);
+	
 	UFUNCTION(BlueprintCallable)
 	virtual void SetStackText(int Stack);
+	
 	UFUNCTION(BlueprintCallable)
 	virtual void SetImageColor(const FLinearColor& Color);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetIsSelected(bool IsSelected) {};
 	
 	UFUNCTION(BlueprintCallable)
 	int GetSlotIndex() const { return SlotIndex; }
+	
 	UFUNCTION(BlueprintCallable)
 	void SetSlotIndex(int Index) { SlotIndex = Index; }
 
 	UFUNCTION(BlueprintCallable)
 	void SetupSlot(UInventoryComponent* OwningInventory, UInventoryComponent* TargetInventory, int Index);
+	
 	UFUNCTION(BlueprintCallable)
 	void SlotAction();
+	
 	UFUNCTION(BlueprintCallable)
 	void InfoAction();
+	
 	UFUNCTION(BlueprintCallable)
 	void BindToInventory(UInventoryComponent* InventoryComponent);
 	

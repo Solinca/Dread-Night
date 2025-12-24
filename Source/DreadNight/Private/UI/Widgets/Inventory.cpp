@@ -3,24 +3,10 @@
 #include "Items/Data/ItemGameplayTag.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 
-void UInventory::NativePreConstruct()
-{
-	Super::NativePreConstruct();
-}
-
-void UInventory::NativeConstruct()
-{
-	Super::NativeConstruct();
-}
-
-void UInventory::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-}
-
 void UInventory::SetSize(int Size)
 {
 	InventoryWrapBox->ClearChildren();
+
 	for (int i = 0; i < Size; i++)
 	{
 		UInventorySlot* TempSlot = CreateWidget<UInventorySlot>(this, InventorySlotClass);
@@ -75,6 +61,21 @@ void UInventory::OnItemsCleared()
 	SetSize(InventoryWrapBox->GetWrapSize());
 }
 
+void UInventory::OnSelectedHotbarChanged(int SlotIndex)
+{
+	if (UInventorySlot* TempSlot = Cast<UInventorySlot>(InventoryWrapBox->GetChildAt(CurrentSlotIndex)))
+	{
+		TempSlot->SetIsSelected(false);
+	}
+
+	if (UInventorySlot* TempSlot = Cast<UInventorySlot>(InventoryWrapBox->GetChildAt(SlotIndex)))
+	{
+		TempSlot->SetIsSelected(true);
+	}
+
+	CurrentSlotIndex = SlotIndex;
+}
+
 void UInventory::BindToInventory(UInventoryComponent* InventoryComponent)
 {
 	BindInventoryComponent = InventoryComponent;
@@ -83,6 +84,8 @@ void UInventory::BindToInventory(UInventoryComponent* InventoryComponent)
 	BindInventoryComponent->OnItemRemoved.AddDynamic(this, &UInventory::OnItemRemoved);
 	BindInventoryComponent->OnItemModified.AddDynamic(this, &UInventory::OnItemModified);
 	BindInventoryComponent->OnItemCleared.AddDynamic(this, &UInventory::OnItemsCleared);
+	BindInventoryComponent->OnSelectedHotbarChanged.AddDynamic(this, &UInventory::OnSelectedHotbarChanged);
+
 	
 	SetSize(InventoryComponent->GetSize());
 }
