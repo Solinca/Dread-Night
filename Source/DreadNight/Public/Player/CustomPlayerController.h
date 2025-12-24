@@ -201,7 +201,7 @@ private:
 	ABuilding* BuildingPreview = nullptr;
 
 	UPROPERTY(EditAnywhere)
-	float ObjectPlacementRange = 200.f;
+	float ObjectPlacementRange = 300.f;
 	
 	UPROPERTY(EditAnywhere)
 	int CurrentHotbarIndex = 0;

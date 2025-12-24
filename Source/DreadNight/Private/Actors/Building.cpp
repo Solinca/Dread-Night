@@ -27,7 +27,7 @@ bool ABuilding::CheckValidPlacement()
 
 bool ABuilding::CheckIsOnGround()
 {
-	return GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), GetActorLocation() - FVector(0, 0, BuildingDataAsset->MaxDistanceFromGround), ECC_Visibility);
+	return GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), GetActorLocation() - FVector(0, 0, GetDataAsset()->DistanceFromTheGround), ECC_Visibility);
 }
 
 void ABuilding::PlaceBuilding()

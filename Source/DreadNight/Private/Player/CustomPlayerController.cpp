@@ -220,27 +220,45 @@ void ACustomPlayerController::UpdateCrouching(float deltatime)
 
 void ACustomPlayerController::UpdateObjectPlacement()
 {
-	if (BuildingPreview)
+	if (!BuildingPreview) 
+		return;
+	
+	FHitResult CameraHit;
+	FHitResult GroundHit;
+	FVector TargetLocation;
+		
+	if (GetWorld()->LineTraceSingleByChannel(
+		CameraHit,
+		PlayerCameraManager->GetCameraLocation(),
+		PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange),
+		ECC_WorldStatic,
+		ObjectPlacementQueryParams) &&
+		!CameraHit.GetActor()->IsA(ACharacter::StaticClass()))
 	{
-		FHitResult Hit;
-
-		if (GetWorld()->LineTraceSingleByChannel(
-			Hit,
-			PlayerCameraManager->GetCameraLocation(),
-			PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange),
-			ECC_WorldStatic,
-			ObjectPlacementQueryParams) &&
-			!Hit.GetActor()->IsA(ACharacter::StaticClass()))
-		{
-			BuildingPreview->SetActorLocation(Hit.ImpactPoint);
-		}
-		else
-		{
-			BuildingPreview->SetActorLocation(PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange));
-		}
-
-		BuildingPreview->CheckValidPlacement();
+		TargetLocation = CameraHit.ImpactPoint;
 	}
+	else
+	{
+		TargetLocation = PlayerCameraManager->GetCameraLocation() + (PlayerCameraManager->GetCameraRotation().Vector() * ObjectPlacementRange);
+	}
+		
+	FBox Box = BuildingPreview->GetMeshComponent()->CalcBounds(BuildingPreview->GetMeshComponent()->GetComponentTransform()).GetBox();
+
+	if (GetWorld()->LineTraceSingleByChannel(
+		GroundHit,
+		TargetLocation + FVector(0.f, 0.f, BuildingPreview->GetActorLocation().Z - Box.Min.Z),
+		TargetLocation - FVector(0.f, 0.f, 1000.f),
+		ECC_WorldStatic,
+		ObjectPlacementQueryParams))
+	{
+		BuildingPreview->SetActorLocation(GroundHit.ImpactPoint + FVector(0.f, 0.f, BuildingPreview->GetDataAsset()->DistanceFromTheGround));
+	}
+	else
+	{
+		BuildingPreview->SetActorLocation(TargetLocation);
+	}
+	
+	BuildingPreview->CheckValidPlacement();
 }
 
 void ACustomPlayerController::ItemSpecialActionStart(const FInputActionValue& Value)
