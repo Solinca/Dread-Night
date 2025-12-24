@@ -443,7 +443,7 @@ void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
 
 void ACustomPlayerController::RemoveCurrentlyHoldItem()
 {
-	CancelBuildingPlacement();
+	StopBuildingPlacement();
 
 	MyPlayer->UnequipWeapon();
 }
@@ -459,13 +459,10 @@ void ACustomPlayerController::ProcessHotbarSlot()
 	
 	if (UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item); BuildingItem)
 	{
-		UpdateBuildingAfterSwap(CurrentHotbarIndex);
-		
 		BuildingItem->Use(MyPlayer);
-
 		return;
 	}
-
+	
 	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon"))
 	{
 		MyPlayer->EquipWeapon(Cast<UItemInstance_Weapon>(Item));
@@ -484,19 +481,23 @@ void ACustomPlayerController::OnHotbarItemChanged(int Index)
 
 void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 {
+	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
+	
 	if (BuildingPreview && BuildingPreview->CheckValidPlacement())
 	{
 		BuildingPreview->PlaceBuilding();
 
-		BuildingPreview = nullptr;
-
-		ProcessHotbarSlot();
-
+		UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item);
+		if (Item && BuildingItem && BuildingItem->GetStackNumber() > 0)
+		{
+			MyPlayer->GetHotbarInventoryComponent()->RemoveItemsAt(CurrentHotbarIndex, 1);
+		}
+		
+		StopBuildingPlacement();
+		OnHotbarItemChanged(CurrentHotbarIndex);
 		return;
 	}
-
-	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
-
+	
 	if (!Item)
 	{
 		return;
@@ -751,7 +752,7 @@ void ACustomPlayerController::CreateBuilding(UBuildingDataAsset* BuildingData)
 	ObjectPlacementQueryParams.AddIgnoredActor(BuildingPreview);
 }
 
-void ACustomPlayerController::CancelBuildingPlacement()
+void ACustomPlayerController::StopBuildingPlacement()
 {
 	if (BuildingPreview)
 	{
@@ -761,22 +762,7 @@ void ACustomPlayerController::CancelBuildingPlacement()
 	}
 }
 
-void ACustomPlayerController::UpdateBuildingAfterSwap(int Index)
-{
-	if (Index != CurrentHotbarIndex)
-		return;
-	
-	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
-	UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item);
-	if (Item && BuildingItem)
-	{
-		CancelBuildingPlacement();
-		BuildingItem->Use(MyPlayer);
-	}
-}
-
 void ACustomPlayerController::AddItemNotificationToViewport(UItemInstance* Data, int32 Quantity)
 {
 	HUDWidget->AddItemNotification(Data, Quantity, PlayerData->ItemNotificationClass);
 }
-

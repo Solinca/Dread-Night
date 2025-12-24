@@ -15,7 +15,6 @@ void UItemInstance_Building::Use(AActor* Player)
 			if (!Controller->IsPlacingBuilding())
 			{
 				Controller->CreateBuilding(GetDataAsset());
-				StackNumber--;
 			}
 		}
 	}
