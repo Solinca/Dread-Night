@@ -7,7 +7,11 @@ ATorch::ATorch()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	RootComponent = CreateDefaultSubobject<USceneComponent>("Root");
+
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+
+	Mesh->SetupAttachment(RootComponent);
 
 	Light = CreateDefaultSubobject<UPointLightComponent>("Light");
 
