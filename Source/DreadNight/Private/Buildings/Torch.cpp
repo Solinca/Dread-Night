@@ -34,6 +34,10 @@ void ATorch::BeginPlay()
 
 		VFX->Deactivate();
 	}
+	else
+	{
+		VFX->Activate();
+	}
 }
 
 void ATorch::EndPlay(const EEndPlayReason::Type EndPlayReason)
