@@ -15,7 +15,7 @@ bool ABuilding::CheckValidPlacement()
 
 	MeshComp->GetOverlappingActors(OverlapingActors);
 
-	bool bIsValid = (OverlapingActors.Num() == 0 && CheckIsOnGround());
+	bool bIsValid = (OverlapingActors.Num() == 0);
 
 	for (int i = 0; i < MeshComp->GetNumMaterials(); i++)
 	{
