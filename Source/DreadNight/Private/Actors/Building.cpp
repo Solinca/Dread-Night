@@ -15,7 +15,7 @@ bool ABuilding::CheckValidPlacement()
 
 	MeshComp->GetOverlappingActors(OverlapingActors);
 
-	bool bIsValid = (OverlapingActors.Num() == 0);
+	bool bIsValid = OverlapingActors.Num() == 0;
 
 	for (int i = 0; i < MeshComp->GetNumMaterials(); i++)
 	{
@@ -23,11 +23,6 @@ bool ABuilding::CheckValidPlacement()
 	}
 
 	return bIsValid;
-}
-
-bool ABuilding::CheckIsOnGround()
-{
-	return GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), GetActorLocation() - FVector(0, 0, GetDataAsset()->DistanceFromTheGround), ECC_Visibility);
 }
 
 void ABuilding::PlaceBuilding()

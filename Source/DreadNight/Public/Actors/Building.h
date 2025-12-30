@@ -34,8 +34,6 @@ public:
 
 	bool CheckValidPlacement();
 
-	bool CheckIsOnGround();
-
 	virtual void PlaceBuilding();
 
 	void SetDataAsset(UBuildingDataAsset* DataAsset);
