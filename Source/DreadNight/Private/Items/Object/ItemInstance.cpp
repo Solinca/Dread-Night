@@ -53,7 +53,7 @@ bool UItemInstance::CanBeStackedWith(const UItemInstance* Other, EStackMethod St
 	if (!Other || !ItemData)
 		return false;
 
-	const bool bIsSameType = Other->ItemData->Type.MatchesTagExact(ItemData->Type);
+	const bool bIsSameType = Other->ItemData->ItemName == ItemData->ItemName;
 
 	if (!bIsSameType)
 		return false;
