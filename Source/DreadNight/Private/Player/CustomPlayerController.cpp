@@ -48,7 +48,7 @@ void ACustomPlayerController::BeginPlay()
 
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
 	
-	MyPlayer->GetArmorComponent()->OnArmorEquipped.AddDynamic(this, &ThisClass::ChangeArmorUI);
+	MyPlayer->GetArmorComponent()->OnArmorChanged.AddDynamic(this, &ThisClass::ChangeArmorUI);
 
 	MyPlayer->GetInventoryComponent()->OnItemAddedToInventory.AddDynamic(this, &ThisClass::AddItemNotificationToViewport);
 
@@ -70,6 +70,7 @@ void ACustomPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateCrouching(DeltaTime);
+
 	UpdateObjectPlacement();
 }
 
@@ -721,25 +722,25 @@ void ACustomPlayerController::AddPlayerUIToViewport()
 	}
 }
 
-void ACustomPlayerController::ChangeArmorUI(UArmorDataAsset* NewArmor)
+void ACustomPlayerController::ChangeArmorUI(UArmorDataAsset* ArmorData, bool IsEquipped)
 {
 	if (UHotBar* HotBar = Cast<UHotBar>(HotbarInventoryWidget))
 	{
-		if (NewArmor->Type.MatchesTag(GT_Item_Armor_Helmet))
+		if (ArmorData->Type.MatchesTag(GT_Item_Armor_Helmet))
 		{
-			HotBar->SetHelmetBrush(NewArmor->ItemIcon);
+			HotBar->SetHelmetBrush(IsEquipped ? ArmorData->ItemIcon : nullptr);
 		}
-		else if (NewArmor->Type.MatchesTag(GT_Item_Armor_Chest))
+		else if (ArmorData->Type.MatchesTag(GT_Item_Armor_Chest))
 		{
-			HotBar->SetChestBrush(NewArmor->ItemIcon);
+			HotBar->SetChestBrush(IsEquipped ? ArmorData->ItemIcon : nullptr);
 		}
-		else if (NewArmor->Type.MatchesTag(GT_Item_Armor_Pant))
+		else if (ArmorData->Type.MatchesTag(GT_Item_Armor_Pant))
 		{
-			HotBar->SetPantBrush(NewArmor->ItemIcon);
+			HotBar->SetPantBrush(IsEquipped ? ArmorData->ItemIcon : nullptr);
 		}
-		else if (NewArmor->Type.MatchesTag(GT_Item_Armor_Shoes))
+		else if (ArmorData->Type.MatchesTag(GT_Item_Armor_Shoes))
 		{
-			HotBar->SetShoesBrush(NewArmor->ItemIcon);
+			HotBar->SetShoesBrush(IsEquipped ? ArmorData->ItemIcon : nullptr);
 		}
 	}
 }

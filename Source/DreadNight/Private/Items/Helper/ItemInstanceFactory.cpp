@@ -4,9 +4,7 @@
 #include "Items/Data/ItemGameplayTag.h"
 #include "Items/Object/ItemInstance_Armor.h"
 #include "Items/Object/ItemInstance_Building.h"
-#include "Items/Object/ItemInstance_ChestArmor.h"
 #include "Items/Object/ItemInstance_Food.h"
-#include "Items/Object/ItemInstance_HelmetArmor.h"
 #include "Items/Object/ItemInstance_Weapon.h"
 
 UItemInstance* UItemInstanceFactory::CreateItem(UObject* Outer,UItemDataAsset* ItemDataAsset, const int StartStackSize)
@@ -22,13 +20,9 @@ UItemInstance* UItemInstanceFactory::CreateItem(UObject* Outer,UItemDataAsset* I
 	{
 		NewItem = NewObject<UItemInstance_Weapon>(Outer);
 	}
-	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Armor_Chest))
+	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Armor))
 	{
-		NewItem = NewObject<UItemInstance_ChestArmor>(Outer);
-	}
-	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Armor_Helmet))
-	{
-		NewItem = NewObject<UItemInstance_HelmetArmor>(Outer);
+		NewItem = NewObject<UItemInstance_Armor>(Outer);
 	}
 	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Food))
 	{

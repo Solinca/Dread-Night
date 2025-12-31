@@ -44,8 +44,11 @@ void UHotBar::SetShoesBrush(UTexture2D* ShoesTexture) const
 
 void UHotBar::SetArmorImagesVisibility(ESlateVisibility ArmorImagesVisibility) const
 {
-	HelmetImage->SetVisibility(ArmorImagesVisibility);	
-	ChestImage->SetVisibility(ArmorImagesVisibility);	
-	PantImage->SetVisibility(ArmorImagesVisibility);	
+	HelmetImage->SetVisibility(ArmorImagesVisibility);
+
+	ChestImage->SetVisibility(ArmorImagesVisibility);
+
+	PantImage->SetVisibility(ArmorImagesVisibility);
+
 	ShoesImage->SetVisibility(ArmorImagesVisibility);
 }

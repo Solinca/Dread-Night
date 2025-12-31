@@ -15,14 +15,22 @@ class DREADNIGHT_API UHotBarSlot : public UInventorySlot
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> ShortcutText;
+	virtual void NativeConstruct() override;
+	
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	
+	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+	
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> SelectedSlot;
+	TObjectPtr<UTextBlock> ShortcutText = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> SelectedSlot = nullptr;
 	
 	UPROPERTY()
-	TObjectPtr<UItemInstance> CurrentItemInstance;
+	TObjectPtr<UItemInstance> CurrentItemInstance = nullptr;
 
 	int32 CurrentQuantity;
 
@@ -36,11 +44,6 @@ public:
 	virtual void SetIsSelected(bool IsSelected) override;
 	
 	virtual void SetStackText(int Stack) override;
+	
 	virtual void Reset(const FSlateBrush& Brush) override;
-
-protected:
-	virtual void NativeConstruct() override;
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
-	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 };

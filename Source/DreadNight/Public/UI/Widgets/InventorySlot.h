@@ -16,31 +16,37 @@ UCLASS()
 class DREADNIGHT_API UInventorySlot : public UUserWidget
 {
 	GENERATED_BODY()
+
 protected:
 	UPROPERTY(meta =(BindWidgetOptional))
-	TObjectPtr<UImage> ItemImage;
+	TObjectPtr<UImage> ItemImage = nullptr;
 
 	UPROPERTY(meta =(BindWidgetOptional))
-	TObjectPtr<UTextBlock> StackText;
+	TObjectPtr<UTextBlock> StackText = nullptr;
 
 	UPROPERTY(meta =(BindWidgetOptional))
-	TObjectPtr<UButton> ItemButton;
+	TObjectPtr<UButton> ItemButton = nullptr;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UInventoryComponent> BindInventoryComponent;
+	TObjectPtr<UInventoryComponent> BindInventoryComponent = nullptr;
+	
 	UPROPERTY(Transient)
-	TObjectPtr<UInventoryComponent> BindTargetInventoryComponent;
+	TObjectPtr<UInventoryComponent> BindTargetInventoryComponent = nullptr;
 	
 	int SlotIndex;
 	
 	bool HasRightClicked = false;
+
 	bool IsMouseOver = false;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	virtual void NativeConstruct() override;
 
 	virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	
 	virtual void NativeOnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& InMouseEvent) override;
+	
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	
 	UFUNCTION(BlueprintCallable)
@@ -79,6 +85,8 @@ public:
 	const FSlateBrush& GetImageBrush() const;
 	
 	FOnItemActionCreatedEventSignature OnItemActionCreated;
+	
 	FOnItemInfoCreatedEventSignature OnItemInfoCreated;
+	
 	FOnItemInfoRemovedEventSignature OnItemInfoRemoved;
 };

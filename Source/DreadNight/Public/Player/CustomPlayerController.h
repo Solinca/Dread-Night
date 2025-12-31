@@ -297,7 +297,7 @@ private:
 	void AddPlayerUIToViewport();
 	
 	UFUNCTION()
-	void ChangeArmorUI(UArmorDataAsset* NewArmor);
+	void ChangeArmorUI(UArmorDataAsset* ArmorData, bool IsEquipped);
 	
 	UFUNCTION()
 	void StopBuildingPlacement();
