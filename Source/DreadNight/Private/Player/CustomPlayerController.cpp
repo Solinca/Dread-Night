@@ -726,20 +726,30 @@ void ACustomPlayerController::ChangeArmorUI(UArmorDataAsset* NewArmor)
 	if (UHotBar* HotBar = Cast<UHotBar>(HotbarInventoryWidget))
 	{
 		if (NewArmor->Type.MatchesTag(GT_Item_Armor_Helmet))
+		{
 			HotBar->SetHelmetBrush(NewArmor->ItemIcon);
-		else if  (NewArmor->Type.MatchesTag(GT_Item_Armor_Chest))
+		}
+		else if (NewArmor->Type.MatchesTag(GT_Item_Armor_Chest))
+		{
 			HotBar->SetChestBrush(NewArmor->ItemIcon);
-		else if  (NewArmor->Type.MatchesTag(GT_Item_Armor_Pant))
+		}
+		else if (NewArmor->Type.MatchesTag(GT_Item_Armor_Pant))
+		{
 			HotBar->SetPantBrush(NewArmor->ItemIcon);
-		else if  (NewArmor->Type.MatchesTag(GT_Item_Armor_Glove))
-			HotBar->SetGloveBrush(NewArmor->ItemIcon);
+		}
+		else if (NewArmor->Type.MatchesTag(GT_Item_Armor_Shoes))
+		{
+			HotBar->SetShoesBrush(NewArmor->ItemIcon);
+		}
 	}
 }
 
 void ACustomPlayerController::CreateBuilding(UBuildingDataAsset* BuildingData)
 {
 	if (BuildingPreview)
+	{
 		return;
+	}
 	
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;

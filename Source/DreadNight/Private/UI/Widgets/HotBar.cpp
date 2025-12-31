@@ -37,9 +37,9 @@ void UHotBar::SetPantBrush(UTexture2D* PantTexture) const
 	PantImage->SetBrushFromTexture(PantTexture);
 }
 
-void UHotBar::SetGloveBrush(UTexture2D* GloveTexture) const
+void UHotBar::SetShoesBrush(UTexture2D* ShoesTexture) const
 {
-	GloveImage->SetBrushFromTexture(GloveTexture);
+	ShoesImage->SetBrushFromTexture(ShoesTexture);
 }
 
 void UHotBar::SetArmorImagesVisibility(ESlateVisibility ArmorImagesVisibility) const
@@ -47,5 +47,5 @@ void UHotBar::SetArmorImagesVisibility(ESlateVisibility ArmorImagesVisibility) c
 	HelmetImage->SetVisibility(ArmorImagesVisibility);	
 	ChestImage->SetVisibility(ArmorImagesVisibility);	
 	PantImage->SetVisibility(ArmorImagesVisibility);	
-	GloveImage->SetVisibility(ArmorImagesVisibility);
+	ShoesImage->SetVisibility(ArmorImagesVisibility);
 }

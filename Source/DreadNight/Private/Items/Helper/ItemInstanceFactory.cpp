@@ -9,31 +9,46 @@
 #include "Items/Object/ItemInstance_HelmetArmor.h"
 #include "Items/Object/ItemInstance_Weapon.h"
 
-
 UItemInstance* UItemInstanceFactory::CreateItem(UObject* Outer,UItemDataAsset* ItemDataAsset, const int StartStackSize)
 { 
 	if (!ItemDataAsset)
+	{
 		return nullptr;
+	}
 
 	UItemInstance* NewItem = nullptr;
-	if (ItemDataAsset->Type.MatchesTag(GT_Item_Weapon))
-		NewItem = NewObject<UItemInstance_Weapon>(Outer);
-	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Armor_Chest))
-		NewItem = NewObject<UItemInstance_ChestArmor>(Outer);
-	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Armor_Helmet))
-		NewItem = NewObject<UItemInstance_HelmetArmor>(Outer);
-	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Food))
-		NewItem = NewObject<UItemInstance_Food>(Outer);
-	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Building))
-		NewItem = NewObject<UItemInstance_Building>(Outer);
 
-	
+	if (ItemDataAsset->Type.MatchesTag(GT_Item_Weapon))
+	{
+		NewItem = NewObject<UItemInstance_Weapon>(Outer);
+	}
+	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Armor_Chest))
+	{
+		NewItem = NewObject<UItemInstance_ChestArmor>(Outer);
+	}
+	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Armor_Helmet))
+	{
+		NewItem = NewObject<UItemInstance_HelmetArmor>(Outer);
+	}
+	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Food))
+	{
+		NewItem = NewObject<UItemInstance_Food>(Outer);
+	}
+	else if (ItemDataAsset->Type.MatchesTag(GT_Item_Building))
+	{
+		NewItem = NewObject<UItemInstance_Building>(Outer);
+	}
 	else if (ItemDataAsset->Type.MatchesTag(GT_Item))
+	{
 		NewItem = NewObject<UItemInstance>(Outer);
+	}
 	
 	if (!NewItem)
+	{
 		return nullptr;
+	}
 
 	NewItem->SetupItemInstance(ItemDataAsset,StartStackSize);
+
 	return NewItem;
 }
