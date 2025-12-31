@@ -1,5 +1,5 @@
 ﻿#include "Items/Object/ItemInstance_Armor.h"
-
+#include "Components/ArmorComponent.h"
 #include "Items/Data/ArmorDataAsset.h"
 
 FName UItemInstance_Armor::GetActionName()
@@ -7,7 +7,24 @@ FName UItemInstance_Armor::GetActionName()
 	return FName(TEXT("Equip"));
 }
 
- 
+void UItemInstance_Armor::Use(AActor* Player)
+{
+	if (!Player)
+	{
+		return;
+	}
+
+	if (UArmorComponent* ArmorComponent = Player->GetComponentByClass<UArmorComponent>())
+	{
+		ArmorComponent->EquipArmor(ArmorDataAsset);
+
+		StackNumber--;
+
+		OnItemStackChange.Broadcast(this, StackNumber);
+
+		DestroyIfEmpty();
+	}
+}
 
 UArmorDataAsset* UItemInstance_Armor::GetDataAsset()
 {

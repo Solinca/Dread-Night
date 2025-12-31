@@ -28,8 +28,10 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UInventorySlot> InventorySlotClass;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UInventoryAction> InventoryActionClass;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UUserWidget> ItemInfoWidgetClass;
 	
@@ -47,6 +49,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	FLinearColor EmptyInventorySlot;
+
 	UPROPERTY(EditDefaultsOnly)
 	FLinearColor UsedInventorySlot;
 

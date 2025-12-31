@@ -17,8 +17,7 @@ FReply UHotBarSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const F
 	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 }
 
-void UHotBarSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
-	UDragDropOperation*& OutOperation)
+void UHotBarSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
 	if (!CurrentItemInstance)
 	{
@@ -28,8 +27,7 @@ void UHotBarSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 	// TODO all the logic of drag from (UDragDropOperation) ?
 }
 
-bool UHotBarSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
-	UDragDropOperation* InOperation)
+bool UHotBarSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	// TODO reception logic (Swap or assign ?
 	return true;
@@ -38,6 +36,7 @@ bool UHotBarSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent
 void UHotBarSlot::UpdateSlot(UItemInstance* InItemInstance, const int32 InQuantity)
 {
 	CurrentItemInstance = InItemInstance;
+
 	CurrentQuantity = InQuantity;
 
 	if (CurrentItemInstance)
@@ -45,16 +44,20 @@ void UHotBarSlot::UpdateSlot(UItemInstance* InItemInstance, const int32 InQuanti
 		const UItemDataAsset* ItemDataAsset = CurrentItemInstance->GetDataAsset();
 
 		ItemImage->SetBrushFromTexture(ItemDataAsset->ItemIcon);
+
 		ItemImage->SetVisibility(ESlateVisibility::Visible);
 
 		if (CurrentQuantity > 1)
 		{
 			StackText->SetText(FText::AsNumber(CurrentQuantity));
+
 			StackText->SetVisibility(ESlateVisibility::Visible);
+
 			return;
 		}
 		
 		StackText->SetVisibility(ESlateVisibility::Hidden);
+
 		return;
 	}
 
@@ -76,7 +79,9 @@ void UHotBarSlot::SetStackText(int Stack)
 	Super::SetStackText(Stack);
 	
 	if (Stack <= 0)
+	{
 		StackText->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 void UHotBarSlot::Reset(const FSlateBrush& Brush)

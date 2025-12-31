@@ -30,10 +30,6 @@ APlayerCharacter::APlayerCharacter()
 
 	CurrentWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>("WeaponMesh");
 
-	CurrentArmorMesh = CreateDefaultSubobject<UStaticMeshComponent>("ArmorMesh");
-
-	CurrentHelmetMesh = CreateDefaultSubobject<UStaticMeshComponent>("HelmetMesh");
-	
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>("InventoryComponent");
 	
 	HotbarInventoryComponent = CreateDefaultSubobject<UInventoryComponent>("HotbarInventoryComponent");
@@ -46,16 +42,19 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentCapsuleHalfHeight = PlayerData->CapsuleMaxHalfHeight;
+	
 	HotbarInventoryComponent->SetSize(GetHotbarInventoryComponent()->GetSize());
+	
 	SetupSwordComponent();
+	
 	SetupBowComponent();
-	SetupArmorComponent();
 
 	if (PlayerData->StartingWeaponDataAsset)
+	{
 		HotbarInventoryComponent->AddItem(UItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1));
-	EquipWeapon(Cast<UItemInstance_Weapon>(UItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1)));
-	EquipArmor(Cast<UItemInstance_Armor>(UItemInstanceFactory::CreateItem(this, PlayerData->StartingArmorDataAsset, 1)));
-	EquipArmor(Cast<UItemInstance_Armor>(UItemInstanceFactory::CreateItem(this, PlayerData->StartingHelmetDataAsset, 1)));
+
+		EquipWeapon(Cast<UItemInstance_Weapon>(UItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1)));
+	}
 }
 
 void APlayerCharacter::TimerHealthRegen()
@@ -67,7 +66,7 @@ void APlayerCharacter::TimerHealthRegen()
 
 bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 {
-	HealthComponent->RemoveHealth(Damage / ArmorComponent->GetTotalDmgReductionMultiplier());
+	HealthComponent->RemoveHealth(Damage - ArmorComponent->GetTotalDamageReduction());
 
 	if (HealthComponent->GetHealthRatio() < 1)
 	{
@@ -200,6 +199,7 @@ void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
 void APlayerCharacter::UnequipWeapon()
 {
 	SwordCombatComponent->SetWeapon(nullptr);
+
 	BowCombatComponent->SetWeapon(nullptr);
 }
 
@@ -209,24 +209,6 @@ void APlayerCharacter::EquipArmor(UItemInstance_Armor* Armor)
 	{
 		Armor->Use(this);
 	}
-}
-
-void APlayerCharacter::UnequipArmor()
-{ 
-	ArmorComponent->EquipArmor(nullptr);
-}
-
-void APlayerCharacter::UnequipHelmet()
-{
-	ArmorComponent->EquipHelmet(nullptr);
-}
-
-void APlayerCharacter::SetupArmorComponent()
-{  
-	CurrentHelmetMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
-	CurrentArmorMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
-
-	ArmorComponent->SetupMesh(CurrentHelmetMesh,CurrentArmorMesh);
 }
 
 void APlayerCharacter::SetupSwordComponent()

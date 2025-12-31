@@ -64,12 +64,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> CurrentWeaponMesh = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UStaticMeshComponent> CurrentArmorMesh = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UStaticMeshComponent> CurrentHelmetMesh = nullptr;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
 	TObjectPtr<UInventoryComponent> InventoryComponent = nullptr;
 	
@@ -154,15 +148,6 @@ public:
 
 	UFUNCTION()
 	void EquipArmor(UItemInstance_Armor* itemInstanceArmor);
-
-	UFUNCTION()
-	void UnequipArmor();
-
-	UFUNCTION()
-	void UnequipHelmet();
-
-	UFUNCTION()
-	void SetupArmorComponent();
 
 	UFUNCTION()
 	void SetupSwordComponent();
