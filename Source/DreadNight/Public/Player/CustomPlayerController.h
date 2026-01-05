@@ -177,6 +177,9 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void ScrollHotbar(const FInputActionValue& Value);
+	
+	UFUNCTION(BlueprintCallable)
+	void CloseInventoryAction(const FInputActionValue& Value);
 
 	void RemoveCurrentlyHoldItem();
 
