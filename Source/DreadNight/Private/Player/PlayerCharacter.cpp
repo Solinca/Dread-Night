@@ -20,8 +20,6 @@ APlayerCharacter::APlayerCharacter()
 
 	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>("Stamina");
 
-	ManaComponent = CreateDefaultSubobject<UManaComponent>("Mana");
-
 	ConditionStateComponent = CreateDefaultSubobject<UConditionStateComponent>("ConditionState");
 
 	SwordCombatComponent = CreateDefaultSubobject<USwordCombatComponent>("SwordCombatComponent");
@@ -144,11 +142,6 @@ UCameraComponent* APlayerCharacter::GetCamera()
 UStaminaComponent* APlayerCharacter::GetStaminaComponent()
 {
 	return StaminaComponent;
-}
-
-UManaComponent* APlayerCharacter::GetManaComponent()
-{
-	return ManaComponent;
 }
 
 UHealthComponent* APlayerCharacter::GetHealthComponent()

@@ -32,11 +32,6 @@ void UPlayerHud::UpdateStaminaBar(const float CurrentValue, const float MaxValue
 	StaminaBar->UpdateValue(CurrentValue, MaxValue);
 }
 
-void UPlayerHud::UpdateManaBar(const float CurrentValue, const float MaxValue)
-{
-	ManaBar->UpdateValue(CurrentValue, MaxValue);
-}
-
 void UPlayerHud::UpdateThirstRadialBarImage(const float CurrentValue, bool IsState)
 {
 	if (ThirstRadialBarImage)
