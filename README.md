@@ -52,6 +52,10 @@ Leather - https://icones8.fr/icon/EZqg3nTRl4M5/cuir
 
 Environment: https://syntystore.com/products/polygon-dungeon-realms?_pos=4&_psq=dungeon&_ss=e&_v=1.0
 
+Trap: https://www.fab.com/fr/listings/1f692a9c-192f-4b2d-af3e-5a21f7b1e4f9
+
+Animals: https://www.fab.com/fr/listings/8e208ab4-667d-4a86-870a-f0c3e9b0e080
+
 ### Fonts
 
 https://www.dafont.com/fr/haunted-hill.font
