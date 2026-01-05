@@ -13,11 +13,7 @@ class DREADNIGHT_API AProjectileActor : public AActor
 	GENERATED_BODY()
 
 protected:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
-	TObjectPtr<UBoxComponent> ProjectileBoxComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> ProjectileMeshComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
@@ -34,7 +30,6 @@ public:
 	UProjectileMovementComponent* GetProjectileMovementComponent() const;
 
 	UStaticMeshComponent* GetMesh();
-	UBoxComponent* GetCollider();
 
 	void SetDamage(float NewDamage);
 

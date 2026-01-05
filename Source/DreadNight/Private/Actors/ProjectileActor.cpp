@@ -6,11 +6,10 @@ AProjectileActor::AProjectileActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	ProjectileBoxComponent = CreateDefaultSubobject<UBoxComponent>("Projectile Box Component");
-	RootComponent = ProjectileBoxComponent;
+	RootComponent = CreateDefaultSubobject<USceneComponent>("Root");
 
 	ProjectileMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Projectile Mesh Component");
-	ProjectileMeshComponent->SetupAttachment(ProjectileBoxComponent);
+	ProjectileMeshComponent->SetupAttachment(RootComponent);
 
 	ProjectileMeshComponent->SetCollisionProfileName("Projectile");
 	
@@ -31,7 +30,7 @@ void AProjectileActor::BeginPlay()
 	Super::BeginPlay();
 
 
-	ProjectileBoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectileActor::OnBeginOverlap);
+	ProjectileMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectileActor::OnBeginOverlap);
 }
 
 void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -57,11 +56,6 @@ UProjectileMovementComponent* AProjectileActor::GetProjectileMovementComponent()
 UStaticMeshComponent* AProjectileActor::GetMesh()
 {
 	return ProjectileMeshComponent;
-}
-
-UBoxComponent* AProjectileActor::GetCollider()
-{
-	return ProjectileBoxComponent;
 }
 
 void AProjectileActor::SetDamage(float NewDamage)

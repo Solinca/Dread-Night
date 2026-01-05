@@ -52,7 +52,7 @@ void UBowCombatComponent::Shoot()
 		CurrentArrow->SetDamage(ArrowData->Damage);
 		CurrentArrow->SetHasBeenShot(true);
 		CurrentArrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		CurrentArrow->GetCollider()->SetCollisionProfileName("Arrow");
+		CurrentArrow->GetMesh()->SetCollisionProfileName("Arrow");
 	}
 	CurrentArrow = nullptr;
 	bCanShoot = false;
