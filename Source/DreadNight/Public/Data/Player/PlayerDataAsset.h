@@ -98,6 +98,9 @@ public:
 	float SanityOnDarknessCost = 1.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	float SaveIconDuration = 2.5f;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> GameOverClass;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -126,6 +129,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UItemNotification> ItemNotificationClass;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> SaveWidgetClass;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
 	TObjectPtr<USoundBase> GameOverSound;

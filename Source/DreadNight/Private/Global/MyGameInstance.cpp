@@ -61,6 +61,16 @@ void UMyGameInstance::Save(UWorld* World)
 	bIsNewGame = false;
 }
 
+void UMyGameInstance::DeleteSave()
+{
+	UGameplayStatics::DeleteGameInSlot(SaveSlotName.ToString(), UserIndex);
+}
+
+bool UMyGameInstance::DoesSaveExist() const
+{
+	return UGameplayStatics::DoesSaveGameExist(SaveSlotName.ToString(), UserIndex);
+}
+
 void UMyGameInstance::Load(UWorld* World)
 {
 	if (!UGameplayStatics::DoesSaveGameExist(SaveSlotName.ToString(),UserIndex))
