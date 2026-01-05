@@ -22,6 +22,7 @@
 #include "Global/MyGameUserSettings.h"
 #include "Items/Object/ItemInstance_Building.h"
 #include "Items/Object/ItemInstance_Weapon.h"
+#include "Subsystems/World/WaveWorldSubsystem.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -63,6 +64,11 @@ void ACustomPlayerController::BeginPlay()
 	
 	UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
 	MyGameInstance->OnPCGEndGeneration.AddDynamic(this, &ThisClass::AddPlayerUIToViewport);
+
+	if (UWaveWorldSubsystem* WaveWorldSubsystem = GetWorld()->GetSubsystem<UWaveWorldSubsystem>())
+	{
+		WaveWorldSubsystem->OnLastWaveEnd.AddDynamic(this, &ThisClass::TravelToVictoryLevel);
+	}
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
@@ -691,6 +697,13 @@ void ACustomPlayerController::ShowGameOver()
 	PushNewMenu(WidgetGameOver, true, []() {}, false);
 
 	UGameplayStatics::PlaySound2D(this, PlayerData->GameOverSound);
+}
+
+void ACustomPlayerController::TravelToVictoryLevel()
+{
+	TObjectPtr<UUserWidget> WidgetVictoryScreen = CreateWidget<UUserWidget>(this, PlayerData->VictoryScreenClass);
+	
+	PushNewMenu(WidgetVictoryScreen, true, []() {}, false);
 }
 
 void ACustomPlayerController::BindUIEvents()

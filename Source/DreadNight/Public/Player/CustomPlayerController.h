@@ -293,6 +293,9 @@ private:
 	
 	UFUNCTION()
 	void ShowGameOver();
+	
+	UFUNCTION()
+	void TravelToVictoryLevel();
 
 	void BindUIEvents();
 
