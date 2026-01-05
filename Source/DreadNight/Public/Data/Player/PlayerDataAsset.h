@@ -76,10 +76,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 	float SprintStaminaCost = 10.f;
 
-	// TODO: REPLACE WITH WEAPON MANA COST LATER
-	UPROPERTY(EditDefaultsOnly, Category = "Mana")
-	float SpellManaCost = 20.f;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Life")
 	float PassiveHealthRegenAmount = 20.f;
 

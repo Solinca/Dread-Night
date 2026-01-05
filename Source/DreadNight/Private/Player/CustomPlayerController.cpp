@@ -697,7 +697,6 @@ void ACustomPlayerController::BindUIEvents()
 {
 	MyPlayer->GetHealthComponent()->OnHealthChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateHealthBar);
 	MyPlayer->GetStaminaComponent()->OnStaminaChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateStaminaBar);
-	MyPlayer->GetManaComponent()->OnManaChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateManaBar);
 	MyPlayer->GetConditionStateComponent()->OnHungerChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateHungerRadialBarImage);
 }
 

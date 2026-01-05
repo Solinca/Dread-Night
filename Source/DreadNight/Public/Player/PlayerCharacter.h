@@ -7,7 +7,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/HealthComponent.h"
 #include "Components/StaminaComponent.h"
-#include "Components/ManaComponent.h"
 #include "Components/ConditionStateComponent.h"
 #include "Components/ArmorComponent.h"
 #include "DamageSystem/Interface/Damageable.h"
@@ -50,9 +49,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UStaminaComponent> StaminaComponent = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	TObjectPtr<UManaComponent> ManaComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UConditionStateComponent> ConditionStateComponent = nullptr;
@@ -121,9 +117,6 @@ public:
 
 	UFUNCTION()
 	UStaminaComponent* GetStaminaComponent();
-
-	UFUNCTION()
-	UManaComponent* GetManaComponent();
 
 	UFUNCTION()
 	UHealthComponent* GetHealthComponent();
