@@ -1,9 +1,11 @@
 ﻿#include "IA/Characters/BaseAICharacter.h"
 #include "AIController.h"
+#include "IDetailTreeNode.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/Loot/LootData.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "Items/Helper/ItemInstanceFactory.h"
+#include "Player/PlayerCharacter.h"
 
 ABaseAICharacter::ABaseAICharacter()
 {
@@ -91,12 +93,32 @@ void ABaseAICharacter::DropLoot() const
 		if (Random < LootData->Percentage) 
 		{
 			int RandomStack = FMath::RandRange(LootData->MinDroppedAmount,LootData->MaxDroppedAmount);
-
-			UInventoryComponent* InventoryComp = GetWorld()->GetFirstPlayerController()->GetPawn()->GetComponentByClass<UInventoryComponent>();
-
-			if (InventoryComp != nullptr)
+			
+			APlayerCharacter* PC = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+			UInventoryComponent* InventoryComp = PC->GetInventoryComponent();
+			UInventoryComponent* HotbarComp = PC->GetHotbarInventoryComponent();
+			UItemInstance* ItemInstance = UItemInstanceFactory::CreateItem(InventoryComp->GetOwner(),LootData->ItemDataAsset,RandomStack);
+			if (HotbarComp != nullptr && HotbarComp->Contains(LootData->ItemDataAsset, 1) && LootData->ItemDataAsset->StackLimit > 1)
 			{
-				InventoryComp->AddItem(UItemInstanceFactory::CreateItem(InventoryComp->GetOwner(),LootData->ItemDataAsset,RandomStack));
+				if (HotbarComp->GetItemAtSlot(HotbarComp->GetItemSlot(LootData->ItemDataAsset).GetValue())->CanBeStackedWith(ItemInstance,UItemInstance::EStackMethod::Fully))
+					HotbarComp->AddItem(ItemInstance);
+				else
+				{
+					UItemInstance* ToAddTo = HotbarComp->GetItemAtSlot(HotbarComp->GetItemSlot(LootData->ItemDataAsset).GetValue());
+					int amountToAdd = LootData->ItemDataAsset->StackLimit - ToAddTo->GetStackNumber();
+					UItemInstance* ItemInstance2 = UItemInstanceFactory::CreateItem(InventoryComp->GetOwner(),LootData->ItemDataAsset,amountToAdd);
+					HotbarComp->AddItem(ItemInstance2);
+					ItemInstance->TryRemove(amountToAdd);
+					if (InventoryComp != nullptr)
+					{
+						InventoryComp->AddItem(ItemInstance);
+					}
+				}
+				
+			}
+			else if (InventoryComp != nullptr)
+			{
+				InventoryComp->AddItem(ItemInstance);
 			}
 		}
 	}
