@@ -20,6 +20,8 @@ Sword Idle Animation: https://www.mixamo.com/#/?page=1\&query=sword+idle => Grea
 
 Sword Attack Animation: https://www.mixamo.com/#/?page=1\&query=sword+attack => Sword and Shield Slash
 
+Victory Animation: https://www.mixamo.com/#/?page=1&query=victory => Victory
+
 ### Sprites
 
 Ores: https://www.instagram.com/p/DJUR0PtoSSK/
@@ -36,3 +38,22 @@ Rotative Blade Trap: https://www.vecteezy.com/vector-art/15042618-drone-propelle
 
 Armors: https://www.gamedevmarket.net/asset/pixel-art-icons-helmets-armor-24x24
 
+Apple: https://icons8.com/icon/KCMRRjQsz9a5/pomme
+
+Raw Meat: https://icones8.fr/icon/hwB2vUsbIvJ2/emoji-coupe-de-viande
+
+Wood - https://icones8.fr/icon/DjZKjOuIbZw4/bûche-de-bois
+
+Stone - https://icones8.fr/icon/Ei6axvqr0ihL/roche
+
+Leather - https://icones8.fr/icon/EZqg3nTRl4M5/cuir
+
+### 3D Assets
+
+Environment: https://syntystore.com/products/polygon-dungeon-realms?_pos=4&_psq=dungeon&_ss=e&_v=1.0
+
+### Fonts
+
+https://www.dafont.com/fr/haunted-hill.font
+
+https://www.dafont.com/fr/louis-george-cafe.font
