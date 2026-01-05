@@ -706,8 +706,6 @@ void ACustomPlayerController::QuitOptions()
 
 void ACustomPlayerController::LeaveGame()
 {
-	SaveGame();
-
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
 }
 
