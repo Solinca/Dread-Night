@@ -38,6 +38,7 @@ public:
 	void AddItem(UItemInstance* Item);
 	UFUNCTION(BlueprintCallable)
 	void RemoveItemsByType(UItemDataAsset* Item, int Amount);
+	void RemoveItemsByTag(FString Tag, int Amount);
 	void RemoveItemsAt(int SlotIndex, int Amount);
 	void UseItemByType(UItemDataAsset* Item);
 	void UseItemAt(int SlotIndex);
@@ -58,6 +59,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	bool Contains(UItemDataAsset* Item, int StackNumber) const;
+	bool Contains(FString Tag, int StackNumber) const;
 	bool IsSlotEmpty(int SlotIndex) const;
 	bool IsFull() const;
 	int GetInventoryLimitSize() const;

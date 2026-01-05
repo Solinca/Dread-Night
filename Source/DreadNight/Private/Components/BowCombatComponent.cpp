@@ -49,6 +49,7 @@ void UBowCombatComponent::Shoot()
 		Direction.Normalize();
 		ProjectileComp->Velocity = Direction * ProjectileComp->InitialSpeed;
 		ProjectileComp->Activate();
+		CurrentArrow->SetDamage(ArrowData->Damage);
 		CurrentArrow->SetHasBeenShot(true);
 		CurrentArrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		CurrentArrow->GetMesh()->SetCollisionProfileName("Arrow");

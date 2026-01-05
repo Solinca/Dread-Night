@@ -53,7 +53,7 @@ void ACollectibleResource::BeginPlay()
 	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)); GameInstance && GameInstance->IsNewGame())
 	{
 		// TODO : Possibly change this to a random life
-		CurrentLife = 1;
+		CurrentLife = 100;
 	} 
 	
 	SetMesh();

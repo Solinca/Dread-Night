@@ -281,7 +281,7 @@ void ACustomPlayerController::ItemSpecialActionStart(const FInputActionValue& Va
 {
 	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(MyPlayer->CurrentHotbarIndex);
 
-	if (Item && Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow"))
+	if (Item && Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow") && MyPlayer->GetInventoryComponent()->Contains("Item.Weapon.Arrow", 1))
 	{
 		MyPlayer->GetBowCombatComponent()->SetAiming(true);
 	}
@@ -545,6 +545,8 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 	
 	UBowCombatComponent* BowCombatComponent = MyPlayer->GetBowCombatComponent();
 
+	UInventoryComponent* InventoryComponent = MyPlayer->GetInventoryComponent();
+
 	bool AttackExecuted = false;
 
 	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Sword"))
@@ -564,6 +566,8 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 		{
 			BowCombatComponent->Shoot();
 			
+			InventoryComponent->RemoveItemsByTag("Item.Weapon.Arrow", 1);
+
 			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 
 			AttackExecuted = true;
