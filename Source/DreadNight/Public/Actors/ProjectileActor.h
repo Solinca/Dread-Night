@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Data/Projectiles/ProjectileDataAsset.h"
+#include "Components/BoxComponent.h"
 #include "ProjectileActor.generated.h"
 
 UCLASS(Blueprintable, BlueprintType, Category = "Projectile", ClassGroup = "Projectile")
@@ -12,6 +13,10 @@ class DREADNIGHT_API AProjectileActor : public AActor
 	GENERATED_BODY()
 
 protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
+	TObjectPtr<UBoxComponent> ProjectileBoxComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> ProjectileMeshComponent;
 	
@@ -29,6 +34,7 @@ public:
 	UProjectileMovementComponent* GetProjectileMovementComponent() const;
 
 	UStaticMeshComponent* GetMesh();
+	UBoxComponent* GetCollider();
 
 	void SetDamage(float NewDamage);
 
