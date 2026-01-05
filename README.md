@@ -48,11 +48,13 @@ Apple: https://icons8.com/icon/KCMRRjQsz9a5/pomme
 
 Raw Meat: https://icones8.fr/icon/hwB2vUsbIvJ2/emoji-coupe-de-viande
 
-Wood - https://icones8.fr/icon/DjZKjOuIbZw4/bûche-de-bois
+Wood: https://icones8.fr/icon/DjZKjOuIbZw4/bûche-de-bois
 
-Stone - https://icones8.fr/icon/Ei6axvqr0ihL/roche
+Stone: https://icones8.fr/icon/Ei6axvqr0ihL/roche
 
-Leather - https://icones8.fr/icon/EZqg3nTRl4M5/cuir
+Leather: https://icones8.fr/icon/EZqg3nTRl4M5/cuir
+
+Save: https://www.flaticon.com/free-icon/save-icon-silhouette_69539
 
 ### 3D Assets
 
