@@ -19,6 +19,8 @@
 #include "SaveSystem/SavableActor.h"
 #include "PlayerCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerTakeDamageSignature);
+
 UCLASS()
 class DREADNIGHT_API APlayerCharacter : public ACharacter, public IDamageable, public ISavableActor
 {
@@ -80,6 +82,9 @@ protected:
 	FName EquippedObjectTag;
 
 	FTimerHandle THHealthRegen;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerTakeDamageSignature OnPlayerTakeDamage;
 
 public:
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;

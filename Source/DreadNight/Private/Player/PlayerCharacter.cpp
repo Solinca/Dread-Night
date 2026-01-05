@@ -68,6 +68,8 @@ bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 {
 	HealthComponent->RemoveHealth(Damage - ArmorComponent->GetTotalDamageReduction());
 
+	OnPlayerTakeDamage.Broadcast();
+
 	if (HealthComponent->GetHealthRatio() < 1)
 	{
 		if (!GetWorld()->GetTimerManager().IsTimerActive(THHealthRegen))
