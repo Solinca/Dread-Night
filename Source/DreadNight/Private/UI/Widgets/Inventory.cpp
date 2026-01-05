@@ -152,6 +152,10 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 		{
 			RemoveButtonVisibility = ESlateVisibility::Visible;
 		}
+		else
+		{
+			InventoryAction->GetTransferText()->SetText(FText::FromString(FString("Remove")));
+		}
 		
 		InventoryAction->GetUseButton()->SetVisibility(UseButtonVisibility);
 		InventoryAction->GetTransferButton()->SetVisibility(TransferButtonVisibility);
