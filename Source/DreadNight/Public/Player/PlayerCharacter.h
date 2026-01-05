@@ -49,10 +49,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
 	TObjectPtr<UStaminaComponent> StaminaComponent = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	TObjectPtr<UManaComponent> ManaComponent = nullptr;
-
+ 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
 	TObjectPtr<UConditionStateComponent> ConditionStateComponent = nullptr;
 
