@@ -55,8 +55,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Load(UWorld* World);
 
-	UFUNCTION(BlueprintCallable)
-	bool IsNewGame();
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsNewGame() const;
 	
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FPCGEndGenerationSignature OnPCGEndGeneration;
