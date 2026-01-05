@@ -21,7 +21,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values", meta = (ClampMin = 1.f))
 	float MaxStamina = 100.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Values")
 	float CurrentStamina = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values")

@@ -183,7 +183,6 @@ private:
 
 	void RemoveCurrentlyHoldItem();
 
-	void ProcessHotbarSlot();
 
 	UFUNCTION()
 	void OnHotbarItemChanged(int Index);
@@ -206,9 +205,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float ObjectPlacementRange = 300.f;
 	
-	UPROPERTY(EditAnywhere)
-	int CurrentHotbarIndex = 0;
-
 	// Function to add a Menu to the menu list, so we can leave it with escape
 	template<typename T>
 	requires std::is_base_of_v<UUserWidget, T>
@@ -309,6 +305,9 @@ private:
 	void StopBuildingPlacement();
 	
 public:
+
+	void ProcessHotbarSlot();
+	
 	void CreateBuilding(UBuildingDataAsset* BuildingData);
 	
 	UFUNCTION()

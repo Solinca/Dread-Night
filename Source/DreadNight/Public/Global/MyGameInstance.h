@@ -7,6 +7,7 @@
 class UDN_SaveGame;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPCGEndGenerationSignature);
+DECLARE_MULTICAST_DELEGATE(FEndBeginPlaySignature);
 
 UCLASS()
 class DREADNIGHT_API UMyGameInstance : public UGameInstance
@@ -60,6 +61,9 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FPCGEndGenerationSignature OnPCGEndGeneration;
+
+	 
+	FEndBeginPlaySignature OnControllerEndBeginPlay;
 
 	UFUNCTION(BlueprintCallable)
 	int GetSeed();

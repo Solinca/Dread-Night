@@ -43,10 +43,10 @@ protected:
 	/// Retirer un �tat :
 	/// State &= ~EConditionState::THIRSTY;
 	/// </summary>
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "State")
 	EConditionState States = EConditionState::NONE;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame, Category = "State")
 	float HungerValue = 100.f;// 0 - 100 where 100 is NOT hungry
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State", meta = (ClampMin = 1.f))

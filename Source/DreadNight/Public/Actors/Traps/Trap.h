@@ -2,12 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "IA/Characters/BaseAICharacter.h"
+#include "SaveSystem/SavableActor.h"
 #include "Trap.generated.h"
 
 UCLASS()
-class DREADNIGHT_API ATrap : public AActor
+class DREADNIGHT_API ATrap : public AActor, public ISavableActor
 {
 	GENERATED_BODY()
+	GENERATE_GENERIC_SAVABLE_OBJECT()
 
 private:
 	UFUNCTION()

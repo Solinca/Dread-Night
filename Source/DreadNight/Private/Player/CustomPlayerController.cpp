@@ -64,11 +64,12 @@ void ACustomPlayerController::BeginPlay()
 	
 	UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
 	MyGameInstance->OnPCGEndGeneration.AddDynamic(this, &ThisClass::AddPlayerUIToViewport);
-
+ 
 	if (UWaveWorldSubsystem* WaveWorldSubsystem = GetWorld()->GetSubsystem<UWaveWorldSubsystem>())
 	{
 		WaveWorldSubsystem->OnLastWaveEnd.AddDynamic(this, &ThisClass::TravelToVictoryLevel);
 	}
+
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
@@ -270,7 +271,7 @@ void ACustomPlayerController::UpdateObjectPlacement()
 
 void ACustomPlayerController::ItemSpecialActionStart(const FInputActionValue& Value)
 {
-	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
+	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(MyPlayer->CurrentHotbarIndex);
 
 	if (Item && Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow"))
 	{
@@ -425,16 +426,16 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 		Index = 0;
 	}
 
-	if (CurrentHotbarIndex == Index || Index >= MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize())
+	if (MyPlayer->CurrentHotbarIndex == Index || Index >= MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize())
 	{
 		return;
 	}
 
 	RemoveCurrentlyHoldItem();
 	
-	CurrentHotbarIndex = Index;
+	MyPlayer->CurrentHotbarIndex = Index;
 
-	MyPlayer->GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(CurrentHotbarIndex);
+	MyPlayer->GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(MyPlayer->CurrentHotbarIndex);
 
 	ProcessHotbarSlot();
 }
@@ -444,10 +445,10 @@ void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
 	RemoveCurrentlyHoldItem();
 
 	int InventoryLimit = MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize();
-	
-	CurrentHotbarIndex = (CurrentHotbarIndex - (int)Value.Get<float>() + InventoryLimit) % InventoryLimit;
 
-	MyPlayer->GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(CurrentHotbarIndex);
+	MyPlayer->CurrentHotbarIndex = (MyPlayer->CurrentHotbarIndex + (int)Value.Get<float>() + InventoryLimit) % InventoryLimit; 
+
+	MyPlayer->GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(MyPlayer->CurrentHotbarIndex);
 
 	ProcessHotbarSlot();
 }
@@ -459,30 +460,11 @@ void ACustomPlayerController::RemoveCurrentlyHoldItem()
 	MyPlayer->UnequipWeapon();
 }
 
-void ACustomPlayerController::ProcessHotbarSlot()
-{
-	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
 
-	if (!Item)
-	{
-		return;
-	}
-	
-	if (UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item); BuildingItem)
-	{
-		BuildingItem->Use(MyPlayer);
-		return;
-	}
-	
-	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon"))
-	{
-		MyPlayer->EquipWeapon(Cast<UItemInstance_Weapon>(Item));
-	}
-}
 
 void ACustomPlayerController::OnHotbarItemChanged(int Index)
 {
-	if (CurrentHotbarIndex == Index)
+	if (MyPlayer->CurrentHotbarIndex == Index)
 	{
 		RemoveCurrentlyHoldItem();
 
@@ -492,7 +474,7 @@ void ACustomPlayerController::OnHotbarItemChanged(int Index)
 
 void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 {
-	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
+	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(MyPlayer->CurrentHotbarIndex);
 	
 	if (BuildingPreview && BuildingPreview->CheckValidPlacement())
 	{
@@ -501,11 +483,11 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 		UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item);
 		if (Item && BuildingItem && BuildingItem->GetStackNumber() > 0)
 		{
-			MyPlayer->GetHotbarInventoryComponent()->RemoveItemsAt(CurrentHotbarIndex, 1);
+			MyPlayer->GetHotbarInventoryComponent()->RemoveItemsAt(MyPlayer->CurrentHotbarIndex, 1);
 		}
 		
 		StopBuildingPlacement();
-		OnHotbarItemChanged(CurrentHotbarIndex);
+		OnHotbarItemChanged(MyPlayer->CurrentHotbarIndex);
 		return;
 	}
 	
@@ -516,7 +498,7 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 	
 	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Food"))
 	{
-		MyPlayer->GetHotbarInventoryComponent()->UseItemAt(CurrentHotbarIndex);
+		MyPlayer->GetHotbarInventoryComponent()->UseItemAt(MyPlayer->CurrentHotbarIndex);
 
 		return;
 	}
@@ -590,6 +572,8 @@ void ACustomPlayerController::GoBackToMenu()
 
 	PlayerCameraManager->StartCameraFade(0, 1, 1, FColor::Black, true, true);
 
+	SaveGame();
+	
 	GetWorldTimerManager().SetTimer(SwitchLevel, [this]
 	{
 		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), PlayerData->MainMenuLevel);
@@ -708,6 +692,8 @@ void ACustomPlayerController::TravelToVictoryLevel()
 
 void ACustomPlayerController::BindUIEvents()
 {
+	UE_LOG(LogTemp, Error, L"BindUIEvent");
+
 	MyPlayer->GetHealthComponent()->OnHealthChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateHealthBar);
 	MyPlayer->GetStaminaComponent()->OnStaminaChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateStaminaBar);
 	MyPlayer->GetConditionStateComponent()->OnHungerChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateHungerRadialBarImage);
@@ -741,6 +727,10 @@ void ACustomPlayerController::AddPlayerUIToViewport()
 	{
 		PlayerDamageWidget->AddToViewport();
 	}
+	
+	UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
+	MyGameInstance->OnControllerEndBeginPlay.Broadcast();
+	MyGameInstance->OnControllerEndBeginPlay.Clear();
 }
 
 void ACustomPlayerController::ChangeArmorUI(UArmorDataAsset* ArmorData, bool IsEquipped)
@@ -798,11 +788,20 @@ void ACustomPlayerController::StopBuildingPlacement()
 	}
 }
 
+
 void ACustomPlayerController::CloseInventoryAction(const FInputActionValue& Value)
 {
-	if (InventoryWidget)
+    if (InventoryWidget)
+    {
+        InventoryWidget->RemoveItemAction();
+    }
+}
+
+void ACustomPlayerController::ProcessHotbarSlot()
+{
+	if (MyPlayer)
 	{
-		InventoryWidget->RemoveItemAction();
+		MyPlayer->ProcessHotbarSlot();
 	}
 }
 

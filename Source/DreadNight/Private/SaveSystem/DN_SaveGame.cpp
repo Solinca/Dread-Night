@@ -4,6 +4,7 @@
 #include "SaveSystem/DN_SaveGame.h"
 
 #include "EngineUtils.h"
+#include "Global/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "SaveSystem/SavableActor.h"
 #include "SaveSystem/SavableObject.h"
@@ -154,6 +155,22 @@ void UDN_SaveGame::DeserializeWorldSubsystem(UWorld* World)
 		Subsystem.Object->Serialize(Ar); 
 		Subsystem.SavableObject->OnPostLoad();
 	}
+
+	UMyGameInstance* GameInstance = World->GetGameInstance<UMyGameInstance>();
+	GameInstance->OnControllerEndBeginPlay.AddLambda([this, SubSystemCache]()
+	{
+		for (auto SubsystemSave : WorldSubsystemSave)
+		{
+			if (!SubSystemCache.Contains(SubsystemSave.Identifier))
+			{
+				continue;
+			}
+
+			TSavableObject Subsystem = SubSystemCache[SubsystemSave.Identifier];
+ 
+			Subsystem.SavableObject->OnPostLoad();
+		}
+	});
 }
 
 void UDN_SaveGame::DeserializeActor(UWorld* WorldContext)
@@ -197,18 +214,26 @@ void UDN_SaveGame::DeserializeActor(UWorld* WorldContext)
 			SerializeActorComponents(TargetActor, Ar);
 		}
 	}
-	TMap<FName, ISavableActor*> FinalSavableCache = BuildWorldSavableCache(WorldContext);
-	for (TPair<FName, ISavableActor*>& Savable : FinalSavableCache)
-	{
-		Savable.Value->OnPostLoad(FinalSavableCache);
-	}
+
+	UMyGameInstance* GameInstance = WorldContext->GetGameInstance<UMyGameInstance>();
+	GameInstance->OnControllerEndBeginPlay.AddLambda([FinalSavableCache = BuildWorldSavableCache(WorldContext)]() mutable
+	{ 		
+		for (TPair<FName, ISavableActor*>& Savable : FinalSavableCache)
+		{
+			Savable.Value->OnPostLoad(FinalSavableCache);
+		} 
+	});
+
+	
+ 
+	
 }
 
 void UDN_SaveGame::GatherAllSaveData(UWorld* WorldContext)
 {
 	GameSaveData.GameData.Empty();
 	SerializeWorldSubsystem(WorldContext);
-	CollectSaveData(WorldContext);	
+	CollectSaveData(WorldContext);
 }
 
 void UDN_SaveGame::UseAllSaveData(UWorld* WorldContext)

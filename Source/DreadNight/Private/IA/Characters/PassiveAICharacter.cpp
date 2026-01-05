@@ -3,6 +3,12 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "IA/DataAssets/PassiveDataAsset.h"
+#include "SaveSystem/RespawnComponent.h"
+
+APassiveAICharacter::APassiveAICharacter()
+{
+	RespawnComponent = CreateDefaultSubobject<URespawnComponent>("Respawn Component");
+}
 
 void APassiveAICharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
@@ -45,6 +51,14 @@ bool APassiveAICharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 
 	return Super::TryApplyDamage(Damage, DamageInstigator);
 }
+
+void APassiveAICharacter::OnDeath()
+{
+	DropLoot();
+
+	RespawnComponent->Despawn();
+}
+ 
 
 void APassiveAICharacter::OnFleeTimerFinish()
 {
