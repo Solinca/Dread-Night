@@ -39,16 +39,17 @@ void UWaveWorldSubsystem::MonsterDeath(AActor* Monster)
 
 	if (CurrentDeathCount >= RequiredDeathCount)
 	{
-		OnWaveEnd.Broadcast();
-
 		WaveIndex++;
-
+		
 		if (WaveIndex >= BaseWorldSettings->WaveSystemData->WaveList.Num())
 		{
-			WaveIndex = 0;
-
+			OnLastWaveEnd.Broadcast();
+			return;
+			//WaveIndex = 0;
 			//TODO: Increase difficulty
 		}
+		
+		OnWaveEnd.Broadcast();
 	}
 }
 

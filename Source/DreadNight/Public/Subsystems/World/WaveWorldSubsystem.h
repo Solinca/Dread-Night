@@ -41,6 +41,7 @@ protected:
 
 public:
 	FOnWaveEndSignature OnWaveEnd;
+	FOnWaveEndSignature OnLastWaveEnd;
 
 	void RegisterSpawner(ASpawner* Spawn);
 
