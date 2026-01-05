@@ -27,6 +27,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	FVector2D ViewPitch = FVector2D(-55, 55);
 
+	UPROPERTY(EditDefaultsOnly, Category = "Player Damage")
+	TSubclassOf<UUserWidget> PlayerDamageUI;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float BaseMoveSpeed = 600.f;
 

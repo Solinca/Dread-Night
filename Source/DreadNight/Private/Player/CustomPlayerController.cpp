@@ -715,10 +715,19 @@ void ACustomPlayerController::AddPlayerUIToViewport()
 	}
 
 	HUDWidget = CreateWidget<UPlayerHud>(this, PlayerData->PlayerHudClass);
+
 	if (HUDWidget)
 	{
 		HUDWidget->AddToViewport();
+
 		BindUIEvents();
+	}
+
+	UUserWidget* PlayerDamageWidget = CreateWidget<UUserWidget>(this, PlayerData->PlayerDamageUI);
+
+	if (PlayerDamageWidget)
+	{
+		PlayerDamageWidget->AddToViewport();
 	}
 }
 
