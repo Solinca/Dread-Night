@@ -17,9 +17,15 @@ FReply UInventorySlot::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometr
 		
 		ItemButton->OnClicked.Broadcast();
 	}
+	else if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton || InMouseEvent.IsTouchEvent())
+	{
+		HasLeftClicked = true;
+		OnItemActionDestroyed.Broadcast();
+	}
 	else
 	{
 		HasRightClicked = false;
+		HasLeftClicked = false;
 	}
 
 	return Reply;

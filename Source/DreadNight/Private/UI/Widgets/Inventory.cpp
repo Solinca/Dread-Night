@@ -24,6 +24,7 @@ void UInventory::SetSize(int Size)
 		TempSlot->OnItemInfoCreated.AddDynamic(this, &UInventory::OnItemInfoCreated);
 		TempSlot->OnItemInfoRemoved.AddDynamic(this, &UInventory::OnItemInfoRemoved);
 		TempSlot->OnItemActionCreated.AddDynamic(this, &UInventory::OnItemActionCreated);
+		TempSlot->OnItemActionDestroyed.AddDynamic(this, &UInventory::RemoveItemAction);
 		InventoryWrapBox->AddChildToWrapBox(TempSlot);
 	}
 }
@@ -201,6 +202,9 @@ void UInventory::OnItemInfoRemoved()
 
 void UInventory::RemoveItemAction()
 {
+	if (InventoryAction)
+		InventoryAction->RemoveFromParent();
+	
 	if (GlobalInventoryAction.IsValid() && GlobalInventoryAction != InventoryAction)
 		GlobalInventoryAction->RemoveFromParent();
 }

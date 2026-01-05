@@ -9,6 +9,7 @@
 #include "InventorySlot.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemActionCreatedEventSignature, int, SlotIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemActionDestroyedEventSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemInfoCreatedEventSignature, int, SlotIndex);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemInfoRemovedEventSignature);
 
@@ -35,6 +36,7 @@ protected:
 	
 	int SlotIndex;
 	
+	bool HasLeftClicked = false;
 	bool HasRightClicked = false;
 
 	bool IsMouseOver = false;
@@ -85,6 +87,8 @@ public:
 	const FSlateBrush& GetImageBrush() const;
 	
 	FOnItemActionCreatedEventSignature OnItemActionCreated;
+	
+	FOnItemActionDestroyedEventSignature OnItemActionDestroyed;
 	
 	FOnItemInfoCreatedEventSignature OnItemInfoCreated;
 	
