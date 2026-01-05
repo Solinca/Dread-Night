@@ -78,7 +78,7 @@ void UMyGameInstance::Load(UWorld* World)
 	}
 }
 
-bool UMyGameInstance::IsNewGame()
+bool UMyGameInstance::IsNewGame() const
 {
 	return bIsNewGame;	
 }
