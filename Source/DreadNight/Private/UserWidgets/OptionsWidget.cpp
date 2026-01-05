@@ -24,8 +24,6 @@ void UOptionsWidget::NativeConstruct()
 	}
 
 	GraphicsMap = {
-		{TEXT("Low"), 0},
-		{TEXT("Medium"), 1},
 		{TEXT("High"), 2},
 		{TEXT("Epic"), 3},
 		{TEXT("Cinematic"), 4},
