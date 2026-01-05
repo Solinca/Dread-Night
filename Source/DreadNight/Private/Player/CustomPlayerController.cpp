@@ -777,6 +777,14 @@ void ACustomPlayerController::StopBuildingPlacement()
 	}
 }
 
+void ACustomPlayerController::CloseInventoryAction(const FInputActionValue& Value)
+{
+	if (InventoryWidget)
+	{
+		InventoryWidget->RemoveItemAction();
+	}
+}
+
 void ACustomPlayerController::AddItemNotificationToViewport(UItemInstance* Data, int32 Quantity)
 {
 	HUDWidget->AddItemNotification(Data, Quantity, PlayerData->ItemNotificationClass);

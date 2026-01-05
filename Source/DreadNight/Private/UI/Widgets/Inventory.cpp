@@ -201,6 +201,6 @@ void UInventory::OnItemInfoRemoved()
 
 void UInventory::RemoveItemAction()
 {
-	if (InventoryAction)
-		InventoryAction->RemoveFromParent();
+	if (GlobalInventoryAction.IsValid() && GlobalInventoryAction != InventoryAction)
+		GlobalInventoryAction->RemoveFromParent();
 }
