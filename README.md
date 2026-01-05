@@ -14,6 +14,12 @@ Day Music: https://pixabay.com/music/corporate-crafterx27s-mallets-286976/
 
 Night Music: https://pixabay.com/music/mystery-scary-horror-music-289303/
 
+### Sounds
+
+Wave Start: https://pixabay.com/sound-effects/long-distant-foghorn-40915/
+
+Game Over: 
+
 ### Animations
 
 Sword Idle Animation: https://www.mixamo.com/#/?page=1\&query=sword+idle => Great Sword Idle
