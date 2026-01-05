@@ -312,6 +312,9 @@ private:
 	UFUNCTION()
 	void StopBuildingPlacement();
 	
+	UFUNCTION()
+	void ChangeSelectedSlotToFirstAvailable();
+	
 public:
 
 	void ProcessHotbarSlot();
