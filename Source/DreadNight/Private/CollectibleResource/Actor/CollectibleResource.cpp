@@ -20,6 +20,8 @@ bool ACollectibleResource::TryApplyDamage(float Damage, AActor* DamageInstigator
 		DropItem();
 
 		RespawnComponent->Despawn();
+
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), OnRessourceBreakSound, GetActorLocation());
 	}
 
 	return false;

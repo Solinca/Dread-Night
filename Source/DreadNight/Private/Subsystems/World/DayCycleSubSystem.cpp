@@ -14,6 +14,7 @@
 #include "Data/DayCycleSystem/DayCycleSystemDataAsset.h"
 #include "Blueprint/UserWidget.h"
 #include "NiagaraComponent.h"
+#include "Player/PlayerCharacter.h"
 
 void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 {
@@ -43,6 +44,8 @@ void UDayCycleSubSystem::OnWorldBeginPlay(UWorld& InWorld)
 	{
 		GameInstance->OnPCGEndGeneration.AddDynamic(this, &UDayCycleSubSystem::StartDayCycle);
 	} 
+
+	Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))->GetHealthComponent()->OnDeath.AddDynamic(this, &UDayCycleSubSystem::OnPlayerDeath);
 }
 
 bool UDayCycleSubSystem::ShouldCreateSubsystem(UObject* Outer) const
@@ -310,4 +313,17 @@ void UDayCycleSubSystem::SpawnNewDayPopUp()
 void UDayCycleSubSystem::OnPostLoad()
 {
 	--DayCounter;
+}
+
+void UDayCycleSubSystem::OnPlayerDeath()
+{
+	if (DayMusic)
+	{
+		DayMusic->SetVolumeMultiplier(0);
+	}
+
+	if (NightMusic)
+	{
+		NightMusic->SetVolumeMultiplier(0);
+	}
 }

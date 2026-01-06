@@ -1,4 +1,5 @@
 #include "Player/PlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Global/MyGameInstance.h"
 #include "Items/Helper/ItemInstanceFactory.h"
@@ -72,6 +73,8 @@ bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 	HealthComponent->RemoveHealth(Damage - ArmorComponent->GetTotalDamageReduction());
 
 	OnPlayerTakeDamage.Broadcast();
+
+	UGameplayStatics::PlaySound2D(this, PlayerData->PlayerTakesDamageSound);
 
 	if (HealthComponent->GetHealthRatio() < 1)
 	{

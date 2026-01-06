@@ -98,6 +98,9 @@ private:
 
 	void OnPostLoad() override;
 
+	UFUNCTION()
+	void OnPlayerDeath();
+
 protected:
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 

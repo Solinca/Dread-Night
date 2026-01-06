@@ -45,6 +45,9 @@ protected:
 
 	UPROPERTY(SaveGame,EditDefaultsOnly)
 	TObjectPtr<URespawnComponent> RespawnComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
+	TObjectPtr<USoundBase> OnRessourceBreakSound;
 	
 	void DropItem() const;
 

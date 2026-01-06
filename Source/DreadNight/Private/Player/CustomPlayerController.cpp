@@ -1,7 +1,5 @@
 #include "Player/CustomPlayerController.h"
-
 #include <string>
-
 #include "Global/BaseLevelWorldSettings.h"
 #include "Global/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
@@ -555,6 +553,8 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 		if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
 		{
 			SwordCombatComponent->Attack();
+
+			UGameplayStatics::PlaySound2D(this, PlayerData->PlayerSwingSwordSound);
 
 			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 

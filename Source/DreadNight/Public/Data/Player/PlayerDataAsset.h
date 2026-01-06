@@ -136,6 +136,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
 	TObjectPtr<USoundBase> GameOverSound;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
+	TObjectPtr<USoundBase> PlayerTakesDamageSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
+	TObjectPtr<USoundBase> PlayerSwingSwordSound;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Levels")
 	TSoftObjectPtr<UWorld> MainMenuLevel;
 };
