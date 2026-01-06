@@ -23,6 +23,7 @@
 #include "Items/Object/ItemInstance_Building.h"
 #include "Items/Object/ItemInstance_Weapon.h"
 #include "Subsystems/World/WaveWorldSubsystem.h"
+#include "Subsystems/World/DayCycleSubSystem.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -61,6 +62,8 @@ void ACustomPlayerController::BeginPlay()
 	ObjectPlacementQueryParams.AddIgnoredActor(GetPawn());
 
 	MySettings = Cast<UMyGameUserSettings>(GEngine->GetGameUserSettings());
+
+	GetWorld()->GetSubsystem<UDayCycleSubSystem>()->OnDawnStart.AddDynamic(this, &ThisClass::SaveGame);
 	
 	UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
 	MyGameInstance->OnPCGEndGeneration.AddDynamic(this, &ThisClass::AddPlayerUIToViewport);
@@ -553,6 +556,16 @@ void ACustomPlayerController::SaveGame()
 	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
 	{
 		GameInstance->Save(GetWorld());
+
+		if (SaveWidget)
+			return;
+		
+		SaveWidget = CreateWidget<UUserWidget>(this, PlayerData->SaveWidgetClass);
+		SaveWidget->AddToViewport();
+		GetWorldTimerManager().SetTimer(SaveIconHandle, [this]
+		{ 
+			SaveWidget->RemoveFromParent();
+		}, PlayerData->SaveIconDuration, false);
 	}
 }
 
@@ -561,6 +574,14 @@ void ACustomPlayerController::LoadGame()
 	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
 	{
 		GameInstance->Load(GetWorld());
+	}
+}
+
+void ACustomPlayerController::DeleteSave()
+{
+	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
+	{
+		GameInstance->DeleteSave();
 	}
 }
 
@@ -669,8 +690,6 @@ void ACustomPlayerController::QuitOptions()
 
 void ACustomPlayerController::LeaveGame()
 {
-	SaveGame();
-
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, true);
 }
 
@@ -678,6 +697,8 @@ void ACustomPlayerController::ShowGameOver()
 {
 	TObjectPtr<UUserWidget> WidgetGameOver = CreateWidget<UUserWidget>(this, PlayerData->GameOverClass);
 
+	DeleteSave();
+	
 	PushNewMenu(WidgetGameOver, true, []() {}, false);
 
 	UGameplayStatics::PlaySound2D(this, PlayerData->GameOverSound);

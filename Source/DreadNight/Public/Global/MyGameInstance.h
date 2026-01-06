@@ -54,6 +54,12 @@ public:
 	void Save(UWorld* World);
 
 	UFUNCTION(BlueprintCallable)
+	void DeleteSave();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool DoesSaveExist() const;
+	
+	UFUNCTION(BlueprintCallable)
 	void Load(UWorld* World);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)

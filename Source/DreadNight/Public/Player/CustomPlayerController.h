@@ -100,6 +100,9 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UMapWidget> MapWidget;
 
+	UPROPERTY(Transient)
+	TObjectPtr<UUserWidget> SaveWidget;
+ 
 	TArray<FStackedMenu> MenuStack;
 
 	UPROPERTY(Transient)
@@ -115,6 +118,8 @@ private:
 	FCollisionQueryParams ObjectPlacementQueryParams;
 
 	FTimerHandle SwitchLevel;
+
+	FTimerHandle SaveIconHandle;
 
 #if WITH_EDITOR
 	UFUNCTION(BlueprintInternalUseOnly)
@@ -195,7 +200,10 @@ private:
 	
 	UFUNCTION(BlueprintCallable)
 	void LoadGame();
-
+	
+	UFUNCTION(BlueprintCallable)
+	void DeleteSave();
+	
 	UFUNCTION()
 	void GoBackToMenu();
 

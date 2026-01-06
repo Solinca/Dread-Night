@@ -15,6 +15,11 @@ void UMainMenuWidget::NativeConstruct()
 	ButtonOptions->OnClicked.AddDynamic(this, &UMainMenuWidget::OnOptionsClicked);
 
 	ButtonQuit->OnClicked.AddDynamic(this, &UMainMenuWidget::OnQuitClicked);
+
+	if (UMyGameInstance* GameInstance = GetGameInstance<UMyGameInstance>(); GameInstance && !GameInstance->DoesSaveExist())
+	{
+		ButtonContinue->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 void UMainMenuWidget::OnContinueClicked()
