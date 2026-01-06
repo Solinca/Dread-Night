@@ -14,11 +14,49 @@ Day Music: https://pixabay.com/music/corporate-crafterx27s-mallets-286976/
 
 Night Music: https://pixabay.com/music/mystery-scary-horror-music-289303/
 
+Vicotyr Music: https://pixabay.com/fr/music/titre-principal-award-ceremony-orchestral-30-seconds-426752/
+
 ### Sounds
 
 Wave Start: https://pixabay.com/sound-effects/long-distant-foghorn-40915/
 
-Game Over: 
+Game Over: https://pixabay.com/sound-effects/kl-music-box-game-over-iii-152202/
+
+Player Takes Damage: https://pixabay.com/fr/sound-effects/oof-97698/
+
+Swing Sword: https://pixabay.com/fr/sound-effects/sword-swing-sfx-407574/
+
+Wood Collectible Breaks: https://pixabay.com/fr/sound-effects/wood-crate-destory-2-97263/
+
+Ores Collectible Breaks: https://pixabay.com/fr/sound-effects/stones-falling-6375/
+
+Crystal Collectible Breaks: https://pixabay.com/fr/sound-effects/breaking-glass-83809/
+
+Demon Monster Idle: https://pixabay.com/fr/sound-effects/monster-growl-376892/
+
+Demon Monster Attack: https://pixabay.com/fr/sound-effects/monster-roars-177261/
+
+Demon Monster Takes Damages: https://pixabay.com/fr/sound-effects/monster-roars-177261/
+
+Demon Monster Death: https://pixabay.com/fr/sound-effects/monster-roars-177261/
+
+Skeleton Idle: https://pixabay.com/fr/sound-effects/gloomy-aura-153274/
+
+Skeleton Attack: https://pixabay.com/fr/sound-effects/woosh-230554/
+
+Skeleton Takes Damages: https://pixabay.com/fr/sound-effects/bone-crack-3-121580/
+
+Skeleton Death: https://pixabay.com/fr/sound-effects/falling-bones-87568/
+
+Cow Idle: https://pixabay.com/fr/sound-effects/cow-sound-234947/
+
+Cow Take Damages: https://pixabay.com/fr/sound-effects/cow-moo-single-demo-309888/
+
+Cow Death: https://pixabay.com/fr/sound-effects/cow-moo-390282/
+
+Item Crafted: https://pixabay.com/fr/sound-effects/hammering-on-anvil-71902/
+
+Fire: https://pixabay.com/fr/sound-effects/fire-340951/
 
 ### Animations
 
