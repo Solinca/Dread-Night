@@ -18,8 +18,39 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaTime) override;
+
 	virtual void ActivateTrap() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<class URotatingMovementComponent> RotatingComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Component")
+	TObjectPtr<UStaticMeshComponent> PillarMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Values")
+	float LerpHeightSpeed = 8.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Values")
+	float FinishSpawnHeight = 20.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Values")
+	float LerpScaleSpeed = 5.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Values")
+	float FinishScale = 4.f;
+
+private:
+
+	bool AnimateHeight = false;
+	float CurrentSpawnHeight;
+
+	bool AnimateScale = false;
+	float CurrentScale;
+
+public:
+
+	UFUNCTION()
+	void AnimateRotativeBladeTrap(float DeltaTime);
+
 };
