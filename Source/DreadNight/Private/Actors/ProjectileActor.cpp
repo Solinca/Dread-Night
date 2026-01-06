@@ -1,5 +1,5 @@
 ﻿#include "Actors/ProjectileActor.h"
-
+#include "IA/Characters/BaseAICharacter.h"
 #include "DamageSystem/Interface/Damageable.h"
 
 AProjectileActor::AProjectileActor()
@@ -42,7 +42,8 @@ void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	}
 
 	IDamageable* Damageable{Cast<IDamageable>(OtherActor)};
-	Damageable->TryApplyDamage(ProjectileData->Damage, GetInstigator());
+	if (TObjectPtr<ABaseAICharacter> AI = Cast<ABaseAICharacter>(OtherActor))
+		Damageable->TryApplyDamage(ProjectileData->Damage, GetInstigator());
 	
 	Destroy();
 }
