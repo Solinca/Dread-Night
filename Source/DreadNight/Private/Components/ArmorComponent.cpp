@@ -8,7 +8,10 @@ UArmorComponent::UArmorComponent()
 }
 
 void UArmorComponent::EquipArmor(UArmorDataAsset* Armor)
-{	
+{
+	if (!Armor)
+		return;
+	
 	if (Armor->Type.MatchesTag(GT_Item_Armor_Helmet))
 	{
 		if (CurrentHelmet)
