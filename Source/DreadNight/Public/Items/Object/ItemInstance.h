@@ -10,7 +10,13 @@ class UItemDataAsset;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEmptyItemEventSignature, class UItemInstance*, ItemInstance);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemInstanceStackChangeEventSignature, class UItemInstance*, ItemInstance, int, NewInstanceNumber);
 
-
+UENUM(BlueprintType)
+enum EStackMethod
+{
+	Fully,
+	Partially,
+	SameType
+};
 
 UCLASS()
 class DREADNIGHT_API UItemInstance : public UObject
@@ -33,20 +39,17 @@ public:
 	int GetStackNumber() const { return StackNumber; };
 	
 	void SetupItemInstance(UItemDataAsset* DataAsset,const int InitialStack);
+
 	
-	enum class EStackMethod
-	{
-		Fully,
-		Partially,
-		SameType
-	};
  
+	UFUNCTION(BlueprintCallable)
 	bool CanBeStackedWith(const UItemInstance* Other, EStackMethod StackMethod) const;
 
 	bool TryStackWith(UItemInstance* Other);
 
 	bool TryUse(AActor* User);
 	
+	UFUNCTION(BlueprintCallable)
 	bool TryRemove(const int NumberOfInstanceToRemove);
 
 	bool TryAdd(const int NumberOfInstanceToAdd);
