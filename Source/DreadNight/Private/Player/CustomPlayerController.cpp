@@ -1,4 +1,7 @@
 #include "Player/CustomPlayerController.h"
+
+#include <string>
+
 #include "Global/BaseLevelWorldSettings.h"
 #include "Global/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
@@ -429,7 +432,7 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 		Index = 0;
 	}
 
-	if (MyPlayer->CurrentHotbarIndex == Index || Index >= MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize())
+	if (MyPlayer->CurrentHotbarIndex == Index || Index >= MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize() ||MyPlayer->GetHotbarInventoryComponent()->IsSlotEmpty(Index))
 	{
 		return;
 	}
@@ -446,13 +449,22 @@ void ACustomPlayerController::SelectedHotbar(const FInputActionValue& Value)
 void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
 {
 	RemoveCurrentlyHoldItem();
-
+	
 	int InventoryLimit = MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize();
 
-	MyPlayer->CurrentHotbarIndex = (MyPlayer->CurrentHotbarIndex + (int)Value.Get<float>() + InventoryLimit) % InventoryLimit; 
+	bool validSpot = false;
+	while (!validSpot)
+	{
+		MyPlayer->CurrentHotbarIndex = (MyPlayer->CurrentHotbarIndex + (int)Value.Get<float>() + InventoryLimit) % InventoryLimit;
+		
+		if (!MyPlayer->GetHotbarInventoryComponent()->IsSlotEmpty(MyPlayer->CurrentHotbarIndex))
+		{
+			validSpot = true;
+		}
+	}
 
 	MyPlayer->GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(MyPlayer->CurrentHotbarIndex);
-
+	
 	ProcessHotbarSlot();
 }
 
@@ -473,6 +485,10 @@ void ACustomPlayerController::OnHotbarItemChanged(int Index)
 
 		ProcessHotbarSlot();
 	}
+	if (MyPlayer->GetHotbarInventoryComponent()->IsSlotEmpty(MyPlayer->CurrentHotbarIndex))
+	{
+		ChangeSelectedSlotToFirstAvailable();
+	}
 }
 
 void ACustomPlayerController::UseItem(const FInputActionValue& Value)
@@ -487,6 +503,12 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 		if (Item && BuildingItem && BuildingItem->GetStackNumber() > 0)
 		{
 			MyPlayer->GetHotbarInventoryComponent()->RemoveItemsAt(MyPlayer->CurrentHotbarIndex, 1);
+			
+			if (MyPlayer->GetHotbarInventoryComponent()->IsSlotEmpty(MyPlayer->CurrentHotbarIndex))
+			{
+				ChangeSelectedSlotToFirstAvailable();
+			}
+
 		}
 		
 		StopBuildingPlacement();
@@ -502,6 +524,11 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Food"))
 	{
 		MyPlayer->GetHotbarInventoryComponent()->UseItemAt(MyPlayer->CurrentHotbarIndex);
+		
+		if (MyPlayer->GetHotbarInventoryComponent()->IsSlotEmpty(MyPlayer->CurrentHotbarIndex))
+		{
+			ChangeSelectedSlotToFirstAvailable();
+		}
 
 		return;
 	}
@@ -824,6 +851,29 @@ void ACustomPlayerController::ProcessHotbarSlot()
 	{
 		MyPlayer->ProcessHotbarSlot();
 	}
+}
+
+void ACustomPlayerController::ChangeSelectedSlotToFirstAvailable()
+{
+	RemoveCurrentlyHoldItem();
+			
+	MyPlayer->CurrentHotbarIndex=0;
+	for (int i = 0; i <  MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize(); i++)
+	{
+		if (!MyPlayer->GetHotbarInventoryComponent()->IsSlotEmpty(MyPlayer->CurrentHotbarIndex))
+		{
+			break;
+		}
+		MyPlayer->CurrentHotbarIndex++;
+	}
+			
+	if (MyPlayer->CurrentHotbarIndex >=  MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize())
+	{
+		MyPlayer->CurrentHotbarIndex = 0;
+	}
+	MyPlayer->GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(MyPlayer->CurrentHotbarIndex);
+	
+	ProcessHotbarSlot();
 }
 
 void ACustomPlayerController::AddItemNotificationToViewport(UItemInstance* Data, int32 Quantity)
