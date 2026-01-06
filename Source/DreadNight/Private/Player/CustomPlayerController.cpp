@@ -281,7 +281,8 @@ void ACustomPlayerController::ItemSpecialActionStart(const FInputActionValue& Va
 {
 	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(MyPlayer->CurrentHotbarIndex);
 
-	if (Item && Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow") && MyPlayer->GetInventoryComponent()->Contains("Item.Weapon.Arrow", 1))
+	if (Item && Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow") && (MyPlayer->GetInventoryComponent()->Contains("Item.Weapon.Arrow", 1) || 
+		MyPlayer->GetHotbarInventoryComponent()->Contains("Item.Weapon.Arrow", 1)))
 	{
 		MyPlayer->GetBowCombatComponent()->SetAiming(true);
 	}
