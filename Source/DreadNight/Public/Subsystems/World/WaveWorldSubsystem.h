@@ -45,6 +45,8 @@ public:
 
 	void RegisterSpawner(ASpawner* Spawn);
 
+	void RegisterAI(ABaseAICharacter* BaseAICharacter);
+
 	void SpawnWave();
 
 	UFUNCTION()

@@ -58,6 +58,12 @@ void UWaveWorldSubsystem::RegisterSpawner(ASpawner* Spawn)
 	SpawnerList.Push(Spawn);
 }
 
+void UWaveWorldSubsystem::RegisterAI(ABaseAICharacter* BaseAICharacter)
+{
+	RequiredDeathCount++;
+	BaseAICharacter->OnDestroyed.AddDynamic(this, &ThisClass::MonsterDeath);
+}
+
 void UWaveWorldSubsystem::SpawnWave()
 {
 	for (FWaveMonsterData& Monster : BaseWorldSettings->WaveSystemData->WaveList[WaveIndex].MonsterList)
