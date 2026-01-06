@@ -28,6 +28,8 @@ protected:
 	UPROPERTY(Transient)
 	UWeaponDataAsset* CurrentWeapon;
 	UPROPERTY(EditAnywhere, Category = "Combat")
+	UWeaponDataAsset* ArrowData;
+	UPROPERTY(EditAnywhere, Category = "Combat")
 	float ShotCooldown = 0.8f;
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TSubclassOf<AProjectileActor> ArrowProjectileClass;

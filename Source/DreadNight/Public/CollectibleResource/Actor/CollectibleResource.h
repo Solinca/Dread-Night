@@ -27,7 +27,7 @@ protected:
 	virtual void BeginPlay() override;
  
 	UPROPERTY(SaveGame)
-	int CurrentLife = 1;
+	int CurrentLife = 100;
 
 	UPROPERTY(SaveGame)
 	bool bIsDestroyed;

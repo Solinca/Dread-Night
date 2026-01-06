@@ -78,6 +78,36 @@ void UInventoryComponent::RemoveItemsByType(UItemDataAsset* Item, int Amount)
 	}
 }
 
+void UInventoryComponent::RemoveItemsByTag(FString Tag, int Amount)
+{
+	for (int i = 0; i < Items.Num(); ++i)
+	{
+		if (Items[i] && Items[i]->GetDataAsset()->Type.GetTagName().ToString().Contains(Tag))
+		{
+			//Decrement Stack
+			if (Items[i]->GetStackNumber() - Amount < 0)
+			{
+				Amount -= Items[i]->GetStackNumber();
+				Items[i]->TryRemove(Items[i]->GetStackNumber());
+			}
+			else
+			{
+				Items[i]->TryRemove(Amount);
+			}
+
+			//If stack is Empty, Free Inventory Slot
+			if (Items[i]->IsEmpty())
+			{
+				Items[i] = nullptr;
+				OnItemRemoved.Broadcast(i);
+				OnHotbarItemChanged.Broadcast(i);
+			}
+
+			return;
+		}
+	}
+}
+
 void UInventoryComponent::RemoveItemsAt(int SlotIndex, int Amount)
 {
 	if (!Items[SlotIndex])
@@ -333,6 +363,27 @@ bool UInventoryComponent::Contains(UItemDataAsset* Item, int StackNumber) const
 	for (int i = 0; i < Items.Num(); ++i)
 	{
 		if (Items[i] && Items[i]->GetDataAsset() == Item)
+		{
+			if (Items[i]->GetStackNumber() == StackNumber)
+			{
+				return true;
+			}
+			Counter += Items[i]->GetStackNumber();
+		}
+	}
+	if (Counter >= StackNumber)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool UInventoryComponent::Contains(FString Tag, int StackNumber) const
+{
+	int Counter = 0;
+	for (int i = 0; i < Items.Num(); ++i)
+	{
+		if (Items[i] && Items[i]->GetDataAsset()->Type.GetTagName().ToString().Contains(Tag))
 		{
 			if (Items[i]->GetStackNumber() == StackNumber)
 			{
