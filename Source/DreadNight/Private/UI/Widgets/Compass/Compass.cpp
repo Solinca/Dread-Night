@@ -28,13 +28,20 @@ void UCompass::NativeConstruct()
 		CompassMaterial->SetScalarParameterValue("Offset", GetOffset());
 	}
 	PlayerCameraManager = GetOwningPlayerCameraManager();
-	OutRangeA = -CompassImage->GetDesiredSize().X / 2.f; // HalfSize, needs to be in negative
-	OutRangeB = CompassImage->GetDesiredSize().X / 2.f; // HalfSize
+	OutRangeA = -CompassImage->GetDesiredSize().X / 2.f;
+	OutRangeB = CompassImage->GetDesiredSize().X / 2.f;
 }
 
 void UCompass::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+	
+	if (OutRangeB == 0.f && CompassImage->GetDesiredSize().X > 0.f)
+	{
+		const float HalfSize = CompassImage->GetDesiredSize().X / 2.f;
+		OutRangeA = -HalfSize;
+		OutRangeB = HalfSize;
+	}
 	
 	CompassMaterial->SetScalarParameterValue("Offset", GetOffset());
 
@@ -89,7 +96,7 @@ void UCompass::UpdateMarkersPosition()
 
 		if (Distance != 0.f)
 		{
-			FText DistanceText = FText::FromString(FString::Printf(TEXT("%.1f m"), Distance / 100.f)); // meters conversion
+			FText DistanceText = FText::FromString(FString::Printf(TEXT("%.1f"), Distance / 100.f)); // meters conversion
 			Marker->SetDistanceText(DistanceText);
 		}
 	}
