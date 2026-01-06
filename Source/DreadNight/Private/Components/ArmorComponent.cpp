@@ -50,3 +50,19 @@ void UArmorComponent::EquipArmor(UArmorDataAsset* Armor)
 	
 	OnArmorChanged.Broadcast(Armor, true);
 }
+
+void UArmorComponent::OnPreSave()
+{
+	CurrentBootsSave = CurrentBoots;
+	CurrentChestPlateSave = CurrentChestPlate;
+	CurrentHelmetSave = CurrentHelmet;
+	CurrentPantsSave = CurrentPants;
+}
+
+void UArmorComponent::OnPostLoad()
+{
+	EquipArmor(CurrentBootsSave.Get());
+	EquipArmor(CurrentChestPlateSave.Get());
+	EquipArmor(CurrentHelmetSave.Get());
+	EquipArmor(CurrentPantsSave.Get());
+}

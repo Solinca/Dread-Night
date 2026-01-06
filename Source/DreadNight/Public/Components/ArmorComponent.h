@@ -26,8 +26,20 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UArmorDataAsset> CurrentBoots = nullptr;
 
+	UPROPERTY(SaveGame)
 	float TotalDamageReduction = 0.f;
 
+	UPROPERTY(SaveGame)
+	TSoftObjectPtr<UArmorDataAsset> CurrentHelmetSave = nullptr;
+
+	UPROPERTY(SaveGame)
+	TSoftObjectPtr<UArmorDataAsset> CurrentChestPlateSave = nullptr;
+
+	UPROPERTY(SaveGame)
+	TSoftObjectPtr<UArmorDataAsset> CurrentPantsSave = nullptr;
+
+	UPROPERTY(SaveGame)
+	TSoftObjectPtr<UArmorDataAsset> CurrentBootsSave = nullptr;
 protected:
 	UArmorComponent();
 
@@ -37,4 +49,8 @@ public:
 	void EquipArmor(UArmorDataAsset* Armor);
 
 	float GetTotalDamageReduction() const { return TotalDamageReduction; }
+
+	void OnPreSave();
+
+	void OnPostLoad();
 };

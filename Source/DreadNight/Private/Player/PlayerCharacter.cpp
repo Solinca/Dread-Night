@@ -1,8 +1,11 @@
 #include "Player/PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Global/MyGameInstance.h"
 #include "Items/Helper/ItemInstanceFactory.h"
 #include "Items/Object/ItemInstance_Weapon.h"
 #include "Items/Object/ItemInstance_Armor.h"
+#include "Items/Object/ItemInstance_Building.h"
+#include "Player/CustomPlayerController.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -47,7 +50,9 @@ void APlayerCharacter::BeginPlay()
 	
 	SetupBowComponent();
 
-	if (PlayerData->StartingWeaponDataAsset)
+	UMyGameInstance* GameInstance = GetGameInstance<UMyGameInstance>();
+	
+	if (PlayerData->StartingWeaponDataAsset && GameInstance->IsNewGame())
 	{
 		HotbarInventoryComponent->AddItem(UItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1));
 
@@ -223,11 +228,42 @@ void APlayerCharacter::SetupBowComponent()
 void APlayerCharacter::OnPreSave()
 {
 	InventoryComponent->SerializeInventory();
+	HotbarInventoryComponent->SerializeInventory();
+	ArmorComponent->OnPreSave();
 }
 
 void APlayerCharacter::OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache)
 {
+	UE_LOG(LogTemp, Error, L"PostLoad");
 	InventoryComponent->DeserializeInventory();
+	HotbarInventoryComponent->DeserializeInventory();
+	ArmorComponent->OnPostLoad();
+ 
+	
+	GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(CurrentHotbarIndex);
+	ProcessHotbarSlot();
+	StaminaComponent->RegenStamina(0.f);
+}
+
+void APlayerCharacter::ProcessHotbarSlot()
+{ 
+	UItemInstance* Item = GetHotbarInventoryComponent()->GetItemAtSlot(CurrentHotbarIndex);
+
+	if (!Item)
+	{
+		return;
+	}
+
+	if (UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item); BuildingItem)
+	{
+		BuildingItem->Use(this);
+		return;
+	}
+
+	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon"))
+	{
+		EquipWeapon(Cast<UItemInstance_Weapon>(Item));
+	} 
 }
 
 UBowCombatComponent* APlayerCharacter::GetBowCombatComponent()

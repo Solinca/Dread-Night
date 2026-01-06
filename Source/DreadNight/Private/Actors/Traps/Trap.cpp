@@ -22,6 +22,7 @@ void ATrap::BeginPlay()
 	Super::BeginPlay();
 
 	TrapCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ATrap::OnBeginOverlap);
+	SetIsDynamicallySpawned(GetClass());
 }
 
 void ATrap::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

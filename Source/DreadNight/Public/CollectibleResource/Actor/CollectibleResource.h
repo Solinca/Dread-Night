@@ -6,6 +6,7 @@
 #include "SaveSystem/SavableActor.h"
 #include "CollectibleResource.generated.h"
 
+class URespawnComponent;
 class UItemDataAsset;
 
 UCLASS()
@@ -41,17 +42,14 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UDataTable> ResourceData;
+
+	UPROPERTY(SaveGame,EditDefaultsOnly)
+	TObjectPtr<URespawnComponent> RespawnComponent;
 	
 	void DropItem() const;
 
 	void SetMesh();
 
-	UFUNCTION()
-	void HealCollectible();
-
-	void TemporaryDestroyCollectible();
-
-	void RespawnCollectible();
 public:
 
 	

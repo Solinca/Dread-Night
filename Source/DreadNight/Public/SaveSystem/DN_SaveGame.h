@@ -70,9 +70,12 @@ class DREADNIGHT_API UDN_SaveGame : public USaveGame
 
 	void SerializeActorComponents(AActor* Actor, FObjectAndNameAsStringProxyArchive& Ar);
 	void SerializeWorldSubsystem(UWorld* World);
+	
 	void DeserializeWorldSubsystem(UWorld* World);
-
 	void DeserializeActor(UWorld* World);
+
+	FTimerHandle ActorPostLoad;
+	FTimerHandle WorldSubSystemPostLoad;
 public:
 	UFUNCTION(BlueprintCallable)
 	void GatherAllSaveData(UWorld* WorldContext);

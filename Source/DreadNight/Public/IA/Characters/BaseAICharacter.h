@@ -28,7 +28,7 @@ protected:
 	TObjectPtr<UHealthComponent> HealthComponent = nullptr;
 
 	UFUNCTION()
-	void OnDeath();
+	virtual void OnDeath();
 	
 public:
 	ABaseAICharacter();

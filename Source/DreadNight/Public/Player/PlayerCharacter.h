@@ -44,19 +44,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<USpringArmComponent> SpringArm = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
 	TObjectPtr<UHealthComponent> HealthComponent = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
 	TObjectPtr<UStaminaComponent> StaminaComponent = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+ 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
 	TObjectPtr<UConditionStateComponent> ConditionStateComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<USwordCombatComponent> SwordCombatComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
 	TObjectPtr<UArmorComponent> ArmorComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
@@ -83,6 +83,10 @@ protected:
 	FOnPlayerTakeDamageSignature OnPlayerTakeDamage;
 
 public:
+
+	UPROPERTY(EditAnywhere, SaveGame)
+	int CurrentHotbarIndex = 0;
+	
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
 
 	UFUNCTION()
@@ -156,4 +160,7 @@ public:
 	virtual void OnPreSave() override;
 
 	virtual void OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache) override;
+
+	void ProcessHotbarSlot();
+
 };
