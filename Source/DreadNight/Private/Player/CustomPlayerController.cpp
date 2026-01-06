@@ -56,7 +56,9 @@ void ACustomPlayerController::BeginPlay()
 	MyPlayer->GetArmorComponent()->OnArmorChanged.AddDynamic(this, &ThisClass::ChangeArmorUI);
 
 	MyPlayer->GetInventoryComponent()->OnItemAddedToInventory.AddDynamic(this, &ThisClass::AddItemNotificationToViewport);
-
+	
+	MyPlayer->GetHotbarInventoryComponent()->OnItemAddedToInventory.AddDynamic(this, &ThisClass::AddItemNotificationToViewport);
+	
 	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
 
 	PlayerCameraManager->ViewPitchMax = PlayerData->ViewPitch.Y;
