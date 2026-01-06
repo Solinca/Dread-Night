@@ -24,7 +24,7 @@ protected:
 	UPROPERTY(Transient)
 	TObjectPtr<UMaterialInstanceDynamic> CompassMaterial;
 
-	UPROPERTY(Transient)
+	UPROPERTY(BlueprintReadWrite, Transient)
 	TArray<TObjectPtr<UCompassMarker>> MarkersArray;
 	
 	UPROPERTY(Transient)
