@@ -10,6 +10,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/SlateWrapperTypes.h"
 #include "Items/Data/BuildingDataAsset.h"
+#include "Kismet/GameplayStatics.h"
 #include "CustomPlayerController.generated.h"
 
 class UPlayerHud;
@@ -44,6 +45,9 @@ struct FStackedMenu
 
 	bool bCanBeQuit = true;
 };
+
+ 
+
 
 UCLASS()
 class DREADNIGHT_API ACustomPlayerController : public APlayerController
@@ -212,7 +216,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float ObjectPlacementRange = 300.f;
-	
+public:
 	// Function to add a Menu to the menu list, so we can leave it with escape
 	template<typename T>
 	requires std::is_base_of_v<UUserWidget, T>
@@ -275,7 +279,7 @@ private:
 		
 		UpdateGamePauseState();
 	}
-
+private:
 	// Call this function when you need to delete the last menu who has been push in the list
 	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = "true"))
 	void PopLastMenu();
@@ -326,4 +330,44 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddItemNotificationToViewport(UItemInstance* Data, int32 Quantity);
+
+	UPlayerDataAsset* GetPlayerData() const {return PlayerData;};
+};
+
+
+struct FEndVictoryFunctor
+{
+	TWeakObjectPtr<ACustomPlayerController> Controller;
+	TWeakObjectPtr<UWorld> World;
+    
+	float LerpDuration = 3.f;
+	float CurrentLerp = 0.f;
+
+	void operator()()
+	{ 
+		if (!World.IsValid() || !Controller.IsValid())
+		{
+			return;
+		}
+ 
+		if (CurrentLerp > LerpDuration)
+		{ 
+			if (UClass* VictoryClass = Controller->GetPlayerData()->VictoryScreenClass)
+			{
+				TObjectPtr<UUserWidget> WidgetVictoryScreen = CreateWidget<UUserWidget>(World.Get(), VictoryClass);
+                 
+				Controller->PushNewMenu(WidgetVictoryScreen, true, []() {}, false);
+			}
+			return;
+		}
+
+		CurrentLerp += World->DeltaRealTimeSeconds; 
+        
+		float Alpha = FMath::Clamp(CurrentLerp / LerpDuration, 0.f, 1.f);
+		float TimeLerp = FMath::Lerp(1.f, 0.f, Alpha);
+        
+		UGameplayStatics::SetGlobalTimeDilation(World.Get(), TimeLerp);
+
+		World->GetTimerManager().SetTimerForNextTick(*this);
+	}
 };

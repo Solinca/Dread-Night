@@ -744,9 +744,8 @@ void ACustomPlayerController::ShowGameOver()
 
 void ACustomPlayerController::TravelToVictoryLevel()
 {
-	TObjectPtr<UUserWidget> WidgetVictoryScreen = CreateWidget<UUserWidget>(this, PlayerData->VictoryScreenClass);
-	
-	PushNewMenu(WidgetVictoryScreen, true, []() {}, false);
+	FEndVictoryFunctor Functor = {.Controller = this, .World = GetWorld()};
+	Functor();
 }
 
 void ACustomPlayerController::BindUIEvents()
