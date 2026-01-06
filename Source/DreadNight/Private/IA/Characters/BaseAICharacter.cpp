@@ -100,7 +100,7 @@ void ABaseAICharacter::DropLoot() const
 			UItemInstance* ItemInstance = UItemInstanceFactory::CreateItem(InventoryComp->GetOwner(),LootData->ItemDataAsset,RandomStack);
 			if (HotbarComp != nullptr && HotbarComp->Contains(LootData->ItemDataAsset, 1) && LootData->ItemDataAsset->StackLimit > 1)
 			{
-				if (HotbarComp->GetItemAtSlot(HotbarComp->GetItemSlot(LootData->ItemDataAsset).GetValue())->CanBeStackedWith(ItemInstance,UItemInstance::EStackMethod::Fully))
+				if (HotbarComp->GetItemAtSlot(HotbarComp->GetItemSlot(LootData->ItemDataAsset).GetValue())->CanBeStackedWith(ItemInstance,EStackMethod::Fully))
 					HotbarComp->AddItem(ItemInstance);
 				else
 				{

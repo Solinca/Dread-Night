@@ -41,6 +41,8 @@ void UCraftingComponent::Craft(FRecipe* Recipe, TObjectPtr<UInventoryComponent> 
 
 	}
 
-	Inventory->AddItem(UItemInstanceFactory::CreateItem(this, Recipe->TargetItem, 1));
+	UItemInstance* ItemInstance = UItemInstanceFactory::CreateItem(this, Recipe->TargetItem, 1);
+	
+	
 
 }

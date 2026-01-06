@@ -50,11 +50,20 @@ public:
 	
 	int GetSize() const { return Size; }
 	void SetSize(int NewSize) { Size = NewSize; }
+	UFUNCTION(BlueprintCallable)
 	TOptional<int> GetEmptySlot() const;
+	UFUNCTION(BlueprintCallable)
 	UItemInstance* GetItemAtSlot(int SlotIndex) const;
+	UFUNCTION(BlueprintCallable)
 	UItemDataAsset* GetItemTypeAtSlot(int SlotIndex) const;
+	
 	TOptional<int> GetItemSlot(UItemDataAsset* Item) const;
+	
+	UFUNCTION(BlueprintCallable)
+	int GetItemSlotIndex(UItemDataAsset* Item) const;
+	
 	TOptional<int> GetItemInstanceSlot(UItemInstance* Item) const;
+	
 	TOptional<int> GetStackableItemSlot(UItemDataAsset* Item) const;
 	
 	UFUNCTION(BlueprintCallable)

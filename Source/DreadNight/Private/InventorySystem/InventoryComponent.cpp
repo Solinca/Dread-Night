@@ -25,7 +25,7 @@ void UInventoryComponent::AddItem(UItemInstance* Item)
 	{
 		for (int i = 0; i < Items.Num(); ++i)
 		{
-			if (Items[i] && Items[i]->CanBeStackedWith(Item, UItemInstance::EStackMethod::Partially))
+			if (Items[i] && Items[i]->CanBeStackedWith(Item, EStackMethod::Partially))
 			{
 				Items[i]->TryStackWith(Item);
 				OnItemModified.Broadcast(Items[i], i);
@@ -186,7 +186,7 @@ void UInventoryComponent::TransferItem(UInventoryComponent* TargetInventory, UIt
 		{
 			UItemInstance* TargetItem = TargetInventory->GetItemAtSlot(i);
 		
-			if (!TargetItem || !TargetItem->CanBeStackedWith(Item, UItemInstance::EStackMethod::Partially))
+			if (!TargetItem || !TargetItem->CanBeStackedWith(Item, EStackMethod::Partially))
 				continue;
 		
 			if (TargetItem->TryStackWith(Item))
@@ -243,7 +243,7 @@ void UInventoryComponent::TransferItemAt(UInventoryComponent* TargetInventory, U
 	{
 		UItemInstance* TargetItem = TargetInventory->GetItemAtSlot(i);
 		
-		if (!TargetItem || !TargetItem->CanBeStackedWith(Item, UItemInstance::EStackMethod::Partially))
+		if (!TargetItem || !TargetItem->CanBeStackedWith(Item, EStackMethod::Partially))
 			continue;
 		if (!TargetItem->TryStackWith(Item))
 			continue;
@@ -320,6 +320,22 @@ TOptional<int> UInventoryComponent::GetItemSlot(UItemDataAsset* Item) const
 	}
 	
 	return NullOpt;
+}
+
+int UInventoryComponent::GetItemSlotIndex(UItemDataAsset* Item) const
+{
+	if (!Item)
+		return 0;
+	
+	for (int i = 0; i < Items.Num(); ++i)
+	{
+		if (Items[i] && Items[i]->GetDataAsset() == Item)
+		{
+			return i;
+		}
+	}
+	
+	return 0;
 }
 
 TOptional<int> UInventoryComponent::GetItemInstanceSlot(UItemInstance* Item) const
