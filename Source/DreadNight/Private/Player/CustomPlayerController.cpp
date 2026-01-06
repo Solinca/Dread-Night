@@ -453,7 +453,8 @@ void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
 	int InventoryLimit = MyPlayer->GetHotbarInventoryComponent()->GetInventoryLimitSize();
 
 	bool validSpot = false;
-	while (!validSpot)
+	int iteration = 0;
+	while (!validSpot && iteration < InventoryLimit)
 	{
 		MyPlayer->CurrentHotbarIndex = (MyPlayer->CurrentHotbarIndex + (int)Value.Get<float>() + InventoryLimit) % InventoryLimit;
 		
@@ -461,8 +462,11 @@ void ACustomPlayerController::ScrollHotbar(const FInputActionValue& Value)
 		{
 			validSpot = true;
 		}
+		iteration++;
 	}
-
+	if (!validSpot)
+		MyPlayer->CurrentHotbarIndex = 0;
+	
 	MyPlayer->GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(MyPlayer->CurrentHotbarIndex);
 	
 	ProcessHotbarSlot();
