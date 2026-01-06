@@ -17,6 +17,7 @@ protected:
 
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void OnComponentDestroyed(bool bDestroyingHierarchy) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values", meta = (ClampMin = 1.f))
 	float MaxStamina = 100.f;
@@ -67,4 +68,5 @@ public:
 
 	UFUNCTION()
 	float GetCurrentStamina();
+	
 };

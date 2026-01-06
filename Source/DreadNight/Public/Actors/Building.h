@@ -15,8 +15,6 @@ class DREADNIGHT_API ABuilding : public AActor
 private:
 	FHitResult Hit;
 
-	FTimerHandle TickTimerHandle;
-
 	TObjectPtr<class UBuildingDataAsset> BuildingDataAsset = nullptr;
 
 protected:

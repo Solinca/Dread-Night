@@ -41,7 +41,7 @@ protected:
 
 	void SpawnArrow();
 	void ResetShot();
-
+	virtual void OnComponentDestroyed(bool bDestroyingHierarchy) override;
 public:
 	UFUNCTION()
 	void SetAiming(bool bAiming);

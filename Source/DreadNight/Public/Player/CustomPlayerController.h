@@ -61,6 +61,8 @@ protected:
 
 	virtual void SetupInputComponent() override;
 
+	void OnDestroy();
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")
 	TObjectPtr<class UInputMappingContext> MappingContextBase = nullptr;
 

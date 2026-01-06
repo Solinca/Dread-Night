@@ -72,3 +72,13 @@ float UStaminaComponent::GetCurrentStamina()
 	return CurrentStamina;
 }
 
+void UStaminaComponent::OnComponentDestroyed(bool bDestroyingHierarchy)
+{
+	Super::OnComponentDestroyed(bDestroyingHierarchy);
+	
+	if (GetWorld()->GetTimerManager().IsTimerActive(CoolDownTimer))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CoolDownTimer);
+	}
+}
+
