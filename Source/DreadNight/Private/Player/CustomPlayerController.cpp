@@ -302,16 +302,24 @@ void ACustomPlayerController::ItemSpecialActionStart(const FInputActionValue& Va
 {
 	UItemInstance* Item = MyPlayer->GetHotbarInventoryComponent()->GetItemAtSlot(MyPlayer->CurrentHotbarIndex);
 
+	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
+
 	if (Item && Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow") && (MyPlayer->GetInventoryComponent()->Contains("Item.Weapon.Arrow", 1) || 
 		MyPlayer->GetHotbarInventoryComponent()->Contains("Item.Weapon.Arrow", 1)))
 	{
 		MyPlayer->GetBowCombatComponent()->SetAiming(true);
+
+		StaminaComponent->SetCanRegen(false);
 	}
 }
 
 void ACustomPlayerController::ItemSpecialActionStop(const FInputActionValue& Value)
 {
 	MyPlayer->GetBowCombatComponent()->SetAiming(false);
+
+	UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
+
+	StaminaComponent->SetCanRegen(true);
 }
 
 void ACustomPlayerController::Interact(const FInputActionValue& Value)
@@ -591,13 +599,11 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 		if (BowCombatComponent->IsAiming() && BowCombatComponent->CanShoot() && StaminaComponent->GetCurrentStamina() > 0.f)
 		{
 			BowCombatComponent->Shoot();
-			
+
 			if (!HotBarInventoryComponent->RemoveItemsByTag("Item.Weapon.Arrow", 1))
 			{
 				InventoryComponent->RemoveItemsByTag("Item.Weapon.Arrow", 1);
 			}
-			
-			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 
 			AttackExecuted = true;
 		}
