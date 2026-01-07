@@ -1,5 +1,5 @@
 ﻿#include "IA/Tasks/BTTask_Attack.h"
-
+#include "Kismet/GameplayStatics.h"
 #include "AIController.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Float.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
@@ -24,6 +24,7 @@ UBTTask_Attack::UBTTask_Attack()
 EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	FBTAttackTaskMemory* AttackTaskMemory{ CastNodeMemory<FBTAttackTaskMemory>(NodeMemory) };
+	
 	if (AttackTaskMemory->bInitialized)
 	{
 		return EBTNodeResult::Succeeded;
@@ -32,14 +33,18 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	UBlackboardComponent* BlackboardComponent{ OwnerComp.GetBlackboardComponent() };
 
 	AttackTaskMemory->AttackCooldown = AttackCooldown.GetValue(OwnerComp);
+	
 	AttackTaskMemory->AttackDamage = AttackDamage.GetValue(OwnerComp);
-	AttackTaskMemory->AttackedTarget = Cast<AActor>(
-		BlackboardComponent->GetValue<UBlackboardKeyType_Object>(AttackedTarget.GetSelectedKeyID()));
+	
+	AttackTaskMemory->AttackedTarget = Cast<AActor>(BlackboardComponent->GetValue<UBlackboardKeyType_Object>(AttackedTarget.GetSelectedKeyID()));
+	
 	AttackTaskMemory->AttackAnimationMontage = AttackAnimationMontage.GetValue<UAnimMontage>(OwnerComp);
+	
 	AttackTaskMemory->AnimInstance = OwnerComp.GetAIOwner()->GetCharacter()->GetMesh()->GetAnimInstance();
 
-	AttackTaskMemory->AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(
-		this, &UBTTask_Attack::OnAttackNotifyBegin);
+	AttackTaskMemory->AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UBTTask_Attack::OnAttackNotifyBegin);
+
+	AttackTaskMemory->MonsterAttackSound = MonsterAttackSound.GetValue<USoundBase>(OwnerComp);
 
 	if (!AttackTaskMemory->AttackedTarget.IsValid() ||
 		!AttackTaskMemory->AttackedTarget->Implements<UDamageable>() || !AttackTaskMemory->AttackAnimationMontage.
@@ -141,6 +146,8 @@ void UBTTask_Attack::OnAttackNotifyBegin(FName NotifyName, const FBranchingPoint
 		FinishLatentAbort(*BehaviorTreeComponent);
 		return;
 	}
+	
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), AttackTaskMemory->MonsterAttackSound.Get(), DamageInstigator->GetActorLocation());
 
 	IDamageable* Damageable{ Cast<IDamageable>(AttackTaskMemory->AttackedTarget.Get()) };
 
@@ -149,7 +156,7 @@ void UBTTask_Attack::OnAttackNotifyBegin(FName NotifyName, const FBranchingPoint
 		FinishLatentTask(*BehaviorTreeComponent, EBTNodeResult::Succeeded);
 		return;
 	}
-	
+
 	Damageable->TryApplyDamage(AttackTaskMemory->AttackDamage, DamageInstigator);
 }
 

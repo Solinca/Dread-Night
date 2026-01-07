@@ -10,6 +10,7 @@ struct FBTRangeAttackTaskMemory
 	TWeakObjectPtr<AActor> AttackedTarget;
 	TWeakObjectPtr<UAnimMontage> AttackAnimationMontage;
 	TWeakObjectPtr<UAnimInstance> AnimInstance;
+	TWeakObjectPtr<USoundBase> MonsterAttackSound;
 
 	FName ThrowingBoneName;
 	
@@ -44,6 +45,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard")
 	FValueOrBBKey_Name ThrowingBoneName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard")
+	FValueOrBBKey_Object MonsterAttackSound;
 
 public:
 	UBTTask_RangeAttack();

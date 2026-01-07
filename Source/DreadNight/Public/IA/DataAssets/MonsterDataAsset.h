@@ -32,5 +32,16 @@ public:
 	[[nodiscard]] const FName& GetName() const;
 	[[nodiscard]] float GetMaxHealth() const;
 	[[nodiscard]] const TObjectPtr<UDataTable>& GetLootDataTable() const;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
+	TObjectPtr<USoundBase> MonsterIdle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
+	TObjectPtr<USoundBase> MonsterAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
+	TObjectPtr<USoundBase> MonsterHit;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
+	TObjectPtr<USoundBase> MonsterDeath;
 };

@@ -1,5 +1,5 @@
 ﻿#include "IA/Tasks/BTTask_RangeAttack.h"
-
+#include "Kismet/GameplayStatics.h"
 #include "AIController.h"
 #include "Actors/ProjectileActor.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Class.h"
@@ -39,6 +39,8 @@ EBTNodeResult::Type UBTTask_RangeAttack::ExecuteTask(UBehaviorTreeComponent& Own
 	RangeAttackTaskMemory->AttackAnimationMontage = AttackAnimationMontage.GetValue<UAnimMontage>(OwnerComp);
 	RangeAttackTaskMemory->AnimInstance = OwnerComp.GetAIOwner()->GetCharacter()->GetMesh()->GetAnimInstance();
 	RangeAttackTaskMemory->ThrowingBoneName = ThrowingBoneName.GetValue(OwnerComp);
+
+	RangeAttackTaskMemory->MonsterAttackSound = MonsterAttackSound.GetValue<USoundBase>(OwnerComp);
 
 	RangeAttackTaskMemory->AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(
 		this, &UBTTask_RangeAttack::OnAttackNotifyBegin);
@@ -140,6 +142,8 @@ void UBTTask_RangeAttack::OnAttackNotifyBegin(FName NotifyName,
 		FinishLatentTask(*BehaviorTreeComponent, EBTNodeResult::Aborted);
 		return;
 	}
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), RangeAttackTaskMemory->MonsterAttackSound.Get(), SpawnInstigator->GetActorLocation());
 
 	FTransform ProjectileTransform;
 	ProjectileTransform.SetScale3D(FVector::One());

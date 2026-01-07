@@ -1,10 +1,12 @@
 ﻿#include "IA/Characters/BaseAICharacter.h"
+#include "Kismet/GameplayStatics.h"
 #include "AIController.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/Loot/LootData.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "Items/Helper/ItemInstanceFactory.h"
 #include "Player/PlayerCharacter.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 ABaseAICharacter::ABaseAICharacter()
 {
@@ -28,12 +30,19 @@ void ABaseAICharacter::OnDeath()
 {
 	DropLoot();
 
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), UsedDataAsset->MonsterDeath, GetActorLocation());
+
 	Destroy();
 }
 
 bool ABaseAICharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 {
 	HealthComponent->RemoveHealth(Damage);
+
+	if (HealthComponent->GetHealthRatio() > 0)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), UsedDataAsset->MonsterHit, GetActorLocation());
+	}
 
 	return true;
 }
@@ -126,6 +135,8 @@ void ABaseAICharacter::DropLoot() const
 void ABaseAICharacter::OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset)
 {
 	GetMesh()->SetSkeletalMesh(MonsterDataAsset->GetMesh());
+
+	BlackboardComponent->SetValueAsObject("MonsterAttackSound", MonsterDataAsset->MonsterAttack);
 
 	HealthComponent->SetMaxHealth(MonsterDataAsset->GetMaxHealth());
 }
