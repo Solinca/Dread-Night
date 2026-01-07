@@ -5,18 +5,52 @@ Group Project - Survival RPG Horror
 ## Controls
 
 ZQSD : Move
+
 Space : Jump
-LShift : Sprint
-LCtrl : Crouch
-LMB : Use Equiped item (Attack/Place Building/eat)
-RMB : Aim (with a bow, then LMB to shoot) / Select item in inventory
+
+Left Shift : Sprint
+
+Left Ctrl : Crouch
+
+LMB : Use Equiped item (Attack / Place Building / Eat)
+
+RMB : Aim with the bow
+
+RMB over an item inside the inventory / hotbar: Open the associated item action (destroy, assign, remove)
+
 E : Interact
+
 I : Inventory
+
 M : Map
+
 1-6 : Hotbar
+
+Mouse Scroll (up / down) : Change currently selected hotbar slot
+
 Escape : Pause
 
-Need to have the item in the hotbar to use it
+## Special info about the project
+
+In order to use an item, you need to assign it first in the hotbar, and have the hotbar slot selected.
+
+You cannot remove an equipped armor. There is also no need to create multiple armors or weapons, since there is no durability system.
+
+In order to attack with the bow, you need to have some arrows inside your inventory or hotbar. Then, you need to first press RMB to aim and then LMB to shoot.
+
+Cows and resources (wood, stone, ores) respawn at the start of every day.
+
+There is also a Save System that triggers only at the start of every day. Pressing New Game, Dying or Completing the game will destroy the save.
+
+In order to craft some items, you need to access (with E) the anvil at your base camp. Every recipe are available there.
+
+There is a Stamina system. Every action in the game cost stamina. You cannot perform an action while at 0 stamina.
+
+There is also a Hunger system. Every action in the game cost some energy. The less energy you have, the less your passive health regenaration is. Eat some apples or raw meat to regain some energy.
+
+At the start of the night, a wave of monsters will spawn. Defeating them all will allow you to move to the next day.
+
+There is a boss encounter during Night 5. You need to defeat it as well as all of its spawned minions to win the game.
 
 ## References
 
@@ -28,7 +62,7 @@ Day Music: https://pixabay.com/music/corporate-crafterx27s-mallets-286976/
 
 Night Music: https://pixabay.com/music/mystery-scary-horror-music-289303/
 
-Vicotyr Music: https://pixabay.com/fr/music/titre-principal-award-ceremony-orchestral-30-seconds-426752/
+Victory Music: https://pixabay.com/fr/music/titre-principal-award-ceremony-orchestral-30-seconds-426752/
 
 ### Sounds
 
