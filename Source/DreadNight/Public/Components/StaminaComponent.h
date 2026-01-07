@@ -2,53 +2,39 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Data/Player/PlayerDataAsset.h"
 #include "StaminaComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStaminaChanged, float, Stamina, float, MaxStamina);
-
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class DREADNIGHT_API UStaminaComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+private:
+	float CurrentStamina;
+
+	bool CanRegen = false;
+
 protected:	
 	UStaminaComponent();
 
+	virtual void BeginPlay() override;
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values", meta = (ClampMin = 1.f))
-	float MaxStamina = 100.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Values")
-	float CurrentStamina = 100.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values")
-	float RegenSpeed = 20.f;//en %/s
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values")
-	float RegenCooldown = 2.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Values")
-	bool CanRegen = false;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
+	TObjectPtr<UPlayerDataAsset> PlayerData;
 
 public:
-
 	FTimerHandle CoolDownTimer;
 
 	UPROPERTY(BlueprintAssignable)
 	FStaminaChanged OnStaminaChanged;
 
 	UFUNCTION()
-	void AddMaxStamina(float amount);
-
-	UFUNCTION()
 	void AddStamina(float amount);
-
-	UFUNCTION()
-	void RemoveMaxStamina(float amount);
 
 	UFUNCTION()
 	void RemoveStamina(float amount);
@@ -63,9 +49,5 @@ public:
 	void SetCanRegen(bool value);
 
 	UFUNCTION()
-	float GetRegenCoolDown();
-
-	UFUNCTION()
 	float GetCurrentStamina();
-	
 };

@@ -5,66 +5,59 @@ UStaminaComponent::UStaminaComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void UStaminaComponent::BeginPlay()
+{
+	CurrentStamina = PlayerData->MaxStamina;
+}
 
 void UStaminaComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (CanRegen)
+	{
 		RegenStamina(DeltaTime);
-}
-
-void UStaminaComponent::AddMaxStamina(float amount)
-{
-	MaxStamina += amount;
-	AddStamina(amount);
+	}
 }
 
 void UStaminaComponent::AddStamina(float amount)
 {
 	CurrentStamina += amount;
-	CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, MaxStamina);
-	OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+
+	CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, PlayerData->MaxStamina);
+
+	OnStaminaChanged.Broadcast(CurrentStamina, PlayerData->MaxStamina);
 }
 
-void UStaminaComponent::RemoveMaxStamina(float amount)
-{
-	MaxStamina -= amount;
-	CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, MaxStamina);
-	OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
-}
-
-/// <summary>
-/// Remove a fixed amount of stamina
-/// </summary>
 void UStaminaComponent::RemoveStamina(float amount)
 {
 	CurrentStamina -= amount;
-	CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, MaxStamina);
-	OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+
+	CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, PlayerData->MaxStamina);
+
+	OnStaminaChanged.Broadcast(CurrentStamina, PlayerData->MaxStamina);
 }
 
 float UStaminaComponent::GetStaminaRatio()
 {
-	return CurrentStamina / MaxStamina;
+	return CurrentStamina / PlayerData->MaxStamina;
 }
 
 void UStaminaComponent::RegenStamina(float DeltaTime)
 {
-	if (CurrentStamina < MaxStamina)
-		CurrentStamina += RegenSpeed * DeltaTime;
-	CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, MaxStamina);
-	OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+	if (CurrentStamina < PlayerData->MaxStamina)
+	{
+		CurrentStamina += PlayerData->StaminaRegenPerSecond * DeltaTime;
+	}
+
+	CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, PlayerData->MaxStamina);
+
+	OnStaminaChanged.Broadcast(CurrentStamina, PlayerData->MaxStamina);
 }
 
 void UStaminaComponent::SetCanRegen(bool value)
 {
 	CanRegen = value;
-}
-
-float UStaminaComponent::GetRegenCoolDown()
-{
-	return RegenCooldown;
 }
 
 float UStaminaComponent::GetCurrentStamina()

@@ -237,7 +237,6 @@ void APlayerCharacter::OnPreSave()
 
 void APlayerCharacter::OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache)
 {
-	UE_LOG(LogTemp, Error, L"PostLoad");
 	InventoryComponent->DeserializeInventory();
 	HotbarInventoryComponent->DeserializeInventory();
 	ArmorComponent->OnPostLoad();

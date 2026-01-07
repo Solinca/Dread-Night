@@ -19,6 +19,8 @@ class DREADNIGHT_API UPlayerHud : public UUserWidget
 	GENERATED_BODY()
 
 protected:
+	virtual void NativeConstruct() override;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USmartProgressBar> HealthBar;
 	
@@ -26,16 +28,7 @@ protected:
 	TObjectPtr<USmartProgressBar> StaminaBar;
 	
 	UPROPERTY(meta = (BindWidgetOptional))
-	TObjectPtr<URadialProgressBarImage> ThirstRadialBarImage;
-	
-	UPROPERTY(meta = (BindWidgetOptional))
 	TObjectPtr<URadialProgressBarImage> HungerRadialBarImage;
-	
-	UPROPERTY(meta = (BindWidgetOptional))
-	TObjectPtr<URadialProgressBarImage> MentalRadialBarImage;
-	
-	UPROPERTY(meta = (BindWidgetOptional))
-	TObjectPtr<URadialProgressBarImage> FearRadialBarImage;
 	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UHorizontalBox> InformationTextHorizontalBox;
@@ -55,25 +48,13 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void UpdateStaminaBar(const float CurrentValue, const float MaxValue);
-	
-	UFUNCTION(BlueprintCallable)
-	void UpdateThirstRadialBarImage(const float CurrentValue, bool IsState);
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateHungerRadialBarImage(const float CurrentValue, bool IsState);
-
-	UFUNCTION(BlueprintCallable)
-	void UpdateMentalRadialBarImage(const float CurrentValue, bool IsState);
-
-	UFUNCTION(BlueprintCallable)
-	void UpdateFearRadialBarImage(const float CurrentValue, bool IsState);
+	void UpdateHungerRadialBarImage(const float CurrentValue);
 	
 	UFUNCTION(BlueprintCallable)
 	void UpdateInteractionText(AActor* NewInteractable);
 	
 	UFUNCTION(BlueprintCallable)
 	void AddItemNotification(const UItemInstance* Data, const int Quantity, const TSubclassOf<UItemNotification> WidgetToInstantiate);
-
-protected:
-	virtual void NativeConstruct() override;
 };

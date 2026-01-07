@@ -67,6 +67,15 @@ public:
 	FName ArrowSocketName = TEXT("ArrowSocket");
 
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float MaxStamina = 100.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float TimeBeforeStartRegenStamina = 0.5f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float StaminaRegenPerSecond = 10;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 	float JumpStaminaCost = 20.f;
 
 	// TODO: REPLACE WITH WEAPON STAMINA COST LATER
@@ -83,6 +92,9 @@ public:
 	float PassiveHealthRegenTimer = 60.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Hunger")
+	float MaxHunger = 100.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Hunger")
 	float HungerSprintCost = 0.1f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Hunger")
@@ -90,6 +102,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Hunger")
 	float HungerAttackCost = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Hunger")
+	float HungerDecreasePerSecond = 0.1f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sanity")
 	float SanityOnDamageCost = 5.f;

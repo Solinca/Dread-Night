@@ -161,7 +161,7 @@ void ACustomPlayerController::Jump(const FInputActionValue& Value)
 			// START REGEN STAMINA
 			GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
 				[=] {StaminaComponent->SetCanRegen(true); },
-				StaminaComponent->GetRegenCoolDown(), false
+				PlayerData->TimeBeforeStartRegenStamina, false
 			);
 
 			MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerJumpCost);
@@ -207,7 +207,7 @@ void ACustomPlayerController::SprintEnd(const FInputActionValue& Value)
 		// START REGEN STAMINA
 		GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
 			[=] {StaminaComponent->SetCanRegen(true); },
-			StaminaComponent->GetRegenCoolDown(), false
+			PlayerData->TimeBeforeStartRegenStamina, false
 		);
 	}
 }
@@ -595,7 +595,7 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 		// START REGEN STAMINA
 		GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
 			[=] {StaminaComponent->SetCanRegen(true); },
-			StaminaComponent->GetRegenCoolDown(), false
+			PlayerData->TimeBeforeStartRegenStamina, false
 		);
 
 		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
@@ -760,13 +760,12 @@ void ACustomPlayerController::ShowGameOver()
 void ACustomPlayerController::TravelToVictoryLevel()
 {
 	FEndVictoryFunctor Functor = {.Controller = this, .World = GetWorld()};
+
 	Functor();
 }
 
 void ACustomPlayerController::BindUIEvents()
 {
-	UE_LOG(LogTemp, Error, L"BindUIEvent");
-
 	MyPlayer->GetHealthComponent()->OnHealthChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateHealthBar);
 	MyPlayer->GetStaminaComponent()->OnStaminaChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateStaminaBar);
 	MyPlayer->GetConditionStateComponent()->OnHungerChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateHungerRadialBarImage);

@@ -9,7 +9,6 @@
 #include "UI/Widgets/RadialProgressBarImage.h"
 #include "UI/Widgets/SmartProgressBar.h"
 
-
 void UPlayerHud::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -18,8 +17,6 @@ void UPlayerHud::NativeConstruct()
 	{
 		InteractableSubsystem->OnFocusChanged.AddDynamic(this, &ThisClass::UpdateInteractionText);
 	}
-
-	
 }
 
 void UPlayerHud::UpdateHealthBar(const float CurrentValue, const float MaxValue)
@@ -32,35 +29,11 @@ void UPlayerHud::UpdateStaminaBar(const float CurrentValue, const float MaxValue
 	StaminaBar->UpdateValue(CurrentValue, MaxValue);
 }
 
-void UPlayerHud::UpdateThirstRadialBarImage(const float CurrentValue, bool IsState)
-{
-	if (ThirstRadialBarImage)
-	{
-		ThirstRadialBarImage->UpdateValue(CurrentValue);
-	}
-}
-
-void UPlayerHud::UpdateHungerRadialBarImage(const float CurrentValue, bool IsState)
+void UPlayerHud::UpdateHungerRadialBarImage(const float CurrentValue)
 {
 	if (HungerRadialBarImage)
 	{
 		HungerRadialBarImage->UpdateValue(CurrentValue);
-	}
-}
-
-void UPlayerHud::UpdateMentalRadialBarImage(const float CurrentValue, bool IsState)
-{
-	if (MentalRadialBarImage)
-	{
-		MentalRadialBarImage->UpdateValue(CurrentValue);
-	}
-}
-
-void UPlayerHud::UpdateFearRadialBarImage(const float CurrentValue, bool IsState)
-{
-	if (FearRadialBarImage)
-	{
-		FearRadialBarImage->UpdateValue(CurrentValue);
 	}
 }
 
@@ -73,6 +46,7 @@ void UPlayerHud::UpdateInteractionText(AActor* NewInteractable)
 		InteractionText->SetText(Text);
 		
 		InformationTextHorizontalBox->SetVisibility(ESlateVisibility::HitTestInvisible);
+		
 		return;
 	}
 	

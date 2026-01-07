@@ -5,52 +5,37 @@ UConditionStateComponent::UConditionStateComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void UConditionStateComponent::BeginPlay()
+{
+	CurrentHunger = PlayerData->MaxHunger;
+}
+
 void UConditionStateComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	RemoveHungerValue(DecreaseHungerRate * DeltaTime);
-
+	RemoveHungerValue(PlayerData->HungerDecreasePerSecond * DeltaTime);
 }
 
 void UConditionStateComponent::AddHungerValue(float amount)
 {
-	HungerValue += amount;
-	HungerValue = FMath::Clamp(HungerValue, 0.f, 100.f);
+	CurrentHunger += amount;
 
-	if (HungerValue > 20.f)
-	{
-		States &= ~EConditionState::HUNGRY;
-	}
+	CurrentHunger = FMath::Clamp(CurrentHunger, 0.f, 100.f);
 
-	OnHungerChanged.Broadcast(GetHungerValueRatio(), EnumHasAnyFlags(States, EConditionState::HUNGRY));
+	OnHungerChanged.Broadcast(GetHungerValueRatio());
 }
 
 void UConditionStateComponent::RemoveHungerValue(float amount)
 {
-	HungerValue -= amount;
-	HungerValue = FMath::Clamp(HungerValue, 0.f, 100.f);
+	CurrentHunger -= amount;
 
-	if (HungerValue <= 20.f)
-	{
-		States |= EConditionState::HUNGRY;
-	}
+	CurrentHunger = FMath::Clamp(CurrentHunger, 0.f, 100.f);
 
-	OnHungerChanged.Broadcast(GetHungerValueRatio(), EnumHasAnyFlags(States, EConditionState::HUNGRY));
-}
-
-void UConditionStateComponent::ClearStates()
-{
-	HungerValue = 100.f;
-
-
-	States = EConditionState::NONE;
-
-	OnHungerChanged.Broadcast(GetHungerValueRatio(), EnumHasAnyFlags(States, EConditionState::HUNGRY));
+	OnHungerChanged.Broadcast(GetHungerValueRatio());
 }
 
 float UConditionStateComponent::GetHungerValueRatio()
 {
-	return HungerValue / HungerMaxValue;
+	return CurrentHunger / PlayerData->MaxHunger;
 }
-
