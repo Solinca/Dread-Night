@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "RespawnComponent.generated.h"
 
+DECLARE_DELEGATE(FRespawnEventSignature)
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class DREADNIGHT_API URespawnComponent : public UActorComponent
@@ -39,4 +40,6 @@ public:
 	void Respawn();
 
 	void OnPostLoad();
+
+	FRespawnEventSignature OnRespawn;
 };

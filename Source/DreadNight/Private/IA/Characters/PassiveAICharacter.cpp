@@ -10,6 +10,16 @@ APassiveAICharacter::APassiveAICharacter()
 	RespawnComponent = CreateDefaultSubobject<URespawnComponent>("Respawn Component");
 }
 
+void APassiveAICharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	RespawnComponent->OnRespawn.BindLambda([this]
+	{
+		HealthComponent->SetMaxHealth(HealthComponent->GetMaxHealth());
+	});
+}
+
 void APassiveAICharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);

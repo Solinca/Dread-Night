@@ -51,6 +51,7 @@ void URespawnComponent::Respawn()
 	AActor* Owner = GetOwner();
 	Owner->SetActorEnableCollision(true);
 	Owner->SetActorHiddenInGame(false);
+	OnRespawn.ExecuteIfBound();
 }
 
 void URespawnComponent::OnPostLoad()
