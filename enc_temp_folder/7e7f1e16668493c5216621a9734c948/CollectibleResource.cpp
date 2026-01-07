@@ -29,8 +29,7 @@ bool ACollectibleResource::TryApplyDamage(float Damage, AActor* DamageInstigator
 
 void ACollectibleResource::OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache)
 {
-	if (RespawnComponent)
-		RespawnComponent->OnPostLoad();
+	RespawnComponent->OnPostLoad();
 }
 
 ACollectibleResource::ACollectibleResource()
