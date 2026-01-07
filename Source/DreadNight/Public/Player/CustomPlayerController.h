@@ -127,6 +127,9 @@ private:
 
 	FTimerHandle SaveIconHandle;
 
+	UPROPERTY()
+	bool OnePass;
+	
 #if WITH_EDITOR
 	UFUNCTION(BlueprintInternalUseOnly)
 	void Prototype_InputAction(const FInputActionValue& Value) {};
