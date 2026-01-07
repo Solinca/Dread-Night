@@ -7,6 +7,8 @@ UConditionStateComponent::UConditionStateComponent()
 
 void UConditionStateComponent::BeginPlay()
 {
+	Super::BeginPlay();
+
 	CurrentHunger = PlayerData->MaxHunger;
 }
 
