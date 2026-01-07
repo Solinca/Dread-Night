@@ -9,7 +9,7 @@
 
 void UItemNotification::InitNotification(const UItemInstance* Data, const int Quantity)
 {
-	TextItemName->SetText(FText::FromName(Data->GetDataAsset()->ItemName));
+	TextItemName->SetText(FText::FromString(Data->GetDataAsset()->ItemName));
 	TextQuantity->SetText(FText::FromString(FString::Printf(TEXT("x%d"), Quantity)));
 	ImageIcon->SetBrushFromTexture(Data->GetDataAsset()->ItemIcon);
 

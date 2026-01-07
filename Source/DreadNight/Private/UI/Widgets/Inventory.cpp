@@ -194,7 +194,7 @@ void UInventory::OnItemInfoCreated(int SlotIndex)
 	if (UItemInstance* ItemData = BindInventoryComponent->GetItemAtSlot(SlotIndex))
 	{
 		InventoryInfoWidget->GetItemInfoButton()->SetVisibility(ESlateVisibility::Visible);
-		InventoryInfoWidget->GetItemInfoText()->SetText(FText::FromName(ItemData->GetDataAsset()->ItemName));
+		InventoryInfoWidget->GetItemInfoText()->SetText(FText::FromString(ItemData->GetDataAsset()->ItemName));
 	}
 }
 

@@ -22,7 +22,7 @@ public:
 	int StackLimit = 1;
 
 	UPROPERTY(EditAnywhere, SaveGame, BlueprintReadOnly)
-	FName ItemName;
+	FString ItemName;
 
 	UPROPERTY(EditAnywhere, SaveGame, BlueprintReadOnly)
 	TObjectPtr<UTexture2D> ItemIcon;
