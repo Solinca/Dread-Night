@@ -53,7 +53,8 @@ void UInventory::OnItemModified(UItemInstance* Item, int SlotIndex)
 {
 	if (UInventorySlot* TempSlot = Cast<UInventorySlot>(InventoryWrapBox->GetChildAt(SlotIndex)))
 	{
-		TempSlot->SetStackText(Item->GetStackNumber());
+		if (Item)
+			TempSlot->SetStackText(Item->GetStackNumber());
 	}
 }
 
