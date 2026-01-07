@@ -310,6 +310,8 @@ void ACustomPlayerController::ItemSpecialActionStart(const FInputActionValue& Va
 		MyPlayer->GetBowCombatComponent()->SetAiming(true);
 
 		StaminaComponent->SetCanRegen(false);
+
+		GetWorldTimerManager().ClearTimer(StaminaComponent->CoolDownTimer);
 	}
 }
 
@@ -579,19 +581,21 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 	
 	UInventoryComponent* HotBarInventoryComponent = MyPlayer->GetHotbarInventoryComponent();
 
-	bool AttackExecuted = false;
-
 	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Sword"))
 	{
 		if (!SwordCombatComponent->GetIsAttacking() && StaminaComponent->GetCurrentStamina() > 0.f)
 		{
 			SwordCombatComponent->Attack();
 
+			StaminaComponent->SetCanRegen(false);
+
+			GetWorldTimerManager().ClearTimer(StaminaComponent->CoolDownTimer);
+
 			UGameplayStatics::PlaySound2D(this, PlayerData->PlayerSwingSwordSound);
 
 			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 
-			AttackExecuted = true;
+			MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
 		}
 	}
 	else if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow"))
@@ -605,21 +609,8 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 				InventoryComponent->RemoveItemsByTag("Item.Weapon.Arrow", 1);
 			}
 
-			AttackExecuted = true;
+			MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
 		}
-	}
-
-	if (AttackExecuted)
-	{
-		StaminaComponent->SetCanRegen(false);
-
-		// START REGEN STAMINA
-		GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
-			[=] {StaminaComponent->SetCanRegen(true); },
-			PlayerData->TimeBeforeStartRegenStamina, false
-		);
-
-		MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
 	}
 }
 
