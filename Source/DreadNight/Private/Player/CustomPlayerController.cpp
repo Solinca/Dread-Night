@@ -653,8 +653,6 @@ void ACustomPlayerController::GoBackToMenu()
 	SetInputMode(FInputModeUIOnly());
 
 	PlayerCameraManager->StartCameraFade(0, 1, 1, FColor::Black, true, true);
-
-	SaveGame();
 	
 	GetWorldTimerManager().SetTimer(SwitchLevel, [this]
 	{
