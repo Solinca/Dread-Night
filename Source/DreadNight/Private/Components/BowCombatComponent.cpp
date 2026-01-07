@@ -113,16 +113,6 @@ void UBowCombatComponent::ResetShot()
 	bCanShoot = true;
 }
 
-void UBowCombatComponent::OnComponentDestroyed(bool bDestroyingHierarchy)
-{
-	Super::OnComponentDestroyed(bDestroyingHierarchy);
-	
-	if (GetWorld()->GetTimerManager().IsTimerActive(ShotCooldownTimer))
-	{
-		GetWorld()->GetTimerManager().ClearTimer(ShotCooldownTimer);
-	}
-}
-
 void UBowCombatComponent::SetComponentMesh(UStaticMeshComponent* Mesh)
 {
 	CurrentStaticMesh = Mesh;
