@@ -1,0 +1,86 @@
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
+#include "Items/Object/ItemInstance.h"
+#include "InventoryComponent.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemAddedEventSignature, class UItemInstance*, ItemInstance, int, ItemSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemovedEventSignature, int, ItemSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemClearedEventSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemModifiedEventSignature, class UItemInstance*, ItemInstance, int, ItemSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHotbarItemChanged, int, SlotIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectedHotbarChangedSignature, int, SlotIndex);
+
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class DREADNIGHT_API UInventoryComponent : public UActorComponent
+{
+	GENERATED_BODY()
+
+public:	
+	UInventoryComponent();
+
+protected:
+	virtual void BeginPlay() override;
+
+	UPROPERTY(SaveGame)
+	TArray<FItemInstanceSave> SavedItems;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<TObjectPtr<UItemInstance>> Items;
+	
+	UPROPERTY(EditAnywhere, SaveGame,BlueprintReadWrite)
+	int Size = 20;
+	
+public:	
+	
+	UFUNCTION(BlueprintCallable)
+	void AddItem(UItemInstance* Item);
+	UFUNCTION(BlueprintCallable)
+	void RemoveItemsByType(UItemDataAsset* Item, int Amount);
+	bool RemoveItemsByTag(FString Tag, int Amount);
+	void RemoveItemsAt(int SlotIndex, int Amount);
+	void UseItemByType(UItemDataAsset* Item);
+	void UseItemAt(int SlotIndex);
+	void Clear();
+	
+	void TransferItem(UInventoryComponent* TargetInventory, UItemInstance* Item);
+	void TransferItemAt(UInventoryComponent* TargetInventory, UItemInstance* Item, int IndexSlot);
+	void SwapItem(UInventoryComponent* TargetInventory, UItemInstance* FromItem, UItemInstance* ToItem, int TargetSlotIndex);
+	
+	int GetSize() const { return Size; }
+	void SetSize(int NewSize) { Size = NewSize; }
+	UFUNCTION(BlueprintCallable)
+	TOptional<int> GetEmptySlot() const;
+	UFUNCTION(BlueprintCallable)
+	UItemInstance* GetItemAtSlot(int SlotIndex) const;
+	UFUNCTION(BlueprintCallable)
+	UItemDataAsset* GetItemTypeAtSlot(int SlotIndex) const;
+	
+	TOptional<int> GetItemSlot(UItemDataAsset* Item) const;
+	
+	UFUNCTION(BlueprintCallable)
+	int GetItemSlotIndex(UItemDataAsset* Item) const;
+	
+	TOptional<int> GetItemInstanceSlot(UItemInstance* Item) const;
+	
+	TOptional<int> GetStackableItemSlot(UItemDataAsset* Item) const;
+	
+	UFUNCTION(BlueprintCallable)
+	bool Contains(UItemDataAsset* Item, int StackNumber) const;
+	bool Contains(FString Tag, int StackNumber) const;
+	bool IsSlotEmpty(int SlotIndex) const;
+	bool IsFull() const;
+	int GetInventoryLimitSize() const;
+
+	void SerializeInventory();
+	void DeserializeInventory();
+	
+	FOnItemAddedEventSignature OnItemAdded;
+	FOnItemRemovedEventSignature OnItemRemoved;
+	FOnItemModifiedEventSignature OnItemModified;
+	FOnItemClearedEventSignature OnItemCleared;
+	FOnHotbarItemChanged OnHotbarItemChanged;
+	FOnItemAddedEventSignature OnItemAddedToInventory;
+	FOnSelectedHotbarChangedSignature OnSelectedHotbarChanged;
+};
