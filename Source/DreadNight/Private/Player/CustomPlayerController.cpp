@@ -104,6 +104,19 @@ void ACustomPlayerController::SetupInputComponent()
 	}
 }
 
+void ACustomPlayerController::OnDestroy()
+{
+	if (GetWorldTimerManager().IsTimerActive(SwitchLevel))
+	{
+		GetWorldTimerManager().ClearTimer(SwitchLevel);
+	}
+	
+	if (GetWorldTimerManager().IsTimerActive(SaveIconHandle))
+	{
+		GetWorldTimerManager().ClearTimer(SaveIconHandle);
+	}
+}
+
 void ACustomPlayerController::UpdateGamePauseState()
 {
 	const bool bShouldPause = (PauseCounter > 0);
@@ -740,6 +753,8 @@ void ACustomPlayerController::ShowGameOver()
 	PushNewMenu(WidgetGameOver, true, []() {}, false);
 
 	UGameplayStatics::PlaySound2D(this, PlayerData->GameOverSound);
+	
+	OnDestroy();
 }
 
 void ACustomPlayerController::TravelToVictoryLevel()

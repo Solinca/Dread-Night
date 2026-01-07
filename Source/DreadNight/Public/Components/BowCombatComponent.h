@@ -41,7 +41,6 @@ protected:
 
 	void SpawnArrow();
 	void ResetShot();
-
 public:
 	UFUNCTION()
 	void SetAiming(bool bAiming);

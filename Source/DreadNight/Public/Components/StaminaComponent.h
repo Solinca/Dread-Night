@@ -67,4 +67,5 @@ public:
 
 	UFUNCTION()
 	float GetCurrentStamina();
+	
 };

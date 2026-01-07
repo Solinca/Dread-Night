@@ -41,7 +41,7 @@ private:
 	float TargetPercent{ 1.0f };
 	FTimerHandle TimerDelay;
 	FTimerHandle TimerUpdate;
-
+	virtual void NativeDestruct() override;
 public:
 	virtual void NativeConstruct() override;
 

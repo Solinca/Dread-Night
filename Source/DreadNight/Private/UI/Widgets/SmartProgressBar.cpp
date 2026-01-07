@@ -61,3 +61,17 @@ void USmartProgressBar::TickGhostAnimation()
 		}
 	}
 }
+
+void USmartProgressBar::NativeDestruct()
+{
+	Super::NativeDestruct();
+	
+	if (GetWorld()->GetTimerManager().IsTimerActive(TimerDelay))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(TimerDelay);
+	}
+	if (GetWorld()->GetTimerManager().IsTimerActive(TimerUpdate))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(TimerUpdate);
+	}
+}

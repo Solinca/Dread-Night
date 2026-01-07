@@ -71,4 +71,3 @@ float UStaminaComponent::GetCurrentStamina()
 {
 	return CurrentStamina;
 }
-
