@@ -7,6 +7,8 @@ UStaminaComponent::UStaminaComponent()
 
 void UStaminaComponent::BeginPlay()
 {
+	Super::BeginPlay();
+
 	CurrentStamina = PlayerData->MaxStamina;
 }
 
