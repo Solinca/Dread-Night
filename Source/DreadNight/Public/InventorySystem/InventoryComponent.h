@@ -38,7 +38,7 @@ public:
 	void AddItem(UItemInstance* Item);
 	UFUNCTION(BlueprintCallable)
 	void RemoveItemsByType(UItemDataAsset* Item, int Amount);
-	void RemoveItemsByTag(FString Tag, int Amount);
+	bool RemoveItemsByTag(FString Tag, int Amount);
 	void RemoveItemsAt(int SlotIndex, int Amount);
 	void UseItemByType(UItemDataAsset* Item);
 	void UseItemAt(int SlotIndex);

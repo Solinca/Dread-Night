@@ -568,6 +568,8 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 	UBowCombatComponent* BowCombatComponent = MyPlayer->GetBowCombatComponent();
 
 	UInventoryComponent* InventoryComponent = MyPlayer->GetInventoryComponent();
+	
+	UInventoryComponent* HotBarInventoryComponent = MyPlayer->GetHotbarInventoryComponent();
 
 	bool AttackExecuted = false;
 
@@ -590,8 +592,11 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 		{
 			BowCombatComponent->Shoot();
 			
-			InventoryComponent->RemoveItemsByTag("Item.Weapon.Arrow", 1);
-
+			if (!HotBarInventoryComponent->RemoveItemsByTag("Item.Weapon.Arrow", 1))
+			{
+				InventoryComponent->RemoveItemsByTag("Item.Weapon.Arrow", 1);
+			}
+			
 			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 
 			AttackExecuted = true;

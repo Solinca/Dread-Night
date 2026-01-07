@@ -70,15 +70,17 @@ void UInventoryComponent::RemoveItemsByType(UItemDataAsset* Item, int Amount)
 			{
 				Items[i] = nullptr;
 				OnItemRemoved.Broadcast(i);
-				OnHotbarItemChanged.Broadcast(i);
 			}
+			
+			OnItemModified.Broadcast(Items[i], i);
+			OnHotbarItemChanged.Broadcast(i);
 			
 			return;
 		}
 	}
 }
 
-void UInventoryComponent::RemoveItemsByTag(FString Tag, int Amount)
+bool UInventoryComponent::RemoveItemsByTag(FString Tag, int Amount)
 {
 	for (int i = 0; i < Items.Num(); ++i)
 	{
@@ -100,12 +102,15 @@ void UInventoryComponent::RemoveItemsByTag(FString Tag, int Amount)
 			{
 				Items[i] = nullptr;
 				OnItemRemoved.Broadcast(i);
-				OnHotbarItemChanged.Broadcast(i);
 			}
-
-			return;
+			
+			OnItemModified.Broadcast(Items[i], i);
+			OnHotbarItemChanged.Broadcast(i);
+			
+			return true;
 		}
 	}
+	return false;
 }
 
 void UInventoryComponent::RemoveItemsAt(int SlotIndex, int Amount)
