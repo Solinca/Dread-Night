@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "Actors/Spawner.h"
+#include "SaveSystem/SavableObject.h"
 #include "IA/Characters/BaseAICharacter.h"
 #include "WaveWorldSubsystem.generated.h"
 
@@ -11,7 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWaveEndSignature);
 class ABaseLevelWorldSettings;
 
 UCLASS()
-class DREADNIGHT_API UWaveWorldSubsystem : public UWorldSubsystem
+class DREADNIGHT_API UWaveWorldSubsystem : public UWorldSubsystem, public ISavableObject
 {
 	GENERATED_BODY()
 
@@ -28,6 +29,7 @@ private:
 
 	FTimerHandle WaveSpawnDelayTimerHandle;
 
+	UPROPERTY(SaveGame)
 	int WaveIndex = 0;
 
 	int RequiredDeathCount = 0;
