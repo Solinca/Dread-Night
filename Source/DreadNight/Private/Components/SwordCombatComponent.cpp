@@ -23,6 +23,15 @@ void USwordCombatComponent::OnSwordOverlap(UPrimitiveComponent* OverlappedComp, 
 void USwordCombatComponent::ResetAttack()
 {
 	IsAttacking = false;
+
+	APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
+	UStaminaComponent* StaminaComponent = Player->GetStaminaComponent();
+
+	// START REGEN STAMINA
+	Player->GetWorldTimerManager().SetTimer(StaminaComponent->CoolDownTimer,
+		[=] {StaminaComponent->SetCanRegen(true); },
+		Player->GetData()->TimeBeforeStartRegenStamina, false
+	);
 }
 
 void USwordCombatComponent::Attack()
