@@ -5,10 +5,10 @@
 
 AFlyingAICharacter::AFlyingAICharacter()
 {
-	GetCapsuleComponent()->SetCollisionProfileName("AiDownFlyingPawn");
+	GetCapsuleComponent()->SetCollisionProfileName("AiGroundPawn");
 
 	UpFlyingCollision = CreateDefaultSubobject<UCapsuleComponent>("UpFlyingCollision");
-	UpFlyingCollision->SetCollisionProfileName("AiUpFlyingPawn");
+	UpFlyingCollision->SetCollisionProfileName("AiFlyingPawn");
 	UpFlyingCollision->SetupAttachment(RootComponent);
 }
 
