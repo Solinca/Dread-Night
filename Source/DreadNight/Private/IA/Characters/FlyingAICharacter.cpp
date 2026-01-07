@@ -1,9 +1,19 @@
 ﻿#include "IA/Characters/FlyingAICharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "IA/DataAssets/FlyingMonsterDataAsset.h"
+#include "Components/CapsuleComponent.h"
+
+AFlyingAICharacter::AFlyingAICharacter()
+{
+	GetCapsuleComponent()->SetCollisionProfileName("AiGroundPawn");
+
+	UpFlyingCollision = CreateDefaultSubobject<UCapsuleComponent>("UpFlyingCollision");
+	UpFlyingCollision->SetCollisionProfileName("AiFlyingPawn");
+	UpFlyingCollision->SetupAttachment(RootComponent);
+}
 
 void AFlyingAICharacter::OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent,
-                                                   UMonsterDataAsset* MonsterDataAsset)
+													UMonsterDataAsset* MonsterDataAsset)
 {
 	Super::OnDataAssetInitialization(BlackboardComponent, MonsterDataAsset);
 
