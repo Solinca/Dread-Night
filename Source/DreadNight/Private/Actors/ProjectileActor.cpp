@@ -29,6 +29,8 @@ void AProjectileActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (ProjectileData)
+		SetDamage(ProjectileData->Damage);
 
 	ProjectileMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectileActor::OnBeginOverlap);
 }
@@ -46,7 +48,7 @@ void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		IDamageable* Damageable{Cast<IDamageable>(OtherActor)};
 	    if (TObjectPtr<ACharacter> Character = Cast<ACharacter>(OtherActor))
-		    Damageable->TryApplyDamage(ProjectileData->Damage, GetInstigator());
+		    Damageable->TryApplyDamage(Damage, GetInstigator());
 
 		Destroy();
 	}
@@ -64,7 +66,7 @@ UStaticMeshComponent* AProjectileActor::GetMesh()
 
 void AProjectileActor::SetDamage(float NewDamage)
 {
-	ProjectileData->Damage = NewDamage;
+	Damage = NewDamage;
 }
 
 float AProjectileActor::GetDamage() const
