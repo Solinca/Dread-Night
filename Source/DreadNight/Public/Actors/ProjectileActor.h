@@ -23,6 +23,10 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bHasBeenShot = false;
+
+	UPROPERTY()
+	float Damage = 0.f;
+
 public:	
 	AProjectileActor();
 
