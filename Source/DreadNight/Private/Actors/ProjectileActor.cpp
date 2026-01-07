@@ -38,15 +38,18 @@ void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 {
 	if (OtherActor == this || IsPendingKillPending() || !OtherActor->Implements<UDamageable>())
 	{
-		Destroy();
+		ProjectileMovementComponent->Deactivate();
 		return;
 	}
 
-	IDamageable* Damageable{Cast<IDamageable>(OtherActor)};
-	if (TObjectPtr<ACharacter> Character = Cast<ACharacter>(OtherActor))
-		Damageable->TryApplyDamage(ProjectileData->Damage, GetInstigator());
-	
-	Destroy();
+	if (ProjectileMovementComponent->IsActive())
+	{
+		IDamageable* Damageable{Cast<IDamageable>(OtherActor)};
+	    if (TObjectPtr<ACharacter> Character = Cast<ACharacter>(OtherActor))
+		    Damageable->TryApplyDamage(ProjectileData->Damage, GetInstigator());
+
+		Destroy();
+	}
 }
 
 UProjectileMovementComponent* AProjectileActor::GetProjectileMovementComponent() const
