@@ -119,7 +119,7 @@ void UInventoryAction::OnQuickActionPressed(int Index)
 {
 	UItemInstance* ItemFrom = InventoryComponent->GetItemAtSlot(SlotIndex);
 	UItemInstance* ItemTo = TargetInventoryComponent->GetItemAtSlot(Index - 1);
-	if (ItemFrom && ItemTo && ItemFrom->GetDataAsset()->Type != ItemTo->GetDataAsset()->Type)
+	if (ItemFrom && ItemTo && ItemFrom->GetDataAsset()->ItemName != ItemTo->GetDataAsset()->ItemName)
 	{
 		InventoryComponent->SwapItem(TargetInventoryComponent, ItemFrom, ItemTo, Index-1);
 	}
