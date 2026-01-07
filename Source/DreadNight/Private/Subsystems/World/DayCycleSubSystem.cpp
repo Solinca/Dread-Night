@@ -312,7 +312,7 @@ void UDayCycleSubSystem::SpawnNewDayPopUp()
 
 void UDayCycleSubSystem::OnPostLoad()
 {
-	--DayCounter;
+	DayCounter--;
 }
 
 void UDayCycleSubSystem::OnPlayerDeath()

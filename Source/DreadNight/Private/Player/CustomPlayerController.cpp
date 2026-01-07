@@ -65,8 +65,6 @@ void ACustomPlayerController::BeginPlay()
 	ObjectPlacementQueryParams.AddIgnoredActor(GetPawn());
 
 	MySettings = Cast<UMyGameUserSettings>(GEngine->GetGameUserSettings());
-
-	GetWorld()->GetSubsystem<UDayCycleSubSystem>()->OnDawnStart.AddDynamic(this, &ThisClass::SaveGame);
 	
 	UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
 	MyGameInstance->OnPCGEndGeneration.AddDynamic(this, &ThisClass::AddPlayerUIToViewport);
@@ -75,13 +73,25 @@ void ACustomPlayerController::BeginPlay()
 	{
 		WaveWorldSubsystem->OnLastWaveEnd.AddDynamic(this, &ThisClass::TravelToVictoryLevel);
 	}
-
+	
+	MyGameInstance->OnControllerEndBeginPlay.Broadcast();
+	MyGameInstance->OnControllerEndBeginPlay.Clear();
+	
+	GetWorld()->GetSubsystem<UDayCycleSubSystem>()->OnDawnStart.AddDynamic(this, &ThisClass::SaveGame);
+	
+	OnePass = false;
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
+	if (!OnePass)
+	{
+		ChangeSelectedSlotToFirstAvailable();
+		OnePass = true;
+	}
+	
 	UpdateCrouching(DeltaTime);
 
 	UpdateObjectPlacement();
@@ -643,8 +653,6 @@ void ACustomPlayerController::GoBackToMenu()
 	SetInputMode(FInputModeUIOnly());
 
 	PlayerCameraManager->StartCameraFade(0, 1, 1, FColor::Black, true, true);
-
-	SaveGame();
 	
 	GetWorldTimerManager().SetTimer(SwitchLevel, [this]
 	{
@@ -799,10 +807,6 @@ void ACustomPlayerController::AddPlayerUIToViewport()
 	{
 		PlayerDamageWidget->AddToViewport();
 	}
-	
-	UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
-	MyGameInstance->OnControllerEndBeginPlay.Broadcast();
-	MyGameInstance->OnControllerEndBeginPlay.Clear();
 }
 
 void ACustomPlayerController::ChangeArmorUI(UArmorDataAsset* ArmorData, bool IsEquipped)

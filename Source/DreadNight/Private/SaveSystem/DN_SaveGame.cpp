@@ -168,7 +168,7 @@ void UDN_SaveGame::DeserializeWorldSubsystem(UWorld* World)
 
 			TSavableObject Subsystem = SubSystemCache[SubsystemSave.Identifier];
  
-			Subsystem.SavableObject->OnPostLoad();
+			//Subsystem.SavableObject->OnPostLoad();
 		}
 	});
 }
