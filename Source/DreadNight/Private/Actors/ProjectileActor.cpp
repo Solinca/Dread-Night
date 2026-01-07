@@ -38,6 +38,7 @@ void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 {
 	if (OtherActor == this || IsPendingKillPending() || !OtherActor->Implements<UDamageable>())
 	{
+		Destroy();
 		return;
 	}
 
