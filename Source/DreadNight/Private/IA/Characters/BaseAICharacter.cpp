@@ -1,6 +1,5 @@
 ﻿#include "IA/Characters/BaseAICharacter.h"
 #include "AIController.h"
-#include "IDetailTreeNode.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/Loot/LootData.h"
 #include "InventorySystem/InventoryComponent.h"
