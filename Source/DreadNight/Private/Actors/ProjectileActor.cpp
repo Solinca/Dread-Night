@@ -42,7 +42,7 @@ void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	}
 
 	IDamageable* Damageable{Cast<IDamageable>(OtherActor)};
-	if (TObjectPtr<ABaseAICharacter> AI = Cast<ABaseAICharacter>(OtherActor))
+	if (TObjectPtr<ACharacter> Character = Cast<ACharacter>(OtherActor))
 		Damageable->TryApplyDamage(ProjectileData->Damage, GetInstigator());
 	
 	Destroy();
