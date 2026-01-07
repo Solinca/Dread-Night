@@ -2,7 +2,21 @@
 
 Group Project - Survival RPG Horror
 
+## Controls
 
+ZQSD : Move
+Space : Jump
+LShift : Sprint
+LCtrl : Crouch
+LMB : Use Equiped item (Attack/Place Building/eat)
+RMB : Aim (with a bow, then LMB to shoot) / Select item in inventory
+E : Interact
+I : Inventory
+M : Map
+1-6 : Hotbar
+Escape : Pause
+
+Need to have the item in the hotbar to use it
 
 ## References
 
