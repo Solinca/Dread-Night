@@ -54,6 +54,11 @@ void UHealthComponent::RemoveHealth(float amount)
 	}
 }
 
+float UHealthComponent::GetMaxHealth() const
+{
+	return MaxHealth;
+}
+
 float UHealthComponent::GetHealthRatio()
 {
 	return CurrentHealth / MaxHealth;

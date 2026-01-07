@@ -9,6 +9,7 @@
 
 class URespawnComponent;
 
+
 UCLASS()
 class DREADNIGHT_API APassiveAICharacter : public ABaseAICharacter, public ISavableActor
 {
@@ -23,6 +24,8 @@ private:
 	
 protected:
 	APassiveAICharacter();
+
+	virtual void BeginPlay() override;
 	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
@@ -31,7 +34,7 @@ protected:
 	virtual bool TryApplyDamage(float Damage, AActor* DamageInstigator) override;
 
 	virtual void OnDeath() override;
- 
+
 private:
 	void OnFleeTimerFinish();
 };

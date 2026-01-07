@@ -38,6 +38,8 @@ public:
 
 	void RemoveHealth(float amount);
 
+	float GetMaxHealth() const;
+	
 	UFUNCTION(BlueprintCallable)
 	float GetHealthRatio();
 };
