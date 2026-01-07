@@ -162,7 +162,7 @@ void ACustomPlayerController::Sprint(const FInputActionValue& Value)
 	{
 		UStaminaComponent* StaminaComponent = MyPlayer->GetStaminaComponent();
 
-		if (StaminaComponent->GetCurrentStamina() > 0.f)
+		if (StaminaComponent->GetCurrentStamina() > 0.f && MyPlayer->GetCharacterMovement()->Velocity.Length() > 0.f)
 		{
 			MyPlayer->GetCharacterMovement()->MaxWalkSpeed = PlayerData->SprintMoveSpeed;
 
