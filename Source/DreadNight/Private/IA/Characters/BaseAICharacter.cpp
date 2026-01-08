@@ -34,6 +34,15 @@ void ABaseAICharacter::OnDeath()
 
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), UsedDataAsset->MonsterDeath, GetActorLocation());
 
+	TArray<AActor*> AttachedActors;
+
+	GetAttachedActors(AttachedActors);
+
+	for (AActor* actor : AttachedActors)
+	{
+		actor->SetActorHiddenInGame(true);
+	}
+
 	Destroy();
 }
 
