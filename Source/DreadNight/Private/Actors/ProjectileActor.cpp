@@ -40,16 +40,22 @@ void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (OtherActor == this || IsPendingKillPending() || !OtherActor->Implements<UDamageable>())
 	{
 		ProjectileMovementComponent->Deactivate();
+
 		return;
 	}
 
 	if (ProjectileMovementComponent->IsActive())
 	{
-		IDamageable* Damageable{Cast<IDamageable>(OtherActor)};
-	    if (TObjectPtr<ACharacter> Character = Cast<ACharacter>(OtherActor))
-		    Damageable->TryApplyDamage(Damage, GetInstigator());
+		AttachToComponent(OtherComponent, FAttachmentTransformRules::KeepWorldTransform);
 
-		Destroy();
+		ProjectileMovementComponent->Deactivate();
+
+		if (TObjectPtr<ACharacter> Character = Cast<ACharacter>(OtherActor))
+		{
+			IDamageable* Damageable{ Cast<IDamageable>(OtherActor) };
+			
+			Damageable->TryApplyDamage(Damage, GetInstigator());
+		}
 	}
 }
 
