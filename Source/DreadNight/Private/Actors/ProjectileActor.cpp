@@ -16,13 +16,8 @@ AProjectileActor::AProjectileActor()
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Movement Component");
 	ProjectileMovementComponent->SetUpdatedComponent(RootComponent);
 
-	//ProjectileMovementComponent->InitialSpeed = ProjectileData->InitialSpeed;
-	//ProjectileMovementComponent->MaxSpeed = ProjectileData->MaxSpeed;
-	//ProjectileMovementComponent->ProjectileGravityScale = ProjectileData->GravityScale;
 	ProjectileMovementComponent->Friction = 0.f;
 	ProjectileMovementComponent->bSweepCollision = false;
-
-	//InitialLifeSpan = ProjectileData->LifeSpan;
 }
 
 void AProjectileActor::BeginPlay()
@@ -30,7 +25,11 @@ void AProjectileActor::BeginPlay()
 	Super::BeginPlay();
 
 	if (ProjectileData)
+	{
 		SetDamage(ProjectileData->Damage);
+	}
+
+	SetLifeSpan(5);
 
 	ProjectileMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectileActor::OnBeginOverlap);
 }
