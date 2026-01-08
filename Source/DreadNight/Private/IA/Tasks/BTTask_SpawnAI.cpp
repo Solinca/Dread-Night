@@ -6,6 +6,7 @@
 #include "DamageSystem/Interface/Damageable.h"
 #include "GameFramework/Character.h"
 #include "Subsystems/World/WaveWorldSubsystem.h"
+#include <IA/Characters/PassiveAICharacter.h>
 
 UBTTask_SpawnAI::UBTTask_SpawnAI()
 {
@@ -163,8 +164,12 @@ void UBTTask_SpawnAI::OnAttackNotifyBegin(FName NotifyName,
 		return;
 	}
 
-	BaseAICharacter->SetMonsterData(SpawnableAIData.AIData);
-	UWaveWorldSubsystem::Get(GetWorld())->RegisterAI(BaseAICharacter);
+	if (SpawnableAIData.AIClass->GetSuperClass() != APassiveAICharacter::StaticClass())
+	{
+		BaseAICharacter->SetMonsterData(SpawnableAIData.AIData);
+
+		UWaveWorldSubsystem::Get(GetWorld())->RegisterAI(BaseAICharacter);
+	}
 	
 	BaseAICharacter->FinishSpawning(AITransform);
 }
