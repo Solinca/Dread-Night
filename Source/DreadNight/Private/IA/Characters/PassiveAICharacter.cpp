@@ -1,5 +1,5 @@
 ﻿#include "IA/Characters/PassiveAICharacter.h"
-
+#include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "IA/DataAssets/PassiveDataAsset.h"
@@ -65,6 +65,8 @@ bool APassiveAICharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 void APassiveAICharacter::OnDeath()
 {
 	DropLoot();
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), UsedDataAsset->MonsterDeath, GetActorLocation());
 
 	RespawnComponent->Despawn();
 }
