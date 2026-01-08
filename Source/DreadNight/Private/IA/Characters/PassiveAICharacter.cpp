@@ -17,6 +17,8 @@ void APassiveAICharacter::BeginPlay()
 	RespawnComponent->OnRespawn.BindLambda([this]
 	{
 		HealthComponent->SetMaxHealth(HealthComponent->GetMaxHealth());
+
+		GetWorld()->GetTimerManager().SetTimer(IdleSoundIntervalTimer, this, &ABaseAICharacter::PlayIdleSound, FMath::FRandRange(UsedDataAsset->MinIntervalBetweenIdleSound, UsedDataAsset->MaxIntervalBetweenIdleSound), false);
 	});
 }
 
@@ -67,6 +69,8 @@ void APassiveAICharacter::OnDeath()
 	DropLoot();
 
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), UsedDataAsset->MonsterDeath, GetActorLocation());
+
+	GetWorld()->GetTimerManager().ClearTimer(IdleSoundIntervalTimer);
 
 	RespawnComponent->Despawn();
 }

@@ -29,6 +29,8 @@ protected:
 
 	UFUNCTION()
 	virtual void OnDeath();
+
+	FTimerHandle IdleSoundIntervalTimer;
 	
 public:
 	ABaseAICharacter();
@@ -50,6 +52,9 @@ public:
 	UMonsterDataAsset* GetMonsterData() const;
 	
 	void DropLoot() const;
+
+	void PlayIdleSound();
+
 protected:
 	UFUNCTION(BlueprintNativeEvent, DisplayName = "OnDataAssetInitialization")
 	void BP_OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset);

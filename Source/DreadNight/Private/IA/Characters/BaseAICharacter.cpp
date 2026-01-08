@@ -24,6 +24,8 @@ void ABaseAICharacter::BeginPlay()
 	Super::BeginPlay();
 
 	HealthComponent->OnDeath.AddDynamic(this, &ABaseAICharacter::OnDeath);
+
+	GetWorld()->GetTimerManager().SetTimer(IdleSoundIntervalTimer, this, &ABaseAICharacter::PlayIdleSound, FMath::FRandRange(UsedDataAsset->MinIntervalBetweenIdleSound, UsedDataAsset->MaxIntervalBetweenIdleSound), false);
 }
 
 void ABaseAICharacter::OnDeath()
@@ -130,6 +132,13 @@ void ABaseAICharacter::DropLoot() const
 			}
 		}
 	}
+}
+
+void ABaseAICharacter::PlayIdleSound()
+{
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), UsedDataAsset->MonsterIdle, GetActorLocation());
+
+	GetWorld()->GetTimerManager().SetTimer(IdleSoundIntervalTimer, this, &ABaseAICharacter::PlayIdleSound, FMath::FRandRange(UsedDataAsset->MinIntervalBetweenIdleSound, UsedDataAsset->MaxIntervalBetweenIdleSound), false);
 }
 
 void ABaseAICharacter::OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset)

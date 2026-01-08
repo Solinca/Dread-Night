@@ -44,4 +44,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
 	TObjectPtr<USoundBase> MonsterDeath;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
+	float MinIntervalBetweenIdleSound = 3.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
+	float MaxIntervalBetweenIdleSound = 5.f;
 };
