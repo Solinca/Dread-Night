@@ -591,8 +591,6 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 
 			GetWorldTimerManager().ClearTimer(StaminaComponent->CoolDownTimer);
 
-			UGameplayStatics::PlaySound2D(this, PlayerData->PlayerSwingSwordSound);
-
 			StaminaComponent->RemoveStamina(PlayerData->AttackStaminaCost);
 
 			MyPlayer->GetConditionStateComponent()->RemoveHungerValue(PlayerData->HungerAttackCost);
