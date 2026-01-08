@@ -82,6 +82,11 @@ void ACustomPlayerController::BeginPlay()
 	OnePass = false;
 }
 
+void ACustomPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorldTimerManager().ClearTimer(SaveIconHandle);
+}
+
 void ACustomPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

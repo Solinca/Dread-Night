@@ -57,6 +57,8 @@ class DREADNIGHT_API ACustomPlayerController : public APlayerController
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupInputComponent() override;
