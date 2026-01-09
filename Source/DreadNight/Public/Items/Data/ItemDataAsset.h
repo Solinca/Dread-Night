@@ -14,9 +14,6 @@ class DREADNIGHT_API UItemDataAsset : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere, SaveGame, BlueprintReadOnly, meta=(Categories="Item"))
 	FGameplayTag Type;
-
-	UPROPERTY(EditAnywhere, SaveGame, BlueprintReadOnly, meta=(Categories="Rarity"))
-	FGameplayTag Rarity;
 	
 	UPROPERTY(EditAnywhere, SaveGame, BlueprintReadOnly, meta=(ClampMin = 1))
 	int StackLimit = 1;
