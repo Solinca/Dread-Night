@@ -23,4 +23,10 @@ public:
 
 	UPROPERTY(EditAnywhere, SaveGame, BlueprintReadOnly)
 	TObjectPtr<UTexture2D> ItemIcon;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMesh> ItemMesh;
+
+	UPROPERTY(EditAnywhere)
+	FVector ItemScale = FVector::One();
 };

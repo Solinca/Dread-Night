@@ -36,7 +36,11 @@ protected:
 	APlayerCharacter();
 
 	virtual void BeginPlay() override;
+
 	void TimerHealthRegen();
+
+	UFUNCTION()
+	void OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UCameraComponent> Camera = nullptr;
@@ -54,13 +58,13 @@ protected:
 	TObjectPtr<UConditionStateComponent> ConditionStateComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	TObjectPtr<USwordCombatComponent> SwordCombatComponent;
+	TObjectPtr<USwordCombatComponent> SwordCombatComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
-	TObjectPtr<UArmorComponent> ArmorComponent;
+	TObjectPtr<UArmorComponent> ArmorComponent = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UStaticMeshComponent> CurrentWeaponMesh = nullptr;
+	TObjectPtr<UStaticMeshComponent> CurrentItemMesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
 	TObjectPtr<UInventoryComponent> InventoryComponent = nullptr;
@@ -83,7 +87,6 @@ protected:
 	FOnPlayerTakeDamageSignature OnPlayerTakeDamage;
 
 public:
-
 	UPROPERTY(EditAnywhere, SaveGame)
 	int CurrentHotbarIndex = 0;
 	
@@ -142,25 +145,15 @@ public:
 	
 	UFUNCTION()
 	UBowCombatComponent* GetBowCombatComponent();
-	
-	UFUNCTION()
-	void EquipWeapon(UItemInstance_Weapon* itemInstanceWeapon);
 
-	void UnequipWeapon();
+	void UnequipCurrentlyHeldItem();
 
 	UFUNCTION()
 	void EquipArmor(UItemInstance_Armor* itemInstanceArmor);
-
-	UFUNCTION()
-	void SetupSwordComponent();
-
-	UFUNCTION()
-	void SetupBowComponent();
 
 	virtual void OnPreSave() override;
 
 	virtual void OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache) override;
 
 	void ProcessHotbarSlot();
-
 };

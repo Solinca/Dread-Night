@@ -13,26 +13,25 @@ class DREADNIGHT_API UBowCombatComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+private:
+	bool bCanShoot = true;
+
+	bool bIsAiming = false;
+
 protected:	
 	UBowCombatComponent();
 
 	FTimerHandle ShotCooldownTimer;
 
-	UPROPERTY()
-	bool bCanShoot;
-	UPROPERTY(BlueprintReadOnly, Category = "Combat")
-	bool bIsAiming;
-
-	UPROPERTY(Transient)
-	UStaticMeshComponent* CurrentStaticMesh;
-	UPROPERTY(Transient)
-	UWeaponDataAsset* CurrentWeapon;
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	UWeaponDataAsset* ArrowData;
+
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	float ShotCooldown = 0.8f;
+
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TSubclassOf<AProjectileActor> ArrowProjectileClass;
+
 	UPROPERTY()
 	TWeakObjectPtr<AProjectileActor> CurrentArrow;
 
@@ -40,18 +39,19 @@ protected:
 	TObjectPtr<UPlayerDataAsset> PlayerData;
 
 	void SpawnArrow();
+
 	void ResetShot();
+
 public:
 	UFUNCTION()
 	void SetAiming(bool bAiming);
+
 	UFUNCTION()
 	void Shoot();
+
 	UFUNCTION()
 	bool CanShoot();
+
 	UFUNCTION()
 	bool IsAiming();
-
-	void SetComponentMesh(UStaticMeshComponent* Mesh);
-	UFUNCTION()
-	void SetWeapon(UWeaponDataAsset* Bow);
 };

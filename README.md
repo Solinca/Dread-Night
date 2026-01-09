@@ -150,6 +150,10 @@ Trap: https://www.fab.com/fr/listings/1f692a9c-192f-4b2d-af3e-5a21f7b1e4f9
 
 Animals: https://www.fab.com/fr/listings/8e208ab4-667d-4a86-870a-f0c3e9b0e080
 
+Apple: https://www.fab.com/listings/c40aab2b-3767-4055-94bf-4283022516f9
+
+Raw Meat: https://www.fab.com/listings/7ae3d759-a963-43e4-855d-ce034d489d77
+
 ### Fonts
 
 https://www.dafont.com/fr/haunted-hill.font

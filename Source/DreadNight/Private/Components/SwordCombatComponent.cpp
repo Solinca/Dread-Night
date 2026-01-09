@@ -39,35 +39,8 @@ void USwordCombatComponent::Attack()
 	IsAttacking = true;
 }
 
-void USwordCombatComponent::SetComponentMesh(UStaticMeshComponent* Mesh)
-{
-	if (CurrentStaticMesh)
-	{
-		CurrentStaticMesh->OnComponentBeginOverlap.RemoveDynamic(this, &USwordCombatComponent::OnSwordOverlap);
-	}	
-	CurrentStaticMesh = Mesh;
-	CurrentStaticMesh->OnComponentBeginOverlap.AddDynamic(this, &USwordCombatComponent::OnSwordOverlap);
-
-}
-
 void USwordCombatComponent::SetWeapon(UWeaponDataAsset* Weapon)
 {
 	CurrentWeapon = Weapon;
-
-	if (CurrentStaticMesh)
-	{
-		if (!Weapon)
-		{
-			CurrentStaticMesh->SetStaticMesh(nullptr);
-
-			return;
-		}
-
-		CurrentStaticMesh->SetStaticMesh(Weapon->WeaponMesh);
-
-		APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
-
-		CurrentStaticMesh->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Player->GetData()->HandSocketName);
-	}
 }
  

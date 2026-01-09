@@ -12,8 +12,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float Damage;
+
 	UPROPERTY(EditAnywhere)
 	float Cooldown;
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UStaticMesh> WeaponMesh;
 };

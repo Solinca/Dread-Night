@@ -30,7 +30,7 @@ APlayerCharacter::APlayerCharacter()
 	
 	ArmorComponent = CreateDefaultSubobject<UArmorComponent>("ArmorComponent");
 
-	CurrentWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>("WeaponMesh");
+	CurrentItemMesh = CreateDefaultSubobject<UStaticMeshComponent>("Item Mesh");
 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>("InventoryComponent");
 	
@@ -46,10 +46,6 @@ void APlayerCharacter::BeginPlay()
 	CurrentCapsuleHalfHeight = PlayerData->CapsuleMaxHalfHeight;
 	
 	HotbarInventoryComponent->SetSize(GetHotbarInventoryComponent()->GetSize());
-	
-	SetupSwordComponent();
-	
-	SetupBowComponent();
 
 	UMyGameInstance* GameInstance = GetGameInstance<UMyGameInstance>();
 	
@@ -57,7 +53,7 @@ void APlayerCharacter::BeginPlay()
 	{
 		HotbarInventoryComponent->AddItem(UItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1));
 
-		EquipWeapon(Cast<UItemInstance_Weapon>(UItemInstanceFactory::CreateItem(this, PlayerData->StartingWeaponDataAsset, 1)));
+		ProcessHotbarSlot();
 	}
 }
 
@@ -65,7 +61,10 @@ void APlayerCharacter::TimerHealthRegen()
 {
 	HealthComponent->AddHealth(PlayerData->PassiveHealthRegenAmount * GetConditionStateComponent()->GetHungerValueRatio());
 
-	if (HealthComponent->GetHealthRatio() == 1) GetWorldTimerManager().ClearTimer(THHealthRegen);
+	if (HealthComponent->GetHealthRatio() == 1)
+	{
+		GetWorldTimerManager().ClearTimer(THHealthRegen);
+	}
 }
 
 bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
@@ -76,12 +75,9 @@ bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 
 	UGameplayStatics::PlaySound2D(this, PlayerData->PlayerTakesDamageSound);
 
-	if (HealthComponent->GetHealthRatio() < 1)
+	if (HealthComponent->GetHealthRatio() < 1 && !GetWorld()->GetTimerManager().IsTimerActive(THHealthRegen))
 	{
-		if (!GetWorld()->GetTimerManager().IsTimerActive(THHealthRegen))
-		{
-			GetWorld()->GetTimerManager().SetTimer(THHealthRegen, this, &APlayerCharacter::TimerHealthRegen, PlayerData->PassiveHealthRegenTimer, true);
-		}
+		GetWorld()->GetTimerManager().SetTimer(THHealthRegen, this, &APlayerCharacter::TimerHealthRegen, PlayerData->PassiveHealthRegenTimer, true);
 	}
 
 	return true;
@@ -183,27 +179,14 @@ UInventoryComponent* APlayerCharacter::GetHotbarInventoryComponent()
 {
 	return HotbarInventoryComponent;
 }
- 
-void APlayerCharacter::EquipWeapon(UItemInstance_Weapon* Weapon)
-{
-	if (Weapon != nullptr)
-	{
-		if (Weapon->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Sword"))
-		{
-			SwordCombatComponent->SetWeapon(Weapon->GetDataAsset());
-		}
-		else if (Weapon->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow"))
-		{
-			BowCombatComponent->SetWeapon(Weapon->GetDataAsset());
-		}
-	}
-}
 
-void APlayerCharacter::UnequipWeapon()
+void APlayerCharacter::UnequipCurrentlyHeldItem()
 {
+	CurrentItemMesh->OnComponentBeginOverlap.RemoveDynamic(this, &APlayerCharacter::OnSwordOverlap);
+	
+	CurrentItemMesh->SetStaticMesh(nullptr);
+	
 	SwordCombatComponent->SetWeapon(nullptr);
-
-	BowCombatComponent->SetWeapon(nullptr);
 }
 
 void APlayerCharacter::EquipArmor(UItemInstance_Armor* Armor)
@@ -214,36 +197,27 @@ void APlayerCharacter::EquipArmor(UItemInstance_Armor* Armor)
 	}
 }
 
-void APlayerCharacter::SetupSwordComponent()
-{
-	CurrentWeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
-
-	SwordCombatComponent->SetComponentMesh(CurrentWeaponMesh);
-}
-
-void APlayerCharacter::SetupBowComponent()
-{
-	CurrentWeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->SecondaryHandSocketName);
-
-	BowCombatComponent->SetComponentMesh(CurrentWeaponMesh);
-}
-
 void APlayerCharacter::OnPreSave()
 {
 	InventoryComponent->SerializeInventory();
+	
 	HotbarInventoryComponent->SerializeInventory();
+	
 	ArmorComponent->OnPreSave();
 }
 
 void APlayerCharacter::OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache)
 {
 	InventoryComponent->DeserializeInventory();
-	HotbarInventoryComponent->DeserializeInventory();
-	ArmorComponent->OnPostLoad();
- 
 	
+	HotbarInventoryComponent->DeserializeInventory();
+	
+	ArmorComponent->OnPostLoad();
+
 	GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(CurrentHotbarIndex);
+	
 	ProcessHotbarSlot();
+	
 	StaminaComponent->RegenStamina(0.f);
 }
 
@@ -259,13 +233,31 @@ void APlayerCharacter::ProcessHotbarSlot()
 	if (UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item); BuildingItem)
 	{
 		BuildingItem->Use(this);
+
 		return;
 	}
 
-	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon"))
+	CurrentItemMesh->SetStaticMesh(Item->GetDataAsset()->ItemMesh);
+
+	CurrentItemMesh->SetRelativeScale3D(Item->GetDataAsset()->ItemScale);
+	
+	CurrentItemMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->HandSocketName);
+
+	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Sword"))
 	{
-		EquipWeapon(Cast<UItemInstance_Weapon>(Item));
-	} 
+		SwordCombatComponent->SetWeapon(Cast<UItemInstance_Weapon>(Item)->GetDataAsset());
+
+		CurrentItemMesh->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnSwordOverlap);
+	}
+	else if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Weapon.Bow"))
+	{
+		CurrentItemMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->SecondaryHandSocketName);
+	}
+}
+
+void APlayerCharacter::OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	SwordCombatComponent->OnSwordOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
 
 UBowCombatComponent* APlayerCharacter::GetBowCombatComponent()

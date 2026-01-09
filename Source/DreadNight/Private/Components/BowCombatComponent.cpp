@@ -6,65 +6,62 @@
 UBowCombatComponent::UBowCombatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	bCanShoot = true;
-	bIsAiming = false;
 }
 
 void UBowCombatComponent::SetAiming(bool bAiming)
 {
 	bIsAiming = bAiming;
 
-	// (optionnel) r�duire la vitesse du perso en visant :
-	// if (auto* Character = Cast<ACharacter>(GetOwner()))
-	// {
-	//     Character->GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? 200.f : 600.f;
-	// }
-
-	// (optionnel) activer un zoom cam�ra, FOV changes, etc.
-
 	if (CurrentArrow == nullptr && bIsAiming)
 	{
 		SpawnArrow();
+
 		return;
 	}
+
 	if (CurrentArrow.IsValid() && !bIsAiming)
 	{
 		CurrentArrow->Destroy();
+
 		CurrentArrow = nullptr;
 	}
 }
 
 void UBowCombatComponent::Shoot()
 {
-	if (!bCanShoot || !ArrowProjectileClass)
+	if (!bCanShoot || !ArrowProjectileClass || !CurrentArrow.IsValid())
+	{
 		return;
+	}
 
-	if (!CurrentArrow.IsValid())
-		return;
 	UProjectileMovementComponent* ProjectileComp = CurrentArrow->GetProjectileMovementComponent();
+	
 	if (ProjectileComp)
 	{
 		APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
+
 		FVector Direction = (Player->GetCamera()->GetComponentLocation() + Player->GetCamera()->GetForwardVector() * 1000.f) - CurrentArrow->GetActorLocation();
+		
 		Direction.Normalize();
+		
 		ProjectileComp->Velocity = Direction * ProjectileComp->InitialSpeed;
+		
 		ProjectileComp->Activate();
+		
 		CurrentArrow->SetDamage(ArrowData->Damage);
+		
 		CurrentArrow->SetHasBeenShot(true);
+		
 		CurrentArrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		
 		CurrentArrow->GetMesh()->SetCollisionProfileName("Arrow");
 	}
+
 	CurrentArrow = nullptr;
+
 	bCanShoot = false;
 
-	// cooldown
-	GetWorld()->GetTimerManager().SetTimer(
-		ShotCooldownTimer,
-		this,
-		&UBowCombatComponent::ResetShot,
-		ShotCooldown,
-		false
-	);
+	GetWorld()->GetTimerManager().SetTimer(ShotCooldownTimer, this, &UBowCombatComponent::ResetShot, ShotCooldown, false);
 }
 
 bool UBowCombatComponent::CanShoot()
@@ -80,61 +77,44 @@ bool UBowCombatComponent::IsAiming()
 void UBowCombatComponent::SpawnArrow()
 {
 	AActor* Owner = GetOwner();
+
 	if (!Owner)
+	{
 		return;
+	}
 
 	FVector SpawnLocation;
+
 	FRotator SpawnRotation;
+
 	USkeletalMeshComponent* MeshComp = Owner->FindComponentByClass<USkeletalMeshComponent>();
+	
 	if (!MeshComp)
+	{
 		return;
+	}
+
 	SpawnLocation = MeshComp->GetSocketLocation(PlayerData->ArrowSocketName);
+	
 	SpawnRotation = Owner->GetActorRotation();
+	
 	FActorSpawnParameters Params;
+	
 	Params.Instigator = Cast<APawn>(Owner);
-	CurrentArrow = GetWorld()->SpawnActor<AProjectileActor>(
-		ArrowProjectileClass,
-		SpawnLocation,
-		SpawnRotation,
-		Params
-	);
+	
+	CurrentArrow = GetWorld()->SpawnActor<AProjectileActor>(ArrowProjectileClass, SpawnLocation, SpawnRotation, Params);
+
 	if (!CurrentArrow.IsValid())
+	{
 		return;
+	}
+
 	CurrentArrow->GetProjectileMovementComponent()->Deactivate();
-	CurrentArrow->AttachToComponent(
-		MeshComp,
-		FAttachmentTransformRules::KeepWorldTransform,
-		PlayerData->ArrowSocketName
-	);
+	
+	CurrentArrow->AttachToComponent(MeshComp, FAttachmentTransformRules::KeepWorldTransform, PlayerData->ArrowSocketName);
 }
 
 void UBowCombatComponent::ResetShot()
 {
 	bCanShoot = true;
-}
-
-void UBowCombatComponent::SetComponentMesh(UStaticMeshComponent* Mesh)
-{
-	CurrentStaticMesh = Mesh;
-}
-
-void UBowCombatComponent::SetWeapon(UWeaponDataAsset* Weapon)
-{
-	CurrentWeapon = Weapon;
-
-	if (CurrentStaticMesh)
-	{
-		if (!Weapon)
-		{
-			CurrentStaticMesh->SetStaticMesh(nullptr);
-
-			return;
-		}
-
-		CurrentStaticMesh->SetStaticMesh(Weapon->WeaponMesh);
-
-		APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner());
-
-		CurrentStaticMesh->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Player->GetData()->SecondaryHandSocketName);
-	}
 }

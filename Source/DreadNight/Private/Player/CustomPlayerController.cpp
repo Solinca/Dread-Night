@@ -515,10 +515,8 @@ void ACustomPlayerController::RemoveCurrentlyHoldItem()
 {
 	StopBuildingPlacement();
 
-	MyPlayer->UnequipWeapon();
+	MyPlayer->UnequipCurrentlyHeldItem();
 }
-
-
 
 void ACustomPlayerController::OnHotbarItemChanged(int Index)
 {

@@ -199,7 +199,6 @@ private:
 
 	void RemoveCurrentlyHoldItem();
 
-
 	UFUNCTION()
 	void OnHotbarItemChanged(int Index);
 	
