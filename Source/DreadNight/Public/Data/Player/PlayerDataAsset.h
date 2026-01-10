@@ -154,6 +154,18 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
 	TObjectPtr<USoundBase> PlayerTakesDamageSound;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
+	TObjectPtr<USoundBase> PlayerEatSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
+	TObjectPtr<USoundBase> PlayerPlaceObjectSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
+	TObjectPtr<USoundBase> PlayerShootArrowSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
+	TObjectPtr<USoundBase> PlayerArrowImpactSound;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Levels")
 	TSoftObjectPtr<UWorld> MainMenuLevel;
 };

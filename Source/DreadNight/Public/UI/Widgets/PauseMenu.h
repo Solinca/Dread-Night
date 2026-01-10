@@ -26,6 +26,12 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> DesktopButton;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<USoundBase> UIHoverSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<USoundBase> UISelectSound = nullptr;
+
 public:
 	virtual void NativeConstruct() override;
 
@@ -53,4 +59,7 @@ private:
 
 	UFUNCTION()
 	void OnDesktopButtonClicked();
+
+	UFUNCTION()
+	void OnButtonHovered();
 };

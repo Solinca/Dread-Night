@@ -222,6 +222,10 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float ObjectPlacementRange = 300.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> UISelectSound = nullptr;
+
 public:
 	// Function to add a Menu to the menu list, so we can leave it with escape
 	template<typename T>

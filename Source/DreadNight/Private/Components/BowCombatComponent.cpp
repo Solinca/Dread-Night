@@ -1,4 +1,5 @@
 #include "Components/BowCombatComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "Player/PlayerCharacter.h"
@@ -55,6 +56,10 @@ void UBowCombatComponent::Shoot()
 		CurrentArrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		
 		CurrentArrow->GetMesh()->SetCollisionProfileName("Arrow");
+
+		UGameplayStatics::PlaySound2D(GetWorld(), PlayerData->PlayerShootArrowSound);
+
+		CurrentArrow->SetImpactSound(PlayerData->PlayerArrowImpactSound);
 	}
 
 	CurrentArrow = nullptr;

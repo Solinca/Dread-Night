@@ -1,4 +1,5 @@
 ﻿#include "Actors/ProjectileActor.h"
+#include "Kismet/GameplayStatics.h"
 #include "IA/Characters/BaseAICharacter.h"
 #include "DamageSystem/Interface/Damageable.h"
 
@@ -34,9 +35,10 @@ void AProjectileActor::BeginPlay()
 	ProjectileMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectileActor::OnBeginOverlap);
 }
 
-void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-									UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ArrowImpactSound, GetActorLocation());
+
 	if (OtherActor == this || IsPendingKillPending() || !OtherActor->Implements<UDamageable>())
 	{
 		ProjectileMovementComponent->Deactivate();
@@ -87,4 +89,9 @@ bool AProjectileActor::GetHasBeenShot()
 void AProjectileActor::SetHasBeenShot(bool Bool)
 {
 	bHasBeenShot = Bool;
+}
+
+void AProjectileActor::SetImpactSound(USoundBase* ImpactSound)
+{
+	ArrowImpactSound = ImpactSound;
 }

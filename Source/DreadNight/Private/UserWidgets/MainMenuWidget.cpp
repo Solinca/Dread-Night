@@ -9,13 +9,21 @@ void UMainMenuWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	ButtonContinue->OnClicked.AddDynamic(this, &UMainMenuWidget::OnContinueClicked);
+
+	ButtonContinue->OnHovered.AddDynamic(this, &UMainMenuWidget::OnButtonHover);
 	
 	ButtonNewGame->OnClicked.AddDynamic(this, &UMainMenuWidget::OnNewGameClicked);
 	
+	ButtonNewGame->OnHovered.AddDynamic(this, &UMainMenuWidget::OnButtonHover);
+	
 	ButtonOptions->OnClicked.AddDynamic(this, &UMainMenuWidget::OnOptionsClicked);
-
+	
+	ButtonOptions->OnHovered.AddDynamic(this, &UMainMenuWidget::OnButtonHover);
+	
 	ButtonQuit->OnClicked.AddDynamic(this, &UMainMenuWidget::OnQuitClicked);
-
+	
+	ButtonQuit->OnHovered.AddDynamic(this, &UMainMenuWidget::OnButtonHover);
+	
 	if (UMyGameInstance* GameInstance = GetGameInstance<UMyGameInstance>(); GameInstance && !GameInstance->DoesSaveExist())
 	{
 		ButtonContinue->SetVisibility(ESlateVisibility::Collapsed);
@@ -29,6 +37,8 @@ void UMainMenuWidget::OnContinueClicked()
 		return;
 	}
 
+	UGameplayStatics::PlaySound2D(GetWorld(), UISelectSound);
+
 	ChangeLevel();
 }
 
@@ -38,6 +48,8 @@ void UMainMenuWidget::OnNewGameClicked()
 	{
 		return;
 	}
+
+	UGameplayStatics::PlaySound2D(GetWorld(), UISelectSound);
 
 	if (UMyGameInstance* GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
 	{
@@ -65,12 +77,19 @@ void UMainMenuWidget::ChangeLevel()
 	}, 1, false);
 }
 
+void UMainMenuWidget::OnButtonHover()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), UIHoverSound);
+}
+
 void UMainMenuWidget::OnOptionsClicked()
 {
 	if (GetWorld()->GetTimerManager().IsTimerActive(SwitchLevel))
 	{
 		return;
 	}
+
+	UGameplayStatics::PlaySound2D(GetWorld(), UISelectSound);
 
 	RemoveFromParent();
 
@@ -93,6 +112,8 @@ void UMainMenuWidget::OnQuitClicked()
 	{
 		return;
 	}
+
+	UGameplayStatics::PlaySound2D(GetWorld(), UISelectSound);
 
 	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 

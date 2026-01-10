@@ -29,7 +29,12 @@ void UOptionsWidget::NativeConstruct()
 		{TEXT("Cinematic"), 4},
 	};
 	
-	if (ButtonReturn) ButtonReturn->OnClicked.AddDynamic(this, &UOptionsWidget::OnReturnClicked);
+	if (ButtonReturn)
+	{
+		ButtonReturn->OnClicked.AddDynamic(this, &UOptionsWidget::OnReturnClicked);
+		
+		ButtonReturn->OnHovered.AddDynamic(this, &UOptionsWidget::OnButtonHovered);
+	}
 
 	MySettings = Cast<UMyGameUserSettings>(GEngine->GetGameUserSettings());
 
@@ -237,6 +242,8 @@ void UOptionsWidget::OnReturnClicked()
 		return;
 	}
 
+	UGameplayStatics::PlaySound2D(GetWorld(), UISelectSound);
+
 	if (UMainMenuWidget* MMW = CreateWidget<UMainMenuWidget>(GetWorld(), MainMenuWidgetClass))
 	{
 		MMW->AddToViewport();
@@ -245,6 +252,11 @@ void UOptionsWidget::OnReturnClicked()
 		
 		RemoveFromParent();
 	}
+}
+
+void UOptionsWidget::OnButtonHovered()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), UIHoverSound);
 }
 
 void UOptionsWidget::SetMainMenuWidgetClass(TSubclassOf<UMainMenuWidget> MMWC)

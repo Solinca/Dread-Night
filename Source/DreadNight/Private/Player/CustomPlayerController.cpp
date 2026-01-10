@@ -540,7 +540,10 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 	{
 		BuildingPreview->PlaceBuilding();
 
+		UGameplayStatics::PlaySound2D(GetWorld(), PlayerData->PlayerPlaceObjectSound);
+
 		UItemInstance_Building* BuildingItem = Cast<UItemInstance_Building>(Item);
+		
 		if (Item && BuildingItem && BuildingItem->GetStackNumber() > 0)
 		{
 			MyPlayer->GetHotbarInventoryComponent()->RemoveItemsAt(MyPlayer->CurrentHotbarIndex, 1);
@@ -553,7 +556,9 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 		}
 		
 		StopBuildingPlacement();
+		
 		OnHotbarItemChanged(MyPlayer->CurrentHotbarIndex);
+		
 		return;
 	}
 	
@@ -565,6 +570,8 @@ void ACustomPlayerController::UseItem(const FInputActionValue& Value)
 	if (Item->GetDataAsset()->Type.GetTagName().ToString().Contains("Item.Food"))
 	{
 		MyPlayer->GetHotbarInventoryComponent()->UseItemAt(MyPlayer->CurrentHotbarIndex);
+
+		UGameplayStatics::PlaySound2D(GetWorld(), PlayerData->PlayerEatSound);
 		
 		if (MyPlayer->GetHotbarInventoryComponent()->IsSlotEmpty(MyPlayer->CurrentHotbarIndex))
 		{
@@ -747,6 +754,8 @@ void ACustomPlayerController::AccessOptions()
 
 void ACustomPlayerController::QuitOptions()
 {
+	UGameplayStatics::PlaySound2D(GetWorld(), UISelectSound);
+
 	PopLastMenu();
 }
 

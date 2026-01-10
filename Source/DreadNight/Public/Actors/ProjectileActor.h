@@ -11,7 +11,18 @@ class DREADNIGHT_API AProjectileActor : public AActor
 {
 	GENERATED_BODY()
 
+private:
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UPROPERTY(Transient)
+	TObjectPtr<USoundBase> ArrowImpactSound = nullptr;
+
 protected:
+	AProjectileActor();
+
+	virtual void BeginPlay() override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> ProjectileMeshComponent;
 	
@@ -27,9 +38,7 @@ protected:
 	UPROPERTY()
 	float Damage = 0.f;
 
-public:	
-	AProjectileActor();
-
+public:
 	UProjectileMovementComponent* GetProjectileMovementComponent() const;
 
 	UStaticMeshComponent* GetMesh();
@@ -41,11 +50,6 @@ public:
 	bool GetHasBeenShot();
 
 	void SetHasBeenShot(bool Bool);
-protected:
-	virtual void BeginPlay() override;
-	
-private:
-	UFUNCTION()
-	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	void SetImpactSound(USoundBase* ImpactSound);
 };

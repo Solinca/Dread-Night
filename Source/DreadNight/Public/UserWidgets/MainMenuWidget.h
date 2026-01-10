@@ -18,6 +18,9 @@ private:
 	FTimerHandle SwitchLevel;
 
 	void ChangeLevel();
+
+	UFUNCTION()
+	void OnButtonHover();
 	
 protected:
 	virtual void NativeConstruct() override;
@@ -42,6 +45,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSubclassOf<UOptionsWidget> OptionsWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<USoundBase> UIHoverSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<USoundBase> UISelectSound = nullptr;
 
 public:
 	UFUNCTION(BlueprintCallable)

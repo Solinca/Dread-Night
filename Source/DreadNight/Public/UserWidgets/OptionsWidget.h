@@ -74,6 +74,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sounds")
 	TObjectPtr<USoundClass> SFXSoundClass = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<USoundBase> UIHoverSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<USoundBase> UISelectSound = nullptr;
+
 	UPROPERTY(meta = (BindWidget))
 	UButton* ButtonReturn = nullptr;
 
@@ -144,6 +150,9 @@ protected:
 
 	UFUNCTION()
 	void OnReturnClicked();
+
+	UFUNCTION()
+	void OnButtonHovered();
 
 public:
 	UPROPERTY(BlueprintAssignable)
