@@ -37,8 +37,6 @@ void AProjectileActor::BeginPlay()
 
 void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ArrowImpactSound, GetActorLocation());
-
 	if (OtherActor == this || IsPendingKillPending() || !OtherActor->Implements<UDamageable>())
 	{
 		ProjectileMovementComponent->Deactivate();
@@ -49,6 +47,8 @@ void AProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (ProjectileMovementComponent->IsActive())
 	{
 		AttachToComponent(OtherComponent, FAttachmentTransformRules::KeepWorldTransform);
+
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ArrowImpactSound, GetActorLocation());
 
 		ProjectileMovementComponent->Deactivate();
 
