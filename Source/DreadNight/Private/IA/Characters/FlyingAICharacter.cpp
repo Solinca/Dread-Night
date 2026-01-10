@@ -12,8 +12,7 @@ AFlyingAICharacter::AFlyingAICharacter()
 	UpFlyingCollision->SetupAttachment(RootComponent);
 }
 
-void AFlyingAICharacter::OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent,
-													UMonsterDataAsset* MonsterDataAsset)
+void AFlyingAICharacter::OnDataAssetInitialization(UBlackboardComponent* BlackboardComponent, UMonsterDataAsset* MonsterDataAsset)
 {
 	Super::OnDataAssetInitialization(BlackboardComponent, MonsterDataAsset);
 

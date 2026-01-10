@@ -1,5 +1,5 @@
 ﻿#include "IA/Tasks/BTTask_SpawnAI.h"
-
+#include "Kismet/GameplayStatics.h"
 #include "AIController.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Float.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
@@ -42,8 +42,9 @@ EBTNodeResult::Type UBTTask_SpawnAI::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	
 	SpawnAITaskMemory->AnimInstance = OwnerComp.GetAIOwner()->GetCharacter()->GetMesh()->GetAnimInstance();
 
-	SpawnAITaskMemory->AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(
-		this, &UBTTask_SpawnAI::OnAttackNotifyBegin);
+	SpawnAITaskMemory->AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UBTTask_SpawnAI::OnAttackNotifyBegin);
+
+	SpawnAITaskMemory->MonsterAttackSound = MonsterAttackSound.GetValue<USoundBase>(OwnerComp);
 
 	if (!SpawnAITaskMemory->AttackedTarget.IsValid() ||
 		!SpawnAITaskMemory->AttackedTarget->Implements<UDamageable>() ||
@@ -158,6 +159,8 @@ void UBTTask_SpawnAI::OnAttackNotifyBegin(FName NotifyName,
 			ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn
 		)
 	};
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SpawnAITaskMemory->MonsterAttackSound.Get(), SpawnInstigator->GetActorLocation());
 	
 	if (!BaseAICharacter)
 	{

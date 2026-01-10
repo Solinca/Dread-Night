@@ -13,6 +13,7 @@ struct FBTSpawnAITaskMemory
 	TWeakObjectPtr<AActor> AttackedTarget;
 	TWeakObjectPtr<UAnimMontage> AttackAnimationMontage;
 	TWeakObjectPtr<UAnimInstance> AnimInstance;
+	TWeakObjectPtr<USoundBase> MonsterAttackSound;
 	
 	FTimerHandle PlayMontageHandle;
 
@@ -41,6 +42,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard")
 	FValueOrBBKey_Object AttackAnimationMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard")
+	FValueOrBBKey_Object MonsterAttackSound;
 
 public:
 	UBTTask_SpawnAI();
