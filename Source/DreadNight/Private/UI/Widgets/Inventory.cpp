@@ -136,7 +136,8 @@ void UInventory::OnItemActionCreated(int SlotIndex)
 		InventoryAction->GetUseText()->SetText(FText::FromName(UsableItem->GetActionName()));
 		
 		ESlateVisibility TransferButtonVisibility = ESlateVisibility::Collapsed;
-		if (!ItemData->GetDataAsset()->Type.MatchesTag(GT_Item_Armor) && !BindTargetInventoryComponent->IsFull())
+
+		if (!ItemData->GetDataAsset()->Type.MatchesTag(GT_Item_Armor))
 		{
 			TransferButtonVisibility = ESlateVisibility::Visible;
 		}
