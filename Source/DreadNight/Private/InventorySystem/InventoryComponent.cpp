@@ -16,10 +16,10 @@ void UInventoryComponent::BeginPlay()
 
 void UInventoryComponent::AddItem(UItemInstance* Item)
 {
-	if (!Item || IsFull())
+	if (!Item)
+	{
 		return;
-	
-	OnItemAddedToInventory.Broadcast(Item, Item->GetStackNumber());
+	}
 	
 	if (Contains(Item->GetDataAsset(), 1))
 	{
@@ -27,21 +27,31 @@ void UInventoryComponent::AddItem(UItemInstance* Item)
 		{
 			if (Items[i] && Items[i]->CanBeStackedWith(Item, EStackMethod::Partially))
 			{
+				OnItemAddedToInventory.Broadcast(Item, Item->GetStackNumber());
+
 				Items[i]->TryStackWith(Item);
+
 				OnItemModified.Broadcast(Items[i], i);
 					
 				if (Item->IsEmpty())
+				{
 					return;
-				
+				}
 			}
 		}
 	}
 	
-	if (Item->IsEmpty())
+	if (Item->IsEmpty() || IsFull())
+	{
 		return;
+	}
+
+	OnItemAddedToInventory.Broadcast(Item, Item->GetStackNumber());
 	
 	int index = GetEmptySlot().GetValue();
+
 	Items[GetEmptySlot().GetValue()] = Item;
+
 	OnItemAdded.Broadcast(Item, index);
 }
 
