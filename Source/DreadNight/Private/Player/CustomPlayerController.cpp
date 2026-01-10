@@ -84,6 +84,8 @@ void ACustomPlayerController::BeginPlay()
 
 void ACustomPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	Super::EndPlay(EndPlayReason);
+
 	GetWorldTimerManager().ClearTimer(SaveIconHandle);
 }
 
