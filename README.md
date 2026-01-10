@@ -32,6 +32,8 @@ Escape : Pause
 
 ## Special info about the project
 
+You can collect every resources with the sword, in 1 hit
+
 In order to use an item, you need to assign it first in the hotbar, and have the hotbar slot selected.
 
 You cannot remove an equipped armor. There is also no need to create multiple armors or weapons, since there is no durability system.
@@ -68,11 +70,25 @@ Victory Music: https://pixabay.com/fr/music/titre-principal-award-ceremony-orche
 
 Wave Start: https://pixabay.com/sound-effects/long-distant-foghorn-40915/
 
-Game Over: https://pixabay.com/sound-effects/kl-music-box-game-over-iii-152202/
+Player Hit: https://pixabay.com/fr/sound-effects/oof-97698/
 
-Player Takes Damage: https://pixabay.com/fr/sound-effects/oof-97698/
+Player Attack with Sword: https://pixabay.com/fr/sound-effects/sword-swing-sfx-407574/
 
-Swing Sword: https://pixabay.com/fr/sound-effects/sword-swing-sfx-407574/
+Player Attack with Bow: https://pixabay.com/fr/sound-effects/arrow-swish-03-306040/
+
+Player Death: https://pixabay.com/sound-effects/kl-music-box-game-over-iii-152202/
+
+Player Craft Item: https://pixabay.com/fr/sound-effects/hammering-on-anvil-71902/
+
+Player Eat Something: https://pixabay.com/fr/sound-effects/eat-323883/
+
+Player Place Something: https://pixabay.com/fr/sound-effects/epic-object-placing-105779/
+
+Arrow Hit Something: https://pixabay.com/fr/sound-effects/arrow-twang-01-306041/
+
+UI Hover: https://pixabay.com/fr/sound-effects/click-buttons-ui-menu-sounds-effects-button-13-205396/
+
+UI Select: https://pixabay.com/fr/sound-effects/soft-ui-pop-light-minimal-click-451232/
 
 Wood Collectible Breaks: https://pixabay.com/fr/sound-effects/wood-crate-destory-2-97263/
 
@@ -80,31 +96,37 @@ Ores Collectible Breaks: https://pixabay.com/fr/sound-effects/stones-falling-637
 
 Crystal Collectible Breaks: https://pixabay.com/fr/sound-effects/breaking-glass-83809/
 
-Demon Monster Idle: https://pixabay.com/fr/sound-effects/monster-growl-376892/
+Fire: https://pixabay.com/fr/sound-effects/fire-340951/
 
-Demon Monster Attack: https://pixabay.com/fr/sound-effects/monster-roars-177261/
+Boss Idle: https://pixabay.com/fr/sound-effects/flying-monster-screech-01-461221/
 
-Demon Monster Takes Damages: https://pixabay.com/fr/sound-effects/monster-roars-177261/
+Boss Attack: https://pixabay.com/fr/sound-effects/item-respawn-91422/
 
-Demon Monster Death: https://pixabay.com/fr/sound-effects/monster-roars-177261/
+Boss Hit: https://pixabay.com/fr/sound-effects/flying-monster-screech-02-461220/
+
+Boss Death: https://pixabay.com/fr/sound-effects/fly-monster-38083/
+
+Demon Idle: https://pixabay.com/fr/sound-effects/monster-growl-376892/
+
+Demon Attack: https://pixabay.com/fr/sound-effects/monster-roars-177261/
+
+Demon Hit: https://pixabay.com/fr/sound-effects/monster-roars-177261/
+
+Demon Death: https://pixabay.com/fr/sound-effects/monster-roars-177261/
 
 Skeleton Idle: https://pixabay.com/fr/sound-effects/gloomy-aura-153274/
 
 Skeleton Attack: https://pixabay.com/fr/sound-effects/woosh-230554/
 
-Skeleton Takes Damages: https://pixabay.com/fr/sound-effects/bone-crack-3-121580/
+Skeleton Hit: https://pixabay.com/fr/sound-effects/bone-crack-3-121580/
 
 Skeleton Death: https://pixabay.com/fr/sound-effects/falling-bones-87568/
 
 Cow Idle: https://pixabay.com/fr/sound-effects/cow-sound-234947/
 
-Cow Take Damages: https://pixabay.com/fr/sound-effects/cow-moo-single-demo-309888/
+Cow Hit: https://pixabay.com/fr/sound-effects/cow-moo-single-demo-309888/
 
 Cow Death: https://pixabay.com/fr/sound-effects/cow-moo-390282/
-
-Item Crafted: https://pixabay.com/fr/sound-effects/hammering-on-anvil-71902/
-
-Fire: https://pixabay.com/fr/sound-effects/fire-340951/
 
 ### Animations
 
