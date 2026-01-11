@@ -4,35 +4,41 @@ Group Project - Survival RPG Horror
 
 ## Controls
 
-ZQSD : Move
+ZQSD: Move
 
-Space : Jump
+Space: Jump
 
-Left Shift : Sprint
+Left Shift (hold): Sprint
 
-Left Ctrl : Crouch
+Left Ctrl (hold): Crouch
 
-LMB : Use Equiped item (Attack / Place Building / Eat)
+LMB: Use selected hotbar item (Attack / Place building / Eat)
 
-RMB : Aim with the bow
+RMB: Aim with the bow
 
-RMB over an item inside the inventory / hotbar: Open the associated item action (destroy, assign, remove)
+RMB over an item inside the inventory / hotbar: Open the associated item action (destroy, assign to, remove)
 
-E : Interact
+E: Interact
 
-I : Inventory
+I: Inventory
 
-M : Map
+M: Map
 
-1-6 : Hotbar
+1-6: Change currently selected hotbar slot
 
-Mouse Scroll (up / down) : Change currently selected hotbar slot
+Mouse Scroll (up / down): Change currently selected hotbar slot
 
-Escape : Pause
+Escape: Pause
+
+
 
 ## Special info about the project
 
-You can collect every resources with the sword, in 1 hit
+You can collect every resource with the sword, in 1 hit.
+
+If you ever trash your rusty sword, you can craft one for free at the anvil.
+
+In order to craft some items, you need to access the anvil at your base camp. Every recipe is available there.
 
 In order to use an item, you need to assign it first in the hotbar, and have the hotbar slot selected.
 
@@ -42,17 +48,15 @@ In order to attack with the bow, you need to have some arrows inside your invent
 
 Cows and resources (wood, stone, ores) respawn at the start of every day.
 
-There is also a Save System that triggers only at the start of every day. Pressing New Game, Dying or Completing the game will destroy the save.
+There is a stamina system. Every action in the game costs stamina. You cannot perform an action while at 0 stamina.
 
-In order to craft some items, you need to access (with E) the anvil at your base camp. Every recipe are available there.
+There is also a hunger system. Every action in the game costs some energy. The less energy you have, the less your passive health regeneration is. Eat some apples or raw meat to regain some energy.
 
-There is a Stamina system. Every action in the game cost stamina. You cannot perform an action while at 0 stamina.
+At the start of the night, a wave of monsters will spawn. Defeating them all will allow you to move on to the next day.
 
-There is also a Hunger system. Every action in the game cost some energy. The less energy you have, the less your passive health regenaration is. Eat some apples or raw meat to regain some energy.
+There is a boss encounter during Night 5. You need to defeat it as well as all of its spawned minions to win the game (except cows).
 
-At the start of the night, a wave of monsters will spawn. Defeating them all will allow you to move to the next day.
-
-There is a boss encounter during Night 5. You need to defeat it as well as all of its spawned minions to win the game.
+Currently, there is no saving system. If we manage to find a fix to it in production, we will be pushing a new update, so stay tuned! :)
 
 ## References
 
