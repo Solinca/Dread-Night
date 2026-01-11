@@ -77,7 +77,7 @@ void ACustomPlayerController::BeginPlay()
 	MyGameInstance->OnControllerEndBeginPlay.Broadcast();
 	MyGameInstance->OnControllerEndBeginPlay.Clear();
 	
-	GetWorld()->GetSubsystem<UDayCycleSubSystem>()->OnDawnStart.AddDynamic(this, &ThisClass::SaveGame);
+	//GetWorld()->GetSubsystem<UDayCycleSubSystem>()->OnDawnStart.AddDynamic(this, &ThisClass::SaveGame);
 	
 	OnePass = false;
 }
