@@ -45,17 +45,7 @@ void ACustomPlayerController::BeginPlay()
 		}
 	}
 
-	MyPlayer = Cast<APlayerCharacter>(GetPawn());
-
-	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = PlayerData->CrouchMoveSpeed;
-
-	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
 	
-	MyPlayer->GetArmorComponent()->OnArmorChanged.AddDynamic(this, &ThisClass::ChangeArmorUI);
-
-	MyPlayer->GetInventoryComponent()->OnItemAddedToInventory.AddDynamic(this, &ThisClass::AddItemNotificationToViewport);
-	
-	MyPlayer->GetHotbarInventoryComponent()->OnItemAddedToInventory.AddDynamic(this, &ThisClass::AddItemNotificationToViewport);
 	
 	PlayerCameraManager->ViewPitchMin = PlayerData->ViewPitch.X;
 
@@ -74,10 +64,7 @@ void ACustomPlayerController::BeginPlay()
 		WaveWorldSubsystem->OnLastWaveEnd.AddDynamic(this, &ThisClass::TravelToVictoryLevel);
 	}
 	
-	MyGameInstance->OnControllerEndBeginPlay.Broadcast();
-	MyGameInstance->OnControllerEndBeginPlay.Clear();
-	
-	//GetWorld()->GetSubsystem<UDayCycleSubSystem>()->OnDawnStart.AddDynamic(this, &ThisClass::SaveGame);
+	GetWorld()->GetSubsystem<UDayCycleSubSystem>()->OnDawnStart.AddDynamic(this, &ThisClass::SaveGame);
 	
 	OnePass = false;
 }
@@ -119,6 +106,27 @@ void ACustomPlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(i.Action, i.Event, this, i.ActionName.GetMemberName());
 		}
 	}
+}
+
+void ACustomPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	MyPlayer = Cast<APlayerCharacter>(InPawn);
+
+	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = PlayerData->CrouchMoveSpeed;
+
+	UE_LOG(LogTemp, Error, TEXT("Try accessing %s component, pointer value = %p"), *UHealthComponent::StaticClass()->GetName(), MyPlayer->GetHealthComponent());
+	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
+
+	UE_LOG(LogTemp, Error, TEXT("Try accessing %s component, pointer value = %p"), *UArmorComponent::StaticClass()->GetName(), MyPlayer->GetArmorComponent());
+	MyPlayer->GetArmorComponent()->OnArmorChanged.AddDynamic(this, &ThisClass::ChangeArmorUI);
+
+	UE_LOG(LogTemp, Error, TEXT("Try accessing %s component, pointer value = %p"), *UInventoryComponent::StaticClass()->GetName(), MyPlayer->GetInventoryComponent());
+	MyPlayer->GetInventoryComponent()->OnItemAddedToInventory.AddDynamic(this, &ThisClass::AddItemNotificationToViewport);
+
+	UE_LOG(LogTemp, Error, TEXT("Try accessing %s component, pointer value = %p"), *UInventoryComponent::StaticClass()->GetName(), MyPlayer->GetHotbarInventoryComponent());
+	MyPlayer->GetHotbarInventoryComponent()->OnItemAddedToInventory.AddDynamic(this, &ThisClass::AddItemNotificationToViewport);
 }
 
 void ACustomPlayerController::OnDestroy()

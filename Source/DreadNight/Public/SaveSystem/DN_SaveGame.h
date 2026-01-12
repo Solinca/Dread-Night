@@ -71,6 +71,7 @@ class DREADNIGHT_API UDN_SaveGame : public USaveGame
 	void SerializeActorComponents(AActor* Actor, FObjectAndNameAsStringProxyArchive& Ar);
 	void SerializeWorldSubsystem(UWorld* World);
 	
+	void DeserializeActorComponents(AActor* Actor, FObjectAndNameAsStringProxyArchive& Ar);
 	void DeserializeWorldSubsystem(UWorld* World);
 	void DeserializeActor(UWorld* World);
 

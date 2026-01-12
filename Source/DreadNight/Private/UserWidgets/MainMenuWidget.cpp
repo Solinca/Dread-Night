@@ -24,14 +24,14 @@ void UMainMenuWidget::NativeConstruct()
 	
 	ButtonQuit->OnHovered.AddDynamic(this, &UMainMenuWidget::OnButtonHover);
 
-	ButtonContinue->SetVisibility(ESlateVisibility::Collapsed);
+	ButtonContinue->SetVisibility(ESlateVisibility::Visible);
 	
-	/*
+	
 	if (UMyGameInstance* GameInstance = GetGameInstance<UMyGameInstance>(); GameInstance && !GameInstance->DoesSaveExist())
 	{
 		ButtonContinue->SetVisibility(ESlateVisibility::Collapsed);
 	}
-	*/
+	
 }
 
 void UMainMenuWidget::OnContinueClicked()

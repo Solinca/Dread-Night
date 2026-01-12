@@ -20,6 +20,11 @@ void AWorldGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GetWorldTimerManager().SetTimerForNextTick(this, &AWorldGenerator::GenerateWorldGame);
+}
+
+void AWorldGenerator::GenerateWorldGame()
+{
 	GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this));
 	if (!GameInstance)
 		return;

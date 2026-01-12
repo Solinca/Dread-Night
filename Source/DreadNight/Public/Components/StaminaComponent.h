@@ -3,12 +3,13 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Data/Player/PlayerDataAsset.h"
+#include "SaveSystem/SavableObject.h"
 #include "StaminaComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStaminaChanged, float, Stamina, float, MaxStamina);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class DREADNIGHT_API UStaminaComponent : public UActorComponent
+class DREADNIGHT_API UStaminaComponent : public UActorComponent, public ISavableObject
 {
 	GENERATED_BODY()
 
