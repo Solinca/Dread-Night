@@ -69,6 +69,4 @@ void URespawnComponent::OnPostLoad()
 	{
 		Despawn();
 	}
-	
-	++NightBeforeRespawn;
 }
