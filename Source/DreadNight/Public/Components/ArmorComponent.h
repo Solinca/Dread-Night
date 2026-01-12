@@ -26,8 +26,7 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UArmorDataAsset> CurrentBoots = nullptr;
-
-	UPROPERTY(SaveGame)
+ 
 	float TotalDamageReduction = 0.f;
 
 	UPROPERTY(SaveGame)
@@ -51,7 +50,10 @@ public:
 
 	float GetTotalDamageReduction() const { return TotalDamageReduction; }
 
-	void OnPreSave();
+	virtual void OnPreSave() override;
 
-	void OnPostLoad();
+	virtual void OnPostLoad() override;
+
+	UFUNCTION()
+	void UpdateAllUI();
 };

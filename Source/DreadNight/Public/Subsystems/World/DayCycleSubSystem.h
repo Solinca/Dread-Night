@@ -103,9 +103,11 @@ private:
 
 protected:
 	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
-
+ 
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 
+	virtual void Deinitialize() override;
+	
 public:
 	FOnNightStartSignature OnNightStart;
 

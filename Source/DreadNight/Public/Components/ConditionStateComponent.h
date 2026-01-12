@@ -14,6 +14,7 @@ class DREADNIGHT_API UConditionStateComponent : public UActorComponent, public I
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(SaveGame)
 	float CurrentHunger;
 
 protected:

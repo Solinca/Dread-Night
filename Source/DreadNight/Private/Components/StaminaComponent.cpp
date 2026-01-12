@@ -1,5 +1,8 @@
 #include "Components/StaminaComponent.h"
 
+#include "Global/MyGameInstance.h"
+#include "Kismet/GameplayStatics.h"
+
 UStaminaComponent::UStaminaComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -10,6 +13,12 @@ void UStaminaComponent::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentStamina = PlayerData->MaxStamina;
+
+	auto GameInstance = GetWorld()->GetGameInstance<UMyGameInstance>();
+	if (!GameInstance->IsNewGame())
+	{
+		GameInstance->OnPCGEndGeneration.AddDynamic(this, &UStaminaComponent::ActivateRegenAfterLoad);
+	}
 }
 
 void UStaminaComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -65,4 +74,14 @@ void UStaminaComponent::SetCanRegen(bool value)
 float UStaminaComponent::GetCurrentStamina()
 {
 	return CurrentStamina;
+}
+ 
+void UStaminaComponent::OnPostLoad()
+{ 
+	OnStaminaChanged.Broadcast(CurrentStamina, PlayerData->MaxStamina);
+}
+
+void UStaminaComponent::ActivateRegenAfterLoad()
+{
+	SetCanRegen(true);
 }

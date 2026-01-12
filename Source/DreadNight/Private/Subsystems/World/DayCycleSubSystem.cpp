@@ -55,6 +55,15 @@ bool UDayCycleSubSystem::ShouldCreateSubsystem(UObject* Outer) const
 	return World && World->IsGameWorld() && World == Cast<ABaseLevelWorldSettings>(World->GetWorldSettings())->MapToLoadSubsystems;
 }
 
+void UDayCycleSubSystem::Deinitialize()
+{
+	Super::Deinitialize();
+	FTimerManager& Manager = GetWorld()->GetTimerManager();
+	Manager.ClearTimer(WidgetSpawnDelayTimerHandle);	
+	Manager.ClearTimer(MusicHandler);	
+	Manager.ClearTimer(ProcessDayTimer);	
+}
+
 void UDayCycleSubSystem::StartDayCycle()
 {
 	DayCounter++;
@@ -312,7 +321,7 @@ void UDayCycleSubSystem::SpawnNewDayPopUp()
 
 void UDayCycleSubSystem::OnPostLoad()
 {
-	DayCounter--;
+	--DayCounter;
 }
 
 void UDayCycleSubSystem::OnPlayerDeath()

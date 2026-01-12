@@ -14,8 +14,9 @@ class DREADNIGHT_API UStaminaComponent : public UActorComponent, public ISavable
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(SaveGame)
 	float CurrentStamina;
-
+ 
 	bool CanRegen = false;
 
 protected:	
@@ -28,6 +29,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UPlayerDataAsset> PlayerData;
 
+	UFUNCTION()
+	void ActivateRegenAfterLoad();
 public:
 	FTimerHandle CoolDownTimer;
 
@@ -51,4 +54,7 @@ public:
 
 	UFUNCTION()
 	float GetCurrentStamina();
+	
+	virtual void OnPostLoad() override;
 };
+ 
