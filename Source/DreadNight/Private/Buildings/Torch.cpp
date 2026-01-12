@@ -38,6 +38,8 @@ void ATorch::BeginPlay()
 	{
 		VFX->Activate();
 	}
+
+	SetIsDynamicallySpawned(GetClass());
 }
 
 void ATorch::EndPlay(const EEndPlayReason::Type EndPlayReason)
