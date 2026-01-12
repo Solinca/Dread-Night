@@ -71,9 +71,12 @@ bool APlayerCharacter::TryApplyDamage(float Damage, AActor* DamageInstigator)
 {
 	HealthComponent->RemoveHealth(Damage - ArmorComponent->GetTotalDamageReduction());
 
-	OnPlayerTakeDamage.Broadcast();
+	if (Damage > 0)
+	{
+		OnPlayerTakeDamage.Broadcast();
 
-	UGameplayStatics::PlaySound2D(this, PlayerData->PlayerTakesDamageSound);
+		UGameplayStatics::PlaySound2D(this, PlayerData->PlayerTakesDamageSound);
+	}
 
 	if (HealthComponent->GetHealthRatio() < 1 && !GetWorld()->GetTimerManager().IsTimerActive(THHealthRegen))
 	{
