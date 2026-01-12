@@ -84,22 +84,13 @@ TMap<FName, ISavableActor*> UDN_SaveGame::BuildWorldSavableCache(UWorld* WorldCo
 
 void UDN_SaveGame::SerializeActorComponents(AActor* Actor, FObjectAndNameAsStringProxyArchive& Ar)
 {
-	for (TFieldIterator<FProperty> PropIt(Actor->GetClass()); PropIt; ++PropIt)
+	for (auto Component : Actor->GetComponentsByInterface(USavableObject::StaticClass()))
 	{
-		if (!PropIt->HasAnyPropertyFlags(CPF_SaveGame))
-		{
-			continue;
-		}
-		
-		if (FObjectProperty* ObjProp = CastField<FObjectProperty>(*PropIt))
-		{
-			UObject* ObjValue = ObjProp->GetObjectPropertyValue_InContainer(Actor);
+		ISavableObject* SavableObject = Cast<ISavableObject>(Component);
 
-			if (UActorComponent* Comp = Cast<UActorComponent>(ObjValue))
-			{
-				Comp->Serialize(Ar);
-			}
-		}
+		SavableObject->OnPreSave();
+		Component->Serialize(Ar);
+		SavableObject->OnPostSave();
 	}
 }
 
@@ -125,6 +116,18 @@ void UDN_SaveGame::SerializeWorldSubsystem(UWorld* World)
 		WorldSubsystemSave.Add(MoveTemp(UniqueObject));
 		Subsystem.SavableObject->OnPostSave();
 		
+	}
+}
+
+void UDN_SaveGame::DeserializeActorComponents(AActor* Actor, FObjectAndNameAsStringProxyArchive& Ar)
+{
+	for (auto Component : Actor->GetComponentsByInterface(USavableObject::StaticClass()))
+	{
+		ISavableObject* SavableObject = Cast<ISavableObject>(Component);
+
+		SavableObject->OnPreLoad();
+		Component->Serialize(Ar);
+		SavableObject->OnPostLoad();
 	}
 }
 
@@ -156,21 +159,17 @@ void UDN_SaveGame::DeserializeWorldSubsystem(UWorld* World)
 		Subsystem.SavableObject->OnPostLoad();
 	}
 
-	UMyGameInstance* GameInstance = World->GetGameInstance<UMyGameInstance>();
-	GameInstance->OnControllerEndBeginPlay.AddLambda([this, SubSystemCache]()
+	for (auto SubsystemSave : WorldSubsystemSave)
 	{
-		for (auto SubsystemSave : WorldSubsystemSave)
+		if (!SubSystemCache.Contains(SubsystemSave.Identifier))
 		{
-			if (!SubSystemCache.Contains(SubsystemSave.Identifier))
-			{
-				continue;
-			}
-
-			TSavableObject Subsystem = SubSystemCache[SubsystemSave.Identifier];
- 
-			//Subsystem.SavableObject->OnPostLoad();
+			continue;
 		}
-	});
+
+		TSavableObject Subsystem = SubSystemCache[SubsystemSave.Identifier];
+ 
+		//Subsystem.SavableObject->OnPostLoad();
+	} 
 }
 
 void UDN_SaveGame::DeserializeActor(UWorld* WorldContext)
@@ -211,20 +210,16 @@ void UDN_SaveGame::DeserializeActor(UWorld* WorldContext)
 			FObjectAndNameAsStringProxyArchive Ar(MemoryReader, false);
 			Ar.ArIsSaveGame = true;
 			TargetActor->Serialize(Ar);
-			SerializeActorComponents(TargetActor, Ar);
+			DeserializeActorComponents(TargetActor, Ar);
 		}
 	}
 
-	UMyGameInstance* GameInstance = WorldContext->GetGameInstance<UMyGameInstance>();
-	GameInstance->OnControllerEndBeginPlay.AddLambda([FinalSavableCache = BuildWorldSavableCache(WorldContext)]() mutable
-	{ 		
-		for (TPair<FName, ISavableActor*>& Savable : FinalSavableCache)
-		{
-			Savable.Value->OnPostLoad(FinalSavableCache);
-		} 
-	});
-
-	
+ 
+	auto FinalSavableCache = BuildWorldSavableCache(WorldContext);
+	for (TPair<FName, ISavableActor*>& Savable : FinalSavableCache)
+	{
+		Savable.Value->OnPostLoad(FinalSavableCache);
+	} 
  
 	
 }

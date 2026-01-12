@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Items/Object/ItemInstance.h"
+#include "SaveSystem/SavableObject.h"
 #include "InventoryComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemAddedEventSignature, class UItemInstance*, ItemInstance, int, ItemSlot);
@@ -13,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHotbarItemChanged, int, SlotIndex
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectedHotbarChangedSignature, int, SlotIndex);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class DREADNIGHT_API UInventoryComponent : public UActorComponent
+class DREADNIGHT_API UInventoryComponent : public UActorComponent, public ISavableObject
 {
 	GENERATED_BODY()
 

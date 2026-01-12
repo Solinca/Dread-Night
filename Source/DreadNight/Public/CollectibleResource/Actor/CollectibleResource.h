@@ -43,7 +43,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UDataTable> ResourceData;
 
-	UPROPERTY(SaveGame,EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<URespawnComponent> RespawnComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")

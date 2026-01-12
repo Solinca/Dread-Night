@@ -75,28 +75,28 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<USpringArmComponent> SpringArm = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UHealthComponent> HealthComponent = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UStaminaComponent> StaminaComponent = nullptr;
  
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UConditionStateComponent> ConditionStateComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<USwordCombatComponent> SwordCombatComponent = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UArmorComponent> ArmorComponent = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> CurrentItemMesh = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UInventoryComponent> InventoryComponent = nullptr;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UInventoryComponent> HotbarInventoryComponent = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")

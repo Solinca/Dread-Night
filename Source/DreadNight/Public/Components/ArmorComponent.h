@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "SaveSystem/SavableObject.h"
 #include "ArmorComponent.generated.h"
 
 class UArmorDataAsset;
@@ -9,7 +10,7 @@ class UArmorDataAsset;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnArmorChangedSignature, UArmorDataAsset*, ArmorData, bool, IsEquipped);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class DREADNIGHT_API UArmorComponent : public UActorComponent
+class DREADNIGHT_API UArmorComponent : public UActorComponent, public ISavableObject
 {
 	GENERATED_BODY()
 

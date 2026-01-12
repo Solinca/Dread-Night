@@ -32,6 +32,7 @@ protected:
 	UPROPERTY(Transient)
 	UMyGameInstance* GameInstance;
 
+	void GenerateWorldGame();
 
 	void RegisterVolume(APCGVolume* Volume);
 

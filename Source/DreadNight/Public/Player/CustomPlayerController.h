@@ -63,6 +63,8 @@ protected:
 
 	virtual void SetupInputComponent() override;
 
+	virtual void OnPossess(APawn* InPawn) override;
+
 	void OnDestroy();
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inputs")

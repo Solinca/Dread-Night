@@ -19,7 +19,7 @@ class DREADNIGHT_API APassiveAICharacter : public ABaseAICharacter, public ISava
 private:
 	FTimerHandle FleeTimerHandle;
 
-	UPROPERTY(SaveGame, EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<URespawnComponent> RespawnComponent;
 	
 protected:

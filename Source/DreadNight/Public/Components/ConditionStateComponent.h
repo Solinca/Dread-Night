@@ -3,12 +3,13 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Data/Player/PlayerDataAsset.h"
+#include "SaveSystem/SavableObject.h"
 #include "ConditionStateComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FConditionStateChangedSignature, float, Value);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class DREADNIGHT_API UConditionStateComponent : public UActorComponent
+class DREADNIGHT_API UConditionStateComponent : public UActorComponent, public ISavableObject
 {
 	GENERATED_BODY()
 
