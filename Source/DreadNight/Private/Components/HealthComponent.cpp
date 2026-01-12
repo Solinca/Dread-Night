@@ -5,7 +5,7 @@ UHealthComponent::UHealthComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
-
+ 
 void UHealthComponent::SetMaxHealth(float amount)
 {
 	MaxHealth = CurrentHealth = amount;
@@ -62,6 +62,12 @@ float UHealthComponent::GetMaxHealth() const
 float UHealthComponent::GetHealthRatio()
 {
 	return CurrentHealth / MaxHealth;
+}
+
+void UHealthComponent::OnPostLoad()
+{
+	OnHealthChanged.Broadcast(CurrentHealth,MaxHealth);
+	
 }
 
 

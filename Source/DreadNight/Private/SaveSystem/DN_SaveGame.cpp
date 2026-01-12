@@ -106,7 +106,7 @@ void UDN_SaveGame::SerializeWorldSubsystem(UWorld* World)
 	for (auto Subsystem : SavableWorldSubsystem)
 	{
 		FUniqueObjectSave UniqueObject;
-		UniqueObject.Identifier = *Subsystem.Object->GetName();
+		UniqueObject.Identifier = *Subsystem.Object->GetClass()->GetName();
 		FMemoryWriter MemoryWriter(UniqueObject.Data, true);
 		FObjectAndNameAsStringProxyArchive Ar(MemoryWriter, false);
 		Ar.ArIsSaveGame = true;
@@ -138,7 +138,7 @@ void UDN_SaveGame::DeserializeWorldSubsystem(UWorld* World)
 	{
 		if (TSavableObject SavableSubsystem = Subsystem; SavableSubsystem.IsValid())
 		{
-			SubSystemCache.Add(*Subsystem->GetName(),MoveTemp(SavableSubsystem));			
+			SubSystemCache.Add(*Subsystem->GetClass()->GetName(),MoveTemp(SavableSubsystem));			
 		}		
 	}
 

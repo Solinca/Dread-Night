@@ -76,6 +76,9 @@ public:
 
 	void SerializeInventory();
 	void DeserializeInventory();
+
+	UFUNCTION()
+	void UpdateAllUI();
 	
 	FOnItemAddedEventSignature OnItemAdded;
 	FOnItemRemovedEventSignature OnItemRemoved;

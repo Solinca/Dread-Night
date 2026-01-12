@@ -116,16 +116,12 @@ void ACustomPlayerController::OnPossess(APawn* InPawn)
 
 	MyPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = PlayerData->CrouchMoveSpeed;
 
-	UE_LOG(LogTemp, Error, TEXT("Try accessing %s component, pointer value = %p"), *UHealthComponent::StaticClass()->GetName(), MyPlayer->GetHealthComponent());
 	MyPlayer->GetHealthComponent()->OnDeath.AddDynamic(this, &ThisClass::ShowGameOver);
 
-	UE_LOG(LogTemp, Error, TEXT("Try accessing %s component, pointer value = %p"), *UArmorComponent::StaticClass()->GetName(), MyPlayer->GetArmorComponent());
 	MyPlayer->GetArmorComponent()->OnArmorChanged.AddDynamic(this, &ThisClass::ChangeArmorUI);
 
-	UE_LOG(LogTemp, Error, TEXT("Try accessing %s component, pointer value = %p"), *UInventoryComponent::StaticClass()->GetName(), MyPlayer->GetInventoryComponent());
 	MyPlayer->GetInventoryComponent()->OnItemAddedToInventory.AddDynamic(this, &ThisClass::AddItemNotificationToViewport);
 
-	UE_LOG(LogTemp, Error, TEXT("Try accessing %s component, pointer value = %p"), *UInventoryComponent::StaticClass()->GetName(), MyPlayer->GetHotbarInventoryComponent());
 	MyPlayer->GetHotbarInventoryComponent()->OnItemAddedToInventory.AddDynamic(this, &ThisClass::AddItemNotificationToViewport);
 }
 
@@ -667,7 +663,7 @@ void ACustomPlayerController::DeleteSave()
 }
 
 void ACustomPlayerController::GoBackToMenu()
-{
+{	
 	PopLastMenu();
 
 	SetInputMode(FInputModeUIOnly());
@@ -797,7 +793,9 @@ void ACustomPlayerController::TravelToVictoryLevel()
 void ACustomPlayerController::BindUIEvents()
 {
 	MyPlayer->GetHealthComponent()->OnHealthChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateHealthBar);
+	MyPlayer->GetHealthComponent()->AddHealth(0);//Force the UI Update
 	MyPlayer->GetStaminaComponent()->OnStaminaChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateStaminaBar);
+	MyPlayer->GetStaminaComponent()->AddStamina(0);//Force the UI Update
 	MyPlayer->GetConditionStateComponent()->OnHungerChanged.AddDynamic(HUDWidget, &UPlayerHud::UpdateHungerRadialBarImage);
 }
 

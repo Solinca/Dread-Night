@@ -21,7 +21,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Values")
 	float CurrentHealth = 100.f;
-	
+
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChangedSignature OnHealthChanged;
@@ -43,4 +43,6 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	float GetHealthRatio();
+
+	virtual void OnPostLoad() override;
 };

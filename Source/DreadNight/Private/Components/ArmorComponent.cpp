@@ -69,3 +69,15 @@ void UArmorComponent::OnPostLoad()
 	EquipArmor(CurrentHelmetSave.Get());
 	EquipArmor(CurrentPantsSave.Get());
 }
+
+void UArmorComponent::UpdateAllUI()
+{
+	if (CurrentBoots)
+		OnArmorChanged.Broadcast(CurrentBoots , true);
+	if (CurrentChestPlate)
+		OnArmorChanged.Broadcast(CurrentChestPlate, true);
+	if (CurrentHelmet)
+		OnArmorChanged.Broadcast(CurrentHelmet, true);
+	if (CurrentPants)
+		OnArmorChanged.Broadcast(CurrentPants , true);
+}

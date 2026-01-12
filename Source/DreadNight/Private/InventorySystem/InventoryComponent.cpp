@@ -470,3 +470,14 @@ void UInventoryComponent::DeserializeInventory()
 	}
 	SavedItems.Empty();
 }
+
+void UInventoryComponent::UpdateAllUI()
+{
+	for (int i = 0; i < Items.Num(); ++i)
+	{	
+		if (Items[i])
+		{
+			OnItemModified.Broadcast(Items[i], i);
+		}		
+	}
+}

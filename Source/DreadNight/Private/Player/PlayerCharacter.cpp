@@ -202,8 +202,7 @@ void APlayerCharacter::OnPreSave()
 	InventoryComponent->SerializeInventory();
 	
 	HotbarInventoryComponent->SerializeInventory();
-	
-	ArmorComponent->OnPreSave();
+	 
 }
 
 void APlayerCharacter::OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache)
@@ -211,14 +210,20 @@ void APlayerCharacter::OnPostLoad(const TMap<FName, ISavableActor*>& SavableActo
 	InventoryComponent->DeserializeInventory();
 	
 	HotbarInventoryComponent->DeserializeInventory();
-	
-	ArmorComponent->OnPostLoad();
-
-	GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(CurrentHotbarIndex);
+	 
 	
 	ProcessHotbarSlot();
 	
 	StaminaComponent->RegenStamina(0.f);
+
+	TryApplyDamage(0.f, this); //Force the regen timer to start
+
+	if (UMyGameInstance* GameInstance = GetWorld()->GetGameInstance<UMyGameInstance>())
+	{
+		GameInstance->OnPCGEndGeneration.AddDynamic(ArmorComponent, &UArmorComponent::UpdateAllUI);
+		GameInstance->OnPCGEndGeneration.AddDynamic(this, &APlayerCharacter::OnPostLoadUI);
+	}
+	
 }
 
 void APlayerCharacter::ProcessHotbarSlot()
@@ -254,6 +259,13 @@ void APlayerCharacter::ProcessHotbarSlot()
 		CurrentItemMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PlayerData->SecondaryHandSocketName);
 	}
 }
+
+void APlayerCharacter::OnPostLoadUI()
+{
+	GetHotbarInventoryComponent()->OnSelectedHotbarChanged.Broadcast(CurrentHotbarIndex);
+	GetHotbarInventoryComponent()->UpdateAllUI();
+}
+
 
 void APlayerCharacter::OnSwordOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {

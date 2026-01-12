@@ -182,5 +182,10 @@ public:
 
 	virtual void OnPostLoad(const TMap<FName, ISavableActor*>& SavableActorCache) override;
 
+	UFUNCTION()
 	void ProcessHotbarSlot();
+
+	UFUNCTION()
+	void OnPostLoadUI();
+ 
 };
