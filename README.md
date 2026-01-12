@@ -56,7 +56,7 @@ At the start of the night, a wave of monsters will spawn. Defeating them all wil
 
 There is a boss encounter during Night 5. You need to defeat it as well as all of its spawned minions to win the game (except cows).
 
-Currently, there is no saving system. If we manage to find a fix to it in production, we will be pushing a new update, so stay tuned! :)
+The save system triggers at the beginning of every day. You can safely quit and continue your game later on by pressing "Continue" on the main menu.
 
 ## References
 
